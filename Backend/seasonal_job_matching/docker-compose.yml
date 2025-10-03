@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  web:
+    #no need for build since i have image, right?
+    image: grad_repo.spring_tag:latest
+    #Do i need container_name:?
+    ports:
+      - 8080:8080
+    #Should there be an environment here ?
+    #SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/seasonal_jobs_db
+    #SPRING_DATASOURCE_USERNAME: postgres
+    #SPRING_DATASOURCE_PASSWORD: postgres
+  database:
+    image: postgres:17.6-bookworm
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: seasonal_jobs_db
+      #DB name
+volumes:
+  postgres_data:

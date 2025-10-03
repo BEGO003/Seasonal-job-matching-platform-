@@ -4,9 +4,11 @@ package grad_project.seasonal_job_matching.seasonal_job_matching.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
-public class JobSeeker {
+@Table(name = "Users")
+public class User {
 
     @Column
     private String name;
@@ -24,13 +26,17 @@ public class JobSeeker {
     @Column
     private String password;
 
-    public JobSeeker(String name, String address, String number, String email, String password){
+    @Column
+    private Type type;
+
+    public User(String name, String address, String number, String email, String password, Type type){
 
         this.name = name;
         this.address = address;
         this.email = email;
         this.password = password;
         this.number = number;
+        this.type = type;
     }
 
     // Getters
@@ -54,6 +60,10 @@ public class JobSeeker {
         return password;
     }
 
+    public Type getType() {
+        return type;
+    }
+
     // Setters
     public void setName(String name) {
         this.name = name;
@@ -73,5 +83,9 @@ public class JobSeeker {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 }
