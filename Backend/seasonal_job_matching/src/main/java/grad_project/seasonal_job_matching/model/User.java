@@ -2,7 +2,6 @@ package grad_project.seasonal_job_matching.model;
 
 
 
-import grad_project.seasonal_job_matching.dto.createuserDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -42,22 +41,18 @@ public class User {
 
     }
     
-    // can use autowired/automapping which is a wrapper that 
-    public static User fromDTO(createuserDTO dto){
-        User user = new User();
-        user.setAddress(dto.getAddress());
-        user.setEmail(dto.getEmail());
-        user.setName(dto.getName());
-        user.setPassword(dto.getPassword());
-        user.setNumber(dto.getNumber());
-        user.setType(detectType());
-        return user;
-    }
+    // can use autowired/automapping which is a wrapper that automatically parses the data and places them in the correct place
+    // public static User fromDTO(createuserDTO dto){
+    //     User user = new User();
+    //     user.setAddress(dto.getAddress());
+    //     user.setEmail(dto.getEmail());
+    //     user.setName(dto.getName());
+    //     user.setPassword(dto.getPassword());
+    //     user.setNumber(dto.getNumber());
+    //     user.setType(detectType());
+    //     return user;
+    // }
 
-    private static Type detectType(){
-        //if mobile, type is jobseeker, else employer
-        return Type.JOB_SEEKER;
-    }
 
     public User(String name, String address, String number, String email, String password, Type type){
 

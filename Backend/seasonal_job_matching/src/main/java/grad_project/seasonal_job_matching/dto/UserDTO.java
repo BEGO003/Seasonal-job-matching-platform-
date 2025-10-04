@@ -1,7 +1,7 @@
 package grad_project.seasonal_job_matching.dto;
 
 //can make responsedto if we want to return data to frontend
-public class createuserDTO {
+public class UserDTO {
 
     private String name;
 

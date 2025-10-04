@@ -12,12 +12,12 @@ public class SeasonalJobMatchingApplication {
 
 }
 /*
- * 
- * 1. Make Sure MVN is always clean before running docker compose 
-2. JPA Interfaces  (repository functions findbyemail, or builtin functions)
-3. DTOs for responses and requests
-4. Implement CRUD operations in service layers 
-5. Update Controllers to use new services
-6. Commit and push latest stable version
+1. Make Sure MVN is always clean before running docker compose 
+2. JPA Interfaces  (repository functions findbyemail, or builtin functions) - DONE
+3. DTOs for responses and requests - kinda Done?
+4. Implement CRUD operations in service layers -DONE
+5. Update Controllers to use new services - DONE
+6. Commit and push latest stable version - DONE
 7. add volume in docker compose
+8. Add hashing for passwords and verification for email, number, etc
  */
