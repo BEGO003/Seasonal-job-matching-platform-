@@ -1,16 +1,20 @@
 version: '3.8'
 services:
-  web:
-    #no need for build since i have image, right?
-    image: grad_repo.spring_tag:latest
-    #Do i need container_name:?
+  backend-crud-service:
+    build: #build latest image of spring boot
+      #when docker compose change file location, we need to write path of this in context instead of .
+      context: .
+      args:
+        - DOCKER_BUILDKIT=1 #makes faster bundling
+    container_name: backend-crud-service
     ports:
       - 8080:8080
-    #Should there be an environment here ?
-    #SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/seasonal_jobs_db
-    #SPRING_DATASOURCE_USERNAME: postgres
-    #SPRING_DATASOURCE_PASSWORD: postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/seasonal_jobs_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
   database:
+    container_name: database
     image: postgres:17.6-bookworm
     ports:
       - 5432:5432

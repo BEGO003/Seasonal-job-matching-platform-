@@ -1,15 +1,24 @@
-package grad_project.seasonal_job_matching.seasonal_job_matching.model;
+package grad_project.seasonal_job_matching.model;
 
 
+
+import grad_project.seasonal_job_matching.dto.createuserDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Users")
 public class User {
-
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
+    private Long id;
+    
     @Column
     private String name;
 
@@ -19,7 +28,6 @@ public class User {
     @Column
     private String number;
 
-    @Id
     @Column
     private String email;
 
@@ -28,6 +36,28 @@ public class User {
 
     @Column
     private Type type;
+
+    // Default constructor required for JPA
+    public User() {
+
+    }
+    
+    // can use autowired/automapping which is a wrapper that 
+    public static User fromDTO(createuserDTO dto){
+        User user = new User();
+        user.setAddress(dto.getAddress());
+        user.setEmail(dto.getEmail());
+        user.setName(dto.getName());
+        user.setPassword(dto.getPassword());
+        user.setNumber(dto.getNumber());
+        user.setType(detectType());
+        return user;
+    }
+
+    private static Type detectType(){
+        //if mobile, type is jobseeker, else employer
+        return Type.JOB_SEEKER;
+    }
 
     public User(String name, String address, String number, String email, String password, Type type){
 
@@ -40,6 +70,10 @@ public class User {
     }
 
     // Getters
+    public Long getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
@@ -65,6 +99,10 @@ public class User {
     }
 
     // Setters
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
