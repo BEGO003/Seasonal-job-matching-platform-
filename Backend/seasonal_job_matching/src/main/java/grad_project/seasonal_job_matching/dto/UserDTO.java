@@ -1,16 +1,28 @@
 package grad_project.seasonal_job_matching.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 //can make responsedto if we want to return data to frontend
 public class UserDTO {
 
+    @NotBlank
     private String name;
 
     private String address;
 
+    @NotBlank
+    @Pattern(regexp = "^[0-9]{11}$") 
     private String number;
 
+    @Email
+    @NotBlank
     private String email;
 
+    @NotBlank
+    @Size(min = 8, max = 100)
     private String password;
 
     public String getName() {

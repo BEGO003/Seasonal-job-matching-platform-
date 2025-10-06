@@ -18,19 +18,20 @@ public class User {
     @Column
     private Long id;
     
-    @Column
+    @Column(nullable = false,length = 100)
     private String name;
 
+    
     @Column
     private String address;
 
-    @Column
+    @Column(length=11)
     private String number;
 
-    @Column
+    @Column(nullable = false)
     private String email;
 
-    @Column
+    @Column(nullable = false)
     private String password;
 
     @Column
