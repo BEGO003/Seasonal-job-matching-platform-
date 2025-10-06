@@ -1,74 +1,32 @@
-package grad_project.seasonal_job_matching.model;
+package grad_project.seasonal_job_matching.dto;
 
 import java.sql.Date;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import grad_project.seasonal_job_matching.model.JobStatus;
+import grad_project.seasonal_job_matching.model.JobType;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
-@Entity
-@Table(name = "Jobs")
-public class Job {
+public class JobDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
     private int id;
-
-    @Column(nullable = false)
+    
+    @NotBlank
     private String title;
-
-    @Column
     private String description;
-
-    @Column
+    @NotNull
     private JobType type;
-
-    @Column(nullable = false)
     private String location;
-
-    @Column
-    private Date startDate;
-
-    @Column
-    private Date endDate;
-
-    @ManyToOne
-    @JoinColumn(name = "userID", nullable = false, referencedColumnName = "id", foreignKey = @ForeignKey(name="fk_ob_user"))// foreign key from user table
-    private User user;
-
-    @Column
+    private Date startDate; // ISO-8601 date string
+    private Date endDate;   // ISO-8601 date string
+    @NotNull @Positive
+    private Long userId;
+    @PositiveOrZero
     private float salary;
-
-    @Column(nullable = false)
     private JobStatus status;
-
-    @Column
     private int numofpositions;
-
-    public Job() {
-    }
-
-    public Job(int id, String title, String description, JobType type, String location, Date startDate, Date endDate, User user, float salary, int numofpositions, JobStatus status){
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.type = type;
-        this.location = location;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.user = user;
-        this.salary = salary;
-        this.numofpositions = numofpositions;
-        this.status = status;
-    }
-    //create setters and getters
 
     public int getId() {
         return id;
@@ -126,12 +84,12 @@ public class Job {
         this.endDate = endDate;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public float getSalary() {

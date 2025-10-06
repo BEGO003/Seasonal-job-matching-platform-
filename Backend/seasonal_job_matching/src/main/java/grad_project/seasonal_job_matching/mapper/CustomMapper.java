@@ -4,7 +4,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import grad_project.seasonal_job_matching.dto.JobDTO;
 import grad_project.seasonal_job_matching.dto.UserDTO;
+import grad_project.seasonal_job_matching.model.Job;
 import grad_project.seasonal_job_matching.model.User;
 
 @Mapper(componentModel = "spring")
@@ -21,4 +23,7 @@ public interface CustomMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "type", ignore = true)
     User maptoEditUser(UserDTO dto);
+
+    @Mapping(target = "id", ignore = true)
+    Job maptoAddJob(JobDTO dto);
 }
