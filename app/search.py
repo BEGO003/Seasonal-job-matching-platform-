@@ -55,7 +55,7 @@ def search_jobs(
 
     results = []
     for job in JOBS:
-        if q.lower() not in (job["title"] + " " + job["description"]).lower():
+        if q and q.lower() not in (job["title"] + " " + job["description"]).lower():
             continue
         if location and job["location"].lower() != location.lower():
             continue
@@ -68,10 +68,14 @@ def search_jobs(
     if sort == "date":
         results.sort(key=lambda j: j["created_at"], reverse=True)
     else:
-        results.sort(
-            key=lambda j: (q.lower() in j["title"].lower(), j["created_at"]),
-            reverse=True
-        )
+        # Only use keyword relevance if q exists
+        if q:
+            results.sort(
+                key=lambda j: (q.lower() in j["title"].lower(), j["created_at"]),
+                reverse=True
+            )
+        else:
+            results.sort(key=lambda j: j["created_at"], reverse=True)
 
     paginated = results[offset: offset + limit]
 
