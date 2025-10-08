@@ -10,7 +10,7 @@ interface StatsCardProps {
 
 export const StatsCard = ({ title, value, icon: Icon, iconBgColor }: StatsCardProps) => {
   return (
-    <Card className="p-6 hover:shadow-lg transition-all duration-300 hover:scale-105 border-l-4 border-l-orange-500/20 bg-gradient-to-br from-white to-orange-50/30">
+    <Card className="p-6 hover:shadow-lg transition-all duration-300 hover:scale-105 border-l-4 border-l-primary/30 bg-gradient-to-br from-white to-secondary/30">
       <div className="flex items-center justify-between mb-4">
         <div className={`flex items-center justify-center w-14 h-14 rounded-2xl ${iconBgColor} shadow-lg`}>
           <Icon className="w-7 h-7" />

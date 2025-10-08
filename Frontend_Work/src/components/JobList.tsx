@@ -38,27 +38,25 @@ export const JobList = () => {
   return (
     <div className="space-y-8">
       <div className="text-center">
-        <h2 className="text-4xl font-bold text-foreground mb-4 bg-gradient-to-r from-foreground to-orange-600 bg-clip-text text-transparent">
-          Your Job Posts
+        <h2 className="text-4xl font-bold text-foreground mb-4 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
+        Job Posts
         </h2>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Manage and track your seasonal job postings with powerful analytics and insights
-        </p>
+        
       </div>
 
       <Tabs defaultValue="all" className="w-full">
         <div className="flex items-center justify-center mb-8">
-          <TabsList className="grid w-full max-w-xl grid-cols-4 bg-gradient-to-r from-orange-50 to-orange-100/50 p-1 rounded-xl">
-            <TabsTrigger value="all" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white rounded-lg">
+          <TabsList className="grid w-full max-w-xl grid-cols-4 bg-gradient-to-r from-secondary to-secondary/70 p-1 rounded-xl">
+            <TabsTrigger value="all" className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg">
               All Jobs
             </TabsTrigger>
-            <TabsTrigger value="active" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white rounded-lg">
+            <TabsTrigger value="active" className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg">
               Active
             </TabsTrigger>
-            <TabsTrigger value="drafts" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white rounded-lg">
+            <TabsTrigger value="drafts" className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg">
               Drafts
             </TabsTrigger>
-            <TabsTrigger value="closed" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white rounded-lg">
+            <TabsTrigger value="closed" className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg">
               Closed
             </TabsTrigger>
           </TabsList>
