@@ -9,7 +9,6 @@ COPY target/seasonal_job_matching-0.0.1-SNAPSHOT.jar /app/seasonaljobs.jar
 
 #Get rid of old jar and gets new one with updated code
 #RUN mvn clean package -DskipTests
-RUN mvn -B -DskipTests clean
 
 #Run jar files when docker contrainer starts
 ENTRYPOINT [ "java", "-jar", "seasonaljobs.jar" ]

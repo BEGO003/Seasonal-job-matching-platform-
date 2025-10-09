@@ -4,7 +4,6 @@ import java.sql.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,7 +18,7 @@ public class Job {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    private int id;
+    private long id;
 
     @Column(nullable = false)
     private String title;
@@ -40,8 +39,9 @@ public class Job {
     private Date endDate;
 
     @ManyToOne
-    @JoinColumn(name = "userID", nullable = false, referencedColumnName = "id", foreignKey = @ForeignKey(name="fk_ob_user"))// foreign key from user table
-    private User user;
+    @JoinColumn(name = "jobposterID", nullable = false, referencedColumnName = "id")// foreign key from user table
+    //@Column
+    private User jobposter;
 
     @Column
     private float salary;
@@ -55,7 +55,7 @@ public class Job {
     public Job() {
     }
 
-    public Job(int id, String title, String description, JobType type, String location, Date startDate, Date endDate, User user, float salary, int numofpositions, JobStatus status){
+    public Job(int id, String title, String description, JobType type, String location, Date startDate, Date endDate, User jobposter, float salary, int numofpositions, JobStatus status){
         this.id = id;
         this.title = title;
         this.description = description;
@@ -63,18 +63,18 @@ public class Job {
         this.location = location;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.user = user;
+        this.jobposter = jobposter;
         this.salary = salary;
         this.numofpositions = numofpositions;
         this.status = status;
     }
     //create setters and getters
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -126,12 +126,12 @@ public class Job {
         this.endDate = endDate;
     }
 
-    public User getUser() {
-        return user;
+    public User getjobposter() {
+        return jobposter;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setjobposter(User jobposter) {
+        this.jobposter = jobposter;
     }
 
     public float getSalary() {

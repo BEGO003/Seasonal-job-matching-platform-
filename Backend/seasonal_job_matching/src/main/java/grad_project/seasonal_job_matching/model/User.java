@@ -2,11 +2,15 @@ package grad_project.seasonal_job_matching.model;
 
 
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -15,12 +19,14 @@ public class User {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
-    private Long id;
+    @Column//turn to UUID, review it first
+    private long id;
     
     @Column(nullable = false,length = 100)
     private String name;
 
+    @OneToMany(mappedBy = "jobposter", cascade = CascadeType.ALL)
+    private List<Job> ownedjobs;
     
     @Column
     private String address;
@@ -66,7 +72,7 @@ public class User {
     }
 
     // Getters
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
@@ -95,7 +101,7 @@ public class User {
     }
 
     // Setters
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

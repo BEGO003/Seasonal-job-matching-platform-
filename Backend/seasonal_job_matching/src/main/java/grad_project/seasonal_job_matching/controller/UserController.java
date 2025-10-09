@@ -77,7 +77,6 @@ public class UserController {
             return ResponseEntity.ok("User not found!");
         }
         
-
     }
 
 }

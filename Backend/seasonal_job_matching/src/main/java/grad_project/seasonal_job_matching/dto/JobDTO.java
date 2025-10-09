@@ -2,13 +2,15 @@ package grad_project.seasonal_job_matching.dto;
 
 import java.sql.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import grad_project.seasonal_job_matching.model.JobStatus;
 import grad_project.seasonal_job_matching.model.JobType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 
+//request dto has different parameters and fields than response (they take objects)
 public class JobDTO {
 
     private int id;
@@ -19,10 +21,12 @@ public class JobDTO {
     @NotNull
     private JobType type;
     private String location;
-    private Date startDate; // ISO-8601 date string
-    private Date endDate;   // ISO-8601 date string
-    @NotNull @Positive
-    private Long userId;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private Date startDate; 
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private Date endDate;   
+    @NotNull
+    private long jobposterID;
     @PositiveOrZero
     private float salary;
     private JobStatus status;
@@ -84,12 +88,12 @@ public class JobDTO {
         this.endDate = endDate;
     }
 
-    public Long getUserId() {
-        return userId;
+    public long getjobposterID() {
+        return jobposterID;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setjobposterID(long jobposterID) {
+        this.jobposterID = jobposterID;
     }
 
     public float getSalary() {
