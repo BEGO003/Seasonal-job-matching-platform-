@@ -12,18 +12,17 @@ public class SeasonalJobMatchingApplication {
 
 }
 /*
-3. (IMPORTANT) DTOs for responses and requests - Done requests, responses to return maybe edited data?
 7. add volume in docker compose
 8. Add hashing for passwords (passwordencrypt)
 9. security when data entered in url that can be edited to access unauthorized data.
 //check modelmapper, ensure naming convention of properties (if not the same explicitly mention like @mapping)
 
 Test user data
-"name":"fahad",
+  "name":"fahad",
     "address" : "lebanon",
-    "number" : "3333333",
-    "password" : "1234",
-    "email" : "hell1o.com"
+    "number" : "11111111111",
+    "password" : "12345678",
+    "email" : "hell1o@gmail.com"
 
 Test job data
 "jobposterID": 1,
@@ -35,5 +34,6 @@ Test job data
     "location": "Egypt",
     "startDate": "2024-10-12",
     "endDate": "2024-11-15",
-    "numofpositions": 5
+    "numofpositions": 5,
+    "workarrangement" : "REMOTE"
  */

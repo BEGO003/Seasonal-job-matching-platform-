@@ -1,6 +1,8 @@
 package grad_project.seasonal_job_matching.controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -12,8 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import grad_project.seasonal_job_matching.dto.UserDTO;
-import grad_project.seasonal_job_matching.model.User;
+import grad_project.seasonal_job_matching.dto.requests.UserCreateDTO;
+import grad_project.seasonal_job_matching.dto.requests.UserEditDTO;
+import grad_project.seasonal_job_matching.dto.responses.UserResponseDTO;
 import grad_project.seasonal_job_matching.services.UserService;
 import jakarta.validation.Valid;
 
@@ -32,36 +35,46 @@ public class UserController {
 
     
     @GetMapping("/all")
-    public List<User> findAll(){
+    public List<UserResponseDTO> findAll(){
         return users_service.findAllUsers();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> findByID(@PathVariable long id){
-        if(users_service.findByID(id).isEmpty()){
-            return ResponseEntity.ok("User not found!");
-        }else{
-            return ResponseEntity.ok("User found!");
+    public ResponseEntity<?> findByID(@PathVariable long id){
+        Optional<UserResponseDTO> user = users_service.findByID(id);
+        if(user.isEmpty()){
+            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok(user.get());
+
     }
     
     @PostMapping("/new")
-    public ResponseEntity<String> createUser(@Valid @RequestBody UserDTO userdto){//if user is from mobile than type is jobseeker, else it is employer  
+    public ResponseEntity<?> createUser(@Valid @RequestBody UserCreateDTO userdto){//if user is from mobile than type is jobseeker, else it is employer  
         try {
-            users_service.createUser(userdto);
-            return ResponseEntity.ok("User created successfully");
+            UserResponseDTO user = users_service.createUser(userdto);
+            return ResponseEntity.ok()
+            .body(Map.of(
+                "message", "User created successfully",
+                "user", user
+            ));
         } catch (RuntimeException e) {
-            return ResponseEntity.ok("Email already in use!");
+            return ResponseEntity.badRequest()
+            .body(Map.of("error", e.getMessage()));
         }
-        
-        
     }
+        
+        
+    
 
     @PostMapping("/edit/{id}")
-    public ResponseEntity<String> editUser(@PathVariable long id,@Valid @RequestBody UserDTO dto){
+    public ResponseEntity<?> editUser(@PathVariable long id,@Valid @RequestBody UserEditDTO dto){
         try {
-            users_service.editUser(dto, id);
-            return ResponseEntity.ok("User updated successfully");
+            UserResponseDTO user = users_service.editUser(dto, id);
+            return ResponseEntity.ok().body(Map.of(
+                "message", "User edited successfully",
+                "user", user
+            ));
         } catch (RuntimeException e) {
             return ResponseEntity.ok("Update failed");
         }
@@ -70,13 +83,12 @@ public class UserController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id){
-        if (ResponseEntity.ok()==findByID(id)) {
+        Optional<UserResponseDTO> user = users_service.findByID(id);
+        if (user.isPresent()) {
             users_service.deleteUser(id);
             return ResponseEntity.ok("User deleted successfully!");
-        }else{
-            return ResponseEntity.ok("User not found!");
         }
-        
+        return ResponseEntity.notFound().build();
     }
 
 }

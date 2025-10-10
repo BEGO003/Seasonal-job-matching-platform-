@@ -2,6 +2,11 @@ package grad_project.seasonal_job_matching.model;
 
 import java.sql.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import grad_project.seasonal_job_matching.model.enums.JobStatus;
+import grad_project.seasonal_job_matching.model.enums.JobType;
+import grad_project.seasonal_job_matching.model.enums.WorkArrangement;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,9 +15,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "Jobs")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Job {
 
     @Id
@@ -41,6 +54,7 @@ public class Job {
     @ManyToOne
     @JoinColumn(name = "jobposterID", nullable = false, referencedColumnName = "id")// foreign key from user table
     //@Column
+    @JsonIgnoreProperties //to prevent infinite loop of getting user and all his info and then getting all of users jobs which is this one and so on
     private User jobposter;
 
     @Column
@@ -52,10 +66,11 @@ public class Job {
     @Column
     private int numofpositions;
 
-    public Job() {
-    }
+    @Column
+    private WorkArrangement workarrangement;
 
-    public Job(int id, String title, String description, JobType type, String location, Date startDate, Date endDate, User jobposter, float salary, int numofpositions, JobStatus status){
+
+    public Job(int id, String title, String description, JobType type, String location, Date startDate, Date endDate, User jobposter, float salary, int numofpositions, JobStatus status, WorkArrangement workarrangement){
         this.id = id;
         this.title = title;
         this.description = description;
@@ -67,6 +82,7 @@ public class Job {
         this.salary = salary;
         this.numofpositions = numofpositions;
         this.status = status;
+        this.workarrangement = workarrangement;
     }
     //create setters and getters
 

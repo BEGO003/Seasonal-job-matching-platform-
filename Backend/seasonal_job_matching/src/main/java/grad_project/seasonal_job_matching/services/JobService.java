@@ -3,13 +3,15 @@ package grad_project.seasonal_job_matching.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import grad_project.seasonal_job_matching.dto.JobDTO;
-import grad_project.seasonal_job_matching.dto.JobResponseDTO;
-import grad_project.seasonal_job_matching.mapper.CustomMapper;
+import grad_project.seasonal_job_matching.dto.requests.JobCreateDTO;
+import grad_project.seasonal_job_matching.dto.requests.JobEditDTO;
+import grad_project.seasonal_job_matching.dto.responses.JobResponseDTO;
+import grad_project.seasonal_job_matching.mapper.JobMapper;
 import grad_project.seasonal_job_matching.model.Job;
 import grad_project.seasonal_job_matching.model.User;
 import grad_project.seasonal_job_matching.repository.JobRepository;
@@ -25,24 +27,28 @@ public class JobService {
 
 
     @Autowired
-    private CustomMapper jobMapper;
+    private JobMapper jobMapper;
 
     public JobService(JobRepository jobRepository, UserRepository userRepository){
         this.jobRepository = jobRepository;
         this.userRepository = userRepository;
     }
-    public List<Job> findAllJobs(){
-        return jobRepository.findAll();
+    public List<JobResponseDTO> findAllJobs(){
+        return jobRepository.findAll()
+        .stream()
+        .map(jobMapper::maptoreturnJob)
+        .collect(Collectors.toList());
     }
 
-    public Optional<Job> findByID(long id){
-        return jobRepository.findById(id);
+    public Optional<JobResponseDTO> findByID(long id){
+        return jobRepository.findById(id)
+        .map(jobMapper::maptoreturnJob);
     }
 
     @Transactional
-    public JobResponseDTO createJob(JobDTO dto) { //does it need any validation like unique user email?
+    public JobResponseDTO createJob(JobCreateDTO dto) { //does it need any validation like unique user email?
         Job job = jobMapper.maptoAddJob(dto);
-        User user = userRepository.findById(dto.getjobposterID()).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(dto.getJobposterID()).orElseThrow(() -> new RuntimeException("User not found"));
 
         // Fetch the User ID using user repo?  
         job.setjobposter(user);
@@ -52,26 +58,24 @@ public class JobService {
         
     }
 
-    public void editJob(JobDTO dto, long id){ 
+    public JobResponseDTO editJob(JobEditDTO dto, long id){ 
         
         Job existingjJob = jobRepository.findById(id).orElseThrow(()-> new RuntimeException("Job not found with ID: " + id));
-
         //has new fields that are changed
         Job updatedJob = jobMapper.maptoEditJob(dto);
 
         //if field thats updated is title and new title isn't empty
-        if(dto.getTitle() != null && !dto.getTitle().trim().isEmpty()){
+        if(dto.getTitle() != null){
             existingjJob.setTitle(updatedJob.getTitle());
         }
 
-        //using dto or updated job should be the same but I still didn't test
         //update description
-        if (updatedJob.getDescription() != null && !updatedJob.getDescription().trim().isEmpty()) {
+        if (updatedJob.getDescription() != null) {
             existingjJob.setDescription(updatedJob.getDescription());
         }
 
         //add salary, checks if salary is updated
-        if (updatedJob.getSalary() != existingjJob.getSalary()) {
+        if (updatedJob.getSalary() > 0) {
             existingjJob.setSalary(updatedJob.getSalary());
         }
 
@@ -91,23 +95,33 @@ public class JobService {
             existingjJob.setStatus(updatedJob.getStatus());
         }
 
+        //update salary
+        if (updatedJob.getSalary() > 0) {
+            existingjJob.setSalary(updatedJob.getSalary());
+        }
+
         //update location
-        if (updatedJob.getLocation() != null && !updatedJob.getLocation().trim().isEmpty()) {
+        if (updatedJob.getLocation() != null ) {
             existingjJob.setLocation(updatedJob.getLocation());
         }
 
         //update number of positions available
-        if (updatedJob.getNumofpositions() != 0 ) {
+        if (updatedJob.getNumofpositions() > 0 ) {
             existingjJob.setNumofpositions(updatedJob.getNumofpositions());
         }
 
         //update job type
-        if (updatedJob.getType() != existingjJob.getType()) {
+        if (updatedJob.getType() != null) {
             existingjJob.setType(updatedJob.getType());
         }
 
+        if (dto.getWorkarrangment() != null) {
+            existingjJob.setWorkarrangement(dto.getWorkarrangment());
+        }
+
         //cant edit userID, id of job
-        jobRepository.save(existingjJob);
+        Job savedjob = jobRepository.save(existingjJob);
+        return jobMapper.maptoreturnJob(savedjob);
 
     }
 

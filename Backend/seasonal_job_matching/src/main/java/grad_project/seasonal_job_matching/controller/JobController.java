@@ -2,6 +2,8 @@ package grad_project.seasonal_job_matching.controller;
 
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import grad_project.seasonal_job_matching.dto.JobDTO;
-import grad_project.seasonal_job_matching.dto.JobResponseDTO;
-import grad_project.seasonal_job_matching.model.Job;
+import grad_project.seasonal_job_matching.dto.requests.JobCreateDTO;
+import grad_project.seasonal_job_matching.dto.requests.JobEditDTO;
+import grad_project.seasonal_job_matching.dto.responses.JobResponseDTO;
 import grad_project.seasonal_job_matching.services.JobService;
 import jakarta.validation.Valid;
 
@@ -31,49 +33,58 @@ public class JobController {
         this.job_service = job_service;
     }
 
-    @GetMapping("/test")
-    public String test(){
-        return "Test";
-    }
 
     @GetMapping("/all")
-    public List<Job> findAll(){
+    public List<JobResponseDTO> findAll(){
         return job_service.findAllJobs();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> findByID(@PathVariable long id){
-        if(job_service.findByID(id).isEmpty()){
+    public ResponseEntity<?> findByID(@PathVariable long id){
+        Optional<JobResponseDTO> job = job_service.findByID(id);
+        if(job.isEmpty()){
             return ResponseEntity.ok("Job not found!");
         }else{
-            return ResponseEntity.ok("Job found!");
+            return ResponseEntity.ok(job.get());
         }
+
     }
 
     @PostMapping("/new")
-    public JobResponseDTO createJob(@Valid @RequestBody JobDTO jobdto){//if user is from mobile than type is jobseeker, else it is employer  
+    public ResponseEntity<?> createJob(@Valid @RequestBody JobCreateDTO jobdto){//if user is from mobile than type is jobseeker, else it is employer  
         try {
-            return job_service.createJob(jobdto);
+            JobResponseDTO job = job_service.createJob(jobdto);
+            return ResponseEntity.ok()
+            .body(Map.of(
+                "message", "Job created successfully",
+                "job", job
+            )); 
         } catch (RuntimeException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.badRequest()
+            .body(Map.of("error", e.getMessage()));
         }
-             
     }
+             
 
     @PostMapping("/edit/{id}")
-    public ResponseEntity<String> editUser(@PathVariable long id,@Valid @RequestBody JobDTO dto){
+    public ResponseEntity<?> editUser(@PathVariable long id,@Valid @RequestBody JobEditDTO dto){
         try {
-            job_service.editJob(dto, id);
-            return ResponseEntity.ok("Job updated successfully");
+            JobResponseDTO job = job_service.editJob(dto, id);
+            return ResponseEntity.ok()
+            .body(Map.of(
+                "message", "Job edited successfully",
+                "job", job
+            )); 
         } catch (RuntimeException e) {
-            return ResponseEntity.ok("Job failed to update");
+            return ResponseEntity.badRequest()
+            .body(Map.of("error", e.getMessage()));
         }
     }
 
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteJob(@PathVariable Long id){
-        if (ResponseEntity.ok()==findByID(id)) {
+        if ("Job found!".equals(findByID(id).getBody())) {
             job_service.deleteJob(id);
             return ResponseEntity.ok("Job deleted successfully!");
         }else{

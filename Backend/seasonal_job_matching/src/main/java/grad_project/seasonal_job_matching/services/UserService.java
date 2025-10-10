@@ -3,13 +3,15 @@ package grad_project.seasonal_job_matching.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import grad_project.seasonal_job_matching.dto.UserDTO;
-import grad_project.seasonal_job_matching.mapper.CustomMapper;
-import grad_project.seasonal_job_matching.model.Type;
+import grad_project.seasonal_job_matching.dto.requests.UserCreateDTO;
+import grad_project.seasonal_job_matching.dto.requests.UserEditDTO;
+import grad_project.seasonal_job_matching.dto.responses.UserResponseDTO;
+import grad_project.seasonal_job_matching.mapper.UserMapper;
 import grad_project.seasonal_job_matching.model.User;
 import grad_project.seasonal_job_matching.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
@@ -22,47 +24,51 @@ public class UserService {
 
     //like singleton, only one instantiation of code which is in mapper so it gets that one instead of creating a new one in this class
     @Autowired
-    private CustomMapper userMapper;
+    private UserMapper userMapper;
 
     public UserService(UserRepository userRepository){
         this.userRepository = userRepository;
 
     }
-    public List<User> findAllUsers(){
-        return userRepository.findAll();
+    public List<UserResponseDTO> findAllUsers(){
+        return userRepository.findAll()
+        .stream()
+        //can(user -> userMapper.maptoreturnUser(user))
+        .map(userMapper::maptoreturnUser)
+        .collect(Collectors.toList());
     }
 
-    public Optional<User> findByID(long id){
-        return userRepository.findById(id);
+    public Optional<UserResponseDTO> findByID(long id){
+        return userRepository.findById(id)
+            .map(userMapper::maptoreturnUser);
     }
-    //Optional is when a return might or might not return a null value
-    // public Optional<User> findUserbyEmail(String email){
-    //     return users.stream().filter(user -> user.getEmail().equals(email)).findFirst();
-    // }
 
     //means we do this method after dependency injection 
     @PostConstruct
     public void init(){
-        User seeker = new User("Baher", "Egypt", "0122234344", "test@gmail.com", "1234", Type.JOB_SEEKER);
+        User seeker = new User("Baher", "Egypt", "0122234344", "test@gmail.com", "1234");
         //return user dto
         userRepository.save(seeker);
     }
     
-    public void createUser(UserDTO dto) {
+    public UserResponseDTO createUser(UserCreateDTO dto) {
         //if email is NOT present, save new user
         if (!userRepository.existsByEmail(dto.getEmail())) {
             User user1 = userMapper.maptoAddUser(dto);
+          
             //still need to encrypt password
             user1.setPassword(dto.getPassword());
-            user1.setType(detectType());
-            //User user = User.fromDTO(dto);
-            userRepository.save(user1);
+            
+            //better practice especially since user1 is being edited
+            User saveduser = userRepository.save(user1);
+            return userMapper.maptoreturnUser(saveduser);
+            
         }else{
-            throw new RuntimeException("Cannot create user, email already exists: " + dto.getEmail());    
+            throw new RuntimeException("Cannot create user");    
         }
     }
 
-    public void editUser(UserDTO dto, long id){
+    public UserResponseDTO editUser(UserEditDTO dto, long id){
         User existingUser = userRepository.findById(id).orElseThrow(()-> new RuntimeException("User not found with ID: " + id));
 
         //checks to see if we are editing email
@@ -82,8 +88,8 @@ public class UserService {
             existingUser.setName(updatedUser.getName());
         }
 
-        if(dto.getAddress() != null && !dto.getAddress().trim().isEmpty()){
-        existingUser.setAddress(updatedUser.getAddress());
+        if(dto.getCountry() != null && !dto.getCountry().trim().isEmpty()){
+        existingUser.setCountry(updatedUser.getCountry());
         }
 
         if(dto.getEmail() != null && !dto.getEmail().trim().isEmpty()){
@@ -98,12 +104,8 @@ public class UserService {
             existingUser.setPassword(updatedUser.getPassword());
         }
 
-        userRepository.save(existingUser);
-    }
-
-    private Type detectType(){
-        //if mobile, type is jobseeker, else employer
-        return Type.JOB_SEEKER;
+        User saveduser = userRepository.save(existingUser);
+        return userMapper.maptoreturnUser(saveduser);
     }
 
     public void deleteUser(Long id){
