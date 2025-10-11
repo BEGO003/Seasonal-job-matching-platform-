@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../utils/app_colors.dart';
-
 class JobsScreen extends StatelessWidget {
   const JobsScreen({super.key});
 
@@ -13,13 +11,11 @@ class JobsScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: AppColors.accent.withValues(alpha: .1),
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.work,
               size: 64,
-              color: AppColors.accent,
             ),
           ),
           const SizedBox(height: 24),

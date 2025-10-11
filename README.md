@@ -1,4 +1,4 @@
-# country_app
+# job_seeker
 
 A new Flutter project.
 

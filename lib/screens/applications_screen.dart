@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../utils/app_colors.dart';
 
 class ApplicationsScreen extends StatelessWidget {
   const ApplicationsScreen({super.key});
@@ -13,13 +12,11 @@ class ApplicationsScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: AppColors.info.withValues(alpha: .1),
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.article,
               size: 64,
-              color: AppColors.info,
             ),
           ),
           const SizedBox(height: 24),
