@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class DocumentCard extends StatelessWidget {
@@ -94,7 +95,21 @@ class DocumentCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 5.0),
                   Expanded(
-                    child: FilledButton(onPressed: () {}, child: Text('View')),
+                    child: FilledButton(
+                      onPressed: ()  {
+                        // final Dio dio = Dio(
+                        //   BaseOptions(
+                        //     baseUrl: "http://192.168.1.44:3000/users/",
+                        //     connectTimeout: const Duration(seconds: 10),
+                        //     receiveTimeout: const Duration(seconds: 10),
+                        //     headers: {'Content-Type': 'application/json'},
+                        //   ),
+                        // );
+                        // final Response response = await dio.get('usr_001');
+                        // print(" Here is ${response.data}");
+                      },
+                      child: Text('View'),
+                    ),
                   ),
                 ],
               ),

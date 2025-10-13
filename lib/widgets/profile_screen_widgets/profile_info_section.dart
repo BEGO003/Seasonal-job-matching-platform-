@@ -13,38 +13,38 @@ class ProfileInfoSection extends ConsumerWidget {
         ProfileInfoCard(
           icon: Icons.person,
           label: 'Name',
-          value: ref.watch(personalInformationStateProvider).data.name,
+          value: ref.watch(personalInformationProvider).value?.name,
           onSave: (String? newValue, WidgetRef ref) => ref
-              .read(personalInformationStateProvider.notifier)
+              .read(personalInformationProvider.notifier)
               .updateName(newValue!),
           // refAbove: ref,
         ),
         ProfileInfoCard(
           icon: Icons.email,
           label: 'Email',
-          value: ref.watch(personalInformationStateProvider).data.email,
+          value: ref.watch(personalInformationProvider).value?.email,
           type: TextInputType.emailAddress,
           onSave: (String? newValue, WidgetRef ref) => ref
-              .read(personalInformationStateProvider.notifier)
+              .read(personalInformationProvider.notifier)
               .updateEmail(newValue!),
           // refAbove: ref,
         ),
         ProfileInfoCard(
           icon: Icons.phone,
           label: 'Phone',
-          value: ref.watch(personalInformationStateProvider).data.phone,
+          value: ref.watch(personalInformationProvider).value?.phone,
           type: TextInputType.phone,
           onSave: (String? newValue, WidgetRef ref) => ref
-              .read(personalInformationStateProvider.notifier)
+              .read(personalInformationProvider.notifier)
               .updatePhone(newValue!),
           // refAbove: ref,
         ),
         ProfileInfoCard(
           icon: Icons.location_on,
           label: 'Country',
-          value: ref.watch(personalInformationStateProvider).data.country,
+          value: ref.watch(personalInformationProvider).value?.country,
           onSave: (String? newValue, WidgetRef ref) => ref
-              .read(personalInformationStateProvider.notifier)
+              .read(personalInformationProvider.notifier)
               .updateCountry(newValue!),
           // refAbove: ref,
         ),

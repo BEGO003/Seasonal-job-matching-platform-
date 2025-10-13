@@ -1,34 +1,76 @@
-import 'package:job_seeker/models/personal_information_state_model.dart';
+import 'dart:async';
+
+import 'package:job_seeker/models/personal_information_model.dart';
+// import 'package:job_seeker/models/personal_information_state_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:job_seeker/services/personal_information_service.dart';
 
-final personalInformationStateProvider =
-    NotifierProvider<PersonalInformationNotifier, PersonalInformationState>(
-      PersonalInformationNotifier.new,
-    );
+final personalInformationProvider =
+    AsyncNotifierProvider<
+      PersonalInformationAsyncNotifier,
+      PersonalInformationModel
+    >(PersonalInformationAsyncNotifier.new);
 
-class PersonalInformationNotifier extends Notifier<PersonalInformationState> {
+class PersonalInformationAsyncNotifier
+    extends AsyncNotifier<PersonalInformationModel> {
+  late final PersonalInformationService _service;
+
   @override
-  PersonalInformationState build() {
-    return PersonalInformationState.initial;
+  Future<PersonalInformationModel> build() async {
+    _service = ref.read(personalInformationServiceProvider);
+    return await _service.fetchUserData();
   }
 
-  void updateName(String vlaue) {
-    state = state.copyWith(isLoading: true);
-    Future.delayed(Duration(seconds: 5), () {
-      state = state.copyWith(data: state.data.copyWith(name: vlaue));
-      state = state.copyWith(isLoading: false);
+  Future<void> updateName(String vlaue) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      await _service.updateName(vlaue);
+      await Future.delayed(Duration(seconds: 3));
+      return state.value!.copyWith(name: vlaue);
     });
   }
 
-  void updateEmail(String vlaue) {
-    state = state.copyWith(data: state.data.copyWith(email: vlaue));
+  Future<void> updateEmail(String vlaue) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      await _service.updateName(vlaue);
+      return state.value!.copyWith(email: vlaue);
+    });
   }
 
-  void updatePhone(String vlaue) {
-    state = state.copyWith(data: state.data.copyWith(phone: vlaue));
+  Future<void> updatePhone(String vlaue) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      await _service.updateName(vlaue);
+      return state.value!.copyWith(phone: vlaue);
+    });
   }
 
-  void updateCountry(String vlaue) {
-    state = state.copyWith(data: state.data.copyWith(country: vlaue));
+  Future<void> updateCountry(String vlaue) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      await _service.updateName(vlaue);
+      return state.value!.copyWith(country: vlaue);
+    });
   }
+
+  // void updateName(String vlaue) {
+  //   state = state.copyWith(isLoading: true);
+  //   Future.delayed(Duration(seconds: 5), () {
+  //     state = state.copyWith(data: state.data.copyWith(name: vlaue));
+  //     state = state.copyWith(isLoading: false);
+  //   });
+  // }
+
+  // void updateEmail(String vlaue) {
+  //   state = state.copyWith(data: state.data.copyWith(email: vlaue));
+  // }
+
+  // void updatePhone(String vlaue) {
+  //   state = state.copyWith(data: state.data.copyWith(phone: vlaue));
+  // }
+
+  // void updateCountry(String vlaue) {
+  //   state = state.copyWith(data: state.data.copyWith(country: vlaue));
+  // }
 }

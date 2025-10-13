@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:job_seeker/constants/constants.dart';
 import 'package:job_seeker/providers/personal_information_notifier.dart';
 
-class ProfileInfoCard extends StatelessWidget {
+class ProfileInfoCard extends ConsumerWidget {
   final IconData icon;
   final String label;
   final String? value;
@@ -95,7 +95,6 @@ class ProfileInfoCard extends StatelessWidget {
                     },
                   )
                 : TextFormField(
-                    // ✅ Regular text field for other inputs
                     controller: controller,
                     keyboardType: type,
                     autofocus: true,
@@ -118,14 +117,33 @@ class ProfileInfoCard extends StatelessWidget {
             ),
             FilledButton(
               child: const Text('Save'),
-              onPressed: () {
+              onPressed: () async {
                 if (formKey.currentState!.validate()) {
-                  // ✅ Use selectedCountry for Country, controller.text for others
                   final valueToSave = label == 'Country'
                       ? selectedCountry!
                       : controller.text;
-                  onSave!(valueToSave, ref);
-                  Navigator.of(context).pop();
+                  try {
+                    // make it required
+                    Navigator.of(context).pop();
+                    await onSave!(valueToSave, ref);
+                    // if (context.mounted) {
+                    //   ScaffoldMessenger.of(context).showSnackBar(
+                    //     SnackBar(
+                    //       content: const Text('Updated successfully!'),
+                    //       backgroundColor: Colors.green,
+                    //     ),
+                    //   );
+                    // }
+                  } on Exception catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Error : $e'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
                 }
               },
             ),
@@ -136,7 +154,36 @@ class ProfileInfoCard extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncData = ref.watch(personalInformationProvider);
+    return asyncData.when(
+      loading: () => buildCard(context, isLoading: true, onTap: null),
+      error: (error, stackTrace) {
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text("Error : $error"),
+        //     backgroundColor: Colors.red,
+        //   ),
+        // );
+        debugPrint(
+          'This is the error ---------------------------------------------------------- $error',
+        );
+        return const Center(child: CircularProgressIndicator());
+      },
+
+      data: (data) => buildCard(
+        context,
+        isLoading: false,
+        onTap: () => _showEditDialog(context, ref),
+      ),
+    );
+  }
+
+  Widget buildCard(
+    BuildContext context, {
+    required VoidCallback? onTap,
+    required bool isLoading,
+  }) {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
     final colorScheme = theme.colorScheme;
@@ -149,85 +196,76 @@ class ProfileInfoCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),
-        child: Consumer(
-          builder: (BuildContext context, WidgetRef ref, Widget? child) {
-            final isLodaing = ref.watch(
-              personalInformationStateProvider.select(
-                (state) => state.isLoading,
-              ),
-            );
-            return Stack(
-              alignment: Alignment.center,
-              children: [
-                InkWell(
-                  onTap: isLodaing ? null : () => _showEditDialog(context, ref),
-                  borderRadius: BorderRadius.circular(12.0),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 12.0,
-                    ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(12.0),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 12.0,
+                ),
 
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: colorScheme.primary.withValues(
-                            alpha: .1,
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: colorScheme.primary.withValues(
+                        alpha: .1,
+                      ),
+                      foregroundColor: colorScheme.primary,
+                      child: Icon(icon, size: 22),
+                    ),
+                    const SizedBox(width: 16.0),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            label,
+                            style: textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                          foregroundColor: colorScheme.primary,
-                          child: Icon(icon, size: 22),
-                        ),
-                        const SizedBox(width: 16.0),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                label,
-                                style: textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
+                          if (value != null && value!.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2.0),
+                              child: Text(
+                                value!,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
                                 ),
                               ),
-                              if (value != null && value!.isNotEmpty)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 2.0),
-                                  child: Text(
-                                    value!,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                    style: textTheme.bodyMedium?.copyWith(
-                                      color: colorScheme.onSurfaceVariant,
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                        if (onSave != null)
-                          const Icon(
-                            Icons.arrow_forward_ios,
-                            size: 16.0,
-                            color: Colors.grey,
-                          ),
-                      ],
+                            ),
+                        ],
+                      ),
                     ),
+                    if (onSave != null)
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16.0,
+                        color: Colors.grey,
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            if (isLoading)
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: .3),
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  child: const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
                   ),
                 ),
-                if (isLodaing)
-                  Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: .3),
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: const Center(
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    ),
-                  ),
-              ],
-            );
-          },
+              ),
+          ],
         ),
       ),
     );
