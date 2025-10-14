@@ -1,0 +1,36 @@
+# CI: build, unit tests, cache Maven
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Make mvnw executable
+        run: chmod +x Backend/seasonal_job_matching/mvnw
+
+      - name: Build and run unit tests
+        working-directory: Backend/seasonal_job_matching
+        run: ./mvnw -B clean verify
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: Backend/seasonal_job_matching/target/surefire-reports || Backend/seasonal_job_matching/target/failsafe-reports || Backend/seasonal_job_matching/target
