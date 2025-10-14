@@ -1,0 +1,30 @@
+services:
+  backend-crud-service:
+    build: #build latest image of spring boot
+      #when docker compose change file location, we need to write path of this in context instead of .
+      context: .
+      args:
+        - DOCKER_BUILDKIT=1 #makes faster bundling
+    container_name: backend-crud-service
+    ports:
+      - 8080:8080
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/seasonal_jobs_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    # environment:
+    #   SPRING_DATASOURCE_URL: jdbc:postgresql://ep-calm-field-ag4fc8nz-pooler.c-2.eu-central-1.aws.neon.tech:5432/neondb?sslmode=require
+    #   SPRING_DATASOURCE_USERNAME: neondb_owner
+    #   SPRING_DATASOURCE_PASSWORD: npg_3Rlkwm4QWzcN
+  database:
+    container_name: database
+    image: postgres:17.6-bookworm
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: seasonal_jobs_db
+      #DB name
+volumes:
+  postgres_data:
