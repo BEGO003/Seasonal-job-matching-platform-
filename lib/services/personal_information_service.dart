@@ -15,10 +15,11 @@ class PersonalInformationService {
   final Dio _dio;
   PersonalInformationService(this._dio);
 
-  String userPath = 'usr_002';
+  String userPath = '5';
+  // String editPath = ;
 
   Future<PersonalInformationModel> fetchUserData() async {
-    debugPrint("This is response _________________________________________ HE ENtered Fetch");
+    // debugPrint("This is response _________________________________________ HE ENtered Fetch");
       final response = await _dio.get(userPath);
       debugPrint("This is response _________________________________________ $response");
     try {
@@ -30,7 +31,7 @@ class PersonalInformationService {
 
   Future<void> updateName(String vlaue) async {
     try {
-      await _dio.patch(userPath, data: {'name': vlaue});
+      await _dio.post("edit/$userPath", data: {'name': vlaue});
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -38,7 +39,7 @@ class PersonalInformationService {
 
   Future<void> updateEmail(String vlaue) async {
     try {
-      await _dio.patch(userPath, data: {'email': vlaue});
+      await _dio.post("edit/$userPath", data: {'email': vlaue});
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -46,7 +47,7 @@ class PersonalInformationService {
 
   Future<void> updatePhone(String vlaue) async {
     try {
-      await _dio.patch(userPath, data: {'phone': vlaue});
+      await _dio.post("edit/$userPath", data: {'number': vlaue});
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -54,7 +55,7 @@ class PersonalInformationService {
 
   Future<void> updateCountry(String vlaue) async {
     try {
-      await _dio.patch(userPath, data: {'country': vlaue});
+      await _dio.post("edit/$userPath", data: {'country': vlaue});
     } on DioException catch (e) {
       throw _handleError(e);
     }

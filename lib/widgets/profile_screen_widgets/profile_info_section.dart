@@ -32,7 +32,7 @@ class ProfileInfoSection extends ConsumerWidget {
         ProfileInfoCard(
           icon: Icons.phone,
           label: 'Phone',
-          value: ref.watch(personalInformationProvider).value?.phone,
+          value: ref.watch(personalInformationProvider).value?.number,
           type: TextInputType.phone,
           onSave: (String? newValue, WidgetRef ref) => ref
               .read(personalInformationProvider.notifier)

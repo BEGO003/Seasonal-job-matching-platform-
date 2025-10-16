@@ -1,13 +1,13 @@
 class PersonalInformationModel {
   final String name;
   final String email;
-  final String phone;
+  final String number;
   final String country;
 
   const PersonalInformationModel({
     this.name = 'Jhon Doe',
     this.email = 'jhonatDoe26@gmail.com',
-    this.phone = '123-456-789',
+    this.number = '123-456-789',
     this.country = 'Egypt',
   });
   
@@ -16,13 +16,13 @@ class PersonalInformationModel {
   PersonalInformationModel copyWith({
     String? name,
     String? email,
-    String? phone,
+    String? number,
     String? country,
   }) {
     return PersonalInformationModel(
       name: name ?? this.name,
       email: email ?? this.email,
-      phone: phone ?? this.phone,
+      number: number ?? this.number,
       country: country ?? this.country,
     );
   }
@@ -31,7 +31,7 @@ class PersonalInformationModel {
     return {
       'name': name,
       'email': email,
-      'phone': phone,
+      'number': number,
       'country': country,
     };
   }
@@ -40,7 +40,7 @@ class PersonalInformationModel {
     return PersonalInformationModel(
       name: json['name'] ?? '',
       email: json['email'] ?? '',
-      phone: json['phone'] ?? '',
+      number: json['number'] ?? '',
       country: json['country'] ?? '',
     );
   }

@@ -25,7 +25,7 @@ class PersonalInformationAsyncNotifier
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await _service.updateName(vlaue);
-      await Future.delayed(Duration(seconds: 3));
+      // await Future.delayed(Duration(seconds: 3));
       return state.value!.copyWith(name: vlaue);
     });
   }
@@ -33,7 +33,7 @@ class PersonalInformationAsyncNotifier
   Future<void> updateEmail(String vlaue) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      await _service.updateName(vlaue);
+      await _service.updateEmail(vlaue);
       return state.value!.copyWith(email: vlaue);
     });
   }
@@ -41,15 +41,15 @@ class PersonalInformationAsyncNotifier
   Future<void> updatePhone(String vlaue) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      await _service.updateName(vlaue);
-      return state.value!.copyWith(phone: vlaue);
+      await _service.updatePhone(vlaue);
+      return state.value!.copyWith(number: vlaue);
     });
   }
 
   Future<void> updateCountry(String vlaue) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      await _service.updateName(vlaue);
+      await _service.updateCountry(vlaue);
       return state.value!.copyWith(country: vlaue);
     });
   }
