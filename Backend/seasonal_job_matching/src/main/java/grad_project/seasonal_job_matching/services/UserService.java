@@ -32,10 +32,11 @@ public class UserService {
     }
     public List<UserResponseDTO> findAllUsers(){
         return userRepository.findAll()
-        .stream()
+        .stream() //turns from List into type stream<user> which can use map and collect
+        
         //can(user -> userMapper.maptoreturnUser(user))
-        .map(userMapper::maptoreturnUser)
-        .collect(Collectors.toList());
+        .map(userMapper::maptoreturnUser) // applies maptoreturn user from usermapper to each user in stream, turns user into a DTO
+        .collect(Collectors.toList()); //gathers all transformer users back into list 
     }
 
     public Optional<UserResponseDTO> findByID(long id){

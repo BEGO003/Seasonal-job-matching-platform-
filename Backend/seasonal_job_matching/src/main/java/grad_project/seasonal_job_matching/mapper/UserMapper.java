@@ -15,10 +15,12 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)//ignore displaying id
     @Mapping(target = "password", ignore = true)//ignore password, will hash in service layer
     @Mapping(target = "ownedjobs", ignore = true)
+    @Mapping(target = "favoritedjobs", ignore = true)
     User maptoAddUser(UserCreateDTO dto);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "ownedjobs", ignore = true)
+    @Mapping(target = "favoritedjobs", ignore = true)
     User maptoEditUser(UserEditDTO dto);
 
     UserResponseDTO maptoreturnUser(User user);

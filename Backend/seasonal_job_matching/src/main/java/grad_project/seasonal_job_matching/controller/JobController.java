@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +25,7 @@ import jakarta.validation.Valid;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/job")
+@RequestMapping("/api/jobs")
 public class JobController {
 
     final private JobService job_service;
@@ -34,7 +35,7 @@ public class JobController {
     }
 
 
-    @GetMapping("/all")
+    @GetMapping
     public List<JobResponseDTO> findAll(){
         return job_service.findAllJobs();
     }
@@ -50,7 +51,7 @@ public class JobController {
 
     }
 
-    @PostMapping("/new")
+    @PostMapping("")
     public ResponseEntity<?> createJob(@Valid @RequestBody JobCreateDTO jobdto){//if user is from mobile than type is jobseeker, else it is employer  
         try {
             JobResponseDTO job = job_service.createJob(jobdto);
@@ -66,7 +67,7 @@ public class JobController {
     }
              
 
-    @PostMapping("/edit/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> editUser(@PathVariable long id,@Valid @RequestBody JobEditDTO dto){
         try {
             JobResponseDTO job = job_service.editJob(dto, id);
@@ -82,7 +83,7 @@ public class JobController {
     }
 
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteJob(@PathVariable Long id){
         if ("Job found!".equals(findByID(id).getBody())) {
             job_service.deleteJob(id);

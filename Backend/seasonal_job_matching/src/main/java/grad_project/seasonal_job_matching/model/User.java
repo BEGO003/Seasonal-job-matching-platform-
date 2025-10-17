@@ -4,12 +4,15 @@ package grad_project.seasonal_job_matching.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -32,9 +35,6 @@ public class User {
     
     @Column(nullable = false,length = 100)
     private String name;
-
-    @OneToMany(mappedBy = "jobposter", cascade = CascadeType.ALL)
-    private List<Job> ownedjobs;
     
     @Column
     private String country;
@@ -48,10 +48,14 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @OneToMany(mappedBy = "jobposter", cascade = CascadeType.ALL)
+    private List<Job> ownedjobs;
+    
+    @JsonIgnoreProperties
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+    @JoinColumn(name = "favorited_jobs", referencedColumnName = "id")
+    private List<Job> favoritedjobs;
     /*
-    @OneToMany(mappedBy = "id")
-    private List<Job> favoritedJobs;
-
     @OneToMany(mappedBy = "id")
     private List<Application> ownedApplications;
      */

@@ -7,8 +7,8 @@ WORKDIR /app
 #Set the maven built jar file from local machine to /app and renaminig it to springbootdocker.jar
 COPY target/seasonal_job_matching-0.0.1-SNAPSHOT.jar /app/seasonaljobs.jar
 
-#Get rid of old jar and gets new one with updated code
-#RUN mvn clean package -DskipTests
+#Get rid of old jar and gets new one with updated code, can add -DskipTests if we want to avoid testing
+RUN ./mvnw clean package 
 
 #Run jar files when docker contrainer starts
 ENTRYPOINT [ "java", "-jar", "seasonaljobs.jar" ]
