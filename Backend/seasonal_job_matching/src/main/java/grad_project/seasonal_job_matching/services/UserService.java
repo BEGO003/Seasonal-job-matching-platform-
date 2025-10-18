@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import grad_project.seasonal_job_matching.dto.requests.UserCreateDTO;
@@ -21,13 +22,14 @@ public class UserService {
 
     public final List<User> users = new ArrayList<>();
     private final UserRepository userRepository;
-
+    private final PasswordEncoder passwordEncoder;
     //like singleton, only one instantiation of code which is in mapper so it gets that one instead of creating a new one in this class
     @Autowired
     private UserMapper userMapper;
 
-    public UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
 
     }
     public List<UserResponseDTO> findAllUsers(){
@@ -57,8 +59,8 @@ public class UserService {
         if (!userRepository.existsByEmail(dto.getEmail())) {
             User user1 = userMapper.maptoAddUser(dto);
           
-            //still need to encrypt password
-            user1.setPassword(dto.getPassword());
+            //encrypt password
+            user1.setPassword(passwordEncoder.encode(dto.getPassword()));
             
             //better practice especially since user1 is being edited
             User saveduser = userRepository.save(user1);
@@ -102,7 +104,7 @@ public class UserService {
         }
         
         if (dto.getPassword() != null && !dto.getPassword().trim().isEmpty()) {
-            existingUser.setPassword(updatedUser.getPassword());
+            existingUser.setPassword(passwordEncoder.encode(updatedUser.getNumber()));
         }
 
         User saveduser = userRepository.save(existingUser);

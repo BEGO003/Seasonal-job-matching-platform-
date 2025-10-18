@@ -7,7 +7,9 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,6 +27,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties("favoriteJobIds")
 @Table(name = "Users")
 public class User {
     
@@ -48,12 +51,13 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @JsonIgnoreProperties
     @OneToMany(mappedBy = "jobposter", cascade = CascadeType.ALL)
     private List<Job> ownedjobs;
     
-    @JsonIgnoreProperties
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
-    @JoinColumn(name = "favorited_jobs", referencedColumnName = "id")
+    @ElementCollection
+    @CollectionTable(name = "user_favorited_jobs", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "job_id")
     private List<Job> favoritedjobs;
     /*
     @OneToMany(mappedBy = "id")

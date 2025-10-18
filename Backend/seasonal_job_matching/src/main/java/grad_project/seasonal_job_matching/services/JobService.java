@@ -74,6 +74,11 @@ public class JobService {
             existingjJob.setDescription(updatedJob.getDescription());
         }
 
+        //update work arrangement
+        if (updatedJob.getWorkarrangement() != null) {
+            existingjJob.setWorkarrangement(updatedJob.getWorkarrangement());
+        }
+
         //add salary, checks if salary is updated
         if (updatedJob.getSalary() > 0) {
             existingjJob.setSalary(updatedJob.getSalary());
@@ -115,8 +120,8 @@ public class JobService {
             existingjJob.setType(updatedJob.getType());
         }
 
-        if (dto.getWorkarrangment() != null) {
-            existingjJob.setWorkarrangement(dto.getWorkarrangment());
+        if (dto.getWorkarrangement() != null) {
+            existingjJob.setWorkarrangement(dto.getWorkarrangement());
         }
 
         //cant edit userID, id of job
