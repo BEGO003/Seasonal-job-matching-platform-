@@ -1,10 +1,42 @@
+import { useState, useEffect } from "react";
 import { Briefcase, Users, Eye, Clock, ArrowRight, Sparkles } from "lucide-react";
 import { Header } from "@/components/Header";
 import { StatsCard } from "@/components/StatsCard";
 import { JobList } from "@/components/JobList";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { jobApi } from "@/services/api";
+import { JobStats } from "@/types/job";
 
 const Index = () => {
+  const navigate = useNavigate();
+  const [stats, setStats] = useState<JobStats>({
+    totalJobs: 0,
+    totalApplications: 0,
+    totalViews: 0,
+    activeJobs: 0
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const statsData = await jobApi.getJobStats();
+        setStats(statsData);
+      } catch (error) {
+        console.error('Failed to fetch stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  const handlePostJob = () => {
+    navigate('/post-job');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary via-background to-secondary/30">
       <Header />
@@ -30,7 +62,11 @@ const Index = () => {
               Connect with skilled professionals for seasonal positions. Streamline your hiring process and find the right candidates quickly.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-8 py-3 text-lg">
+              <Button 
+                size="lg" 
+                className="bg-primary hover:bg-primary/90 text-white px-8 py-3 text-lg"
+                onClick={handlePostJob}
+              >
                 Post a Job
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
@@ -52,25 +88,25 @@ const Index = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <StatsCard
             title="Total Jobs"
-            value="3"
+            value={loading ? "..." : stats.totalJobs.toString()}
             icon={Briefcase}
             iconBgColor="bg-gradient-to-br from-blue-500 to-blue-600 text-white"
           />
           <StatsCard
             title="Applications"
-            value="111"
+            value={loading ? "..." : stats.totalApplications.toString()}
             icon={Users}
             iconBgColor="bg-gradient-to-br from-primary to-primary/90 text-white"
           />
           <StatsCard
             title="Total Views"
-            value="498"
+            value={loading ? "..." : stats.totalViews.toString()}
             icon={Eye}
             iconBgColor="bg-gradient-to-br from-green-500 to-green-600 text-white"
           />
           <StatsCard
             title="Active Jobs"
-            value="1"
+            value={loading ? "..." : stats.activeJobs.toString()}
             icon={Clock}
             iconBgColor="bg-gradient-to-br from-purple-500 to-purple-600 text-white"
           />

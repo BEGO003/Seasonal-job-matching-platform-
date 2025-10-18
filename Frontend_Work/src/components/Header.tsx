@@ -7,9 +7,11 @@ export const Header = () => {
     <header className="border-b bg-white/95 backdrop-blur-md px-6 py-4 z-50 shadow-sm">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
         <div className="flex items-center gap-4">
-          <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-primary to-primary/90 rounded-2xl shadow-lg">
-            <Briefcase className="w-7 h-7 text-white" />
-          </div>
+          <img
+  src="https://cdn-icons-png.flaticon.com/512/2313/2313256.png"
+  alt="App icon"
+  className="w-12 h-12 rounded-2xl shadow-lg object-cover"
+/>
           <div>
             <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
               HireConnect

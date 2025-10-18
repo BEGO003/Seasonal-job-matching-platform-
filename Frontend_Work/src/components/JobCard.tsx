@@ -2,15 +2,11 @@ import { MapPin, DollarSign, Users, Eye, Pencil, Trash2, Calendar, TrendingUp } 
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Job } from "@/types/job";
+import { useNavigate } from "react-router-dom";
 
 interface JobCardProps {
-  title: string;
-  location: string;
-  salary: string;
-  applications: number;
-  views: number;
-  status: "active" | "draft" | "closed";
-  season: string;
+  job: Job;
 }
 
 const statusConfig = {
@@ -31,8 +27,23 @@ const statusConfig = {
   },
 };
 
-export const JobCard = ({ title, location, salary, applications, views, status, season }: JobCardProps) => {
+export const JobCard = ({ job }: JobCardProps) => {
+  const navigate = useNavigate();
+  const { id, title, location, salary, applications, views, status, startDate, endDate, positions } = job;
   const statusInfo = statusConfig[status];
+  
+  const formatSalary = () => {
+    if (typeof salary === 'number' && !Number.isNaN(salary)) {
+      return `$${salary.toFixed(2)}`;
+    }
+    return 'Salary not specified';
+  };
+
+  const formatDateRange = () => {
+    const start = new Date(startDate).toLocaleDateString();
+    const end = new Date(endDate).toLocaleDateString();
+    return `${start} - ${end}`;
+  };
 
   return (
     <Card className={`p-6 hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-l-4 border-l-primary ${statusInfo.bgColor} group`}>
@@ -50,7 +61,7 @@ export const JobCard = ({ title, location, salary, applications, views, status, 
             </div>
             <div className="flex items-center gap-2 p-3 bg-white/60 rounded-lg">
               <DollarSign className="w-4 h-4 text-green-500" />
-              <span className="text-sm font-medium text-foreground">{salary}</span>
+              <span className="text-sm font-medium text-foreground">{formatSalary()}</span>
             </div>
             <div className="flex items-center gap-2 p-3 bg-white/60 rounded-lg">
               <Users className="w-4 h-4 text-blue-500" />
@@ -60,25 +71,44 @@ export const JobCard = ({ title, location, salary, applications, views, status, 
               <Eye className="w-4 h-4 text-purple-500" />
               <span className="text-sm font-medium text-foreground">{views} views</span>
             </div>
+            <div className="flex items-center gap-2 p-3 bg-white/60 rounded-lg">
+              <Users className="w-4 h-4 text-orange-500" />
+              <span className="text-sm font-medium text-foreground">{positions} positions</span>
+            </div>
           </div>
           
           <div className="flex items-center gap-3">
             <Badge variant="outline" className="text-xs border-secondary text-foreground bg-secondary">
               <Calendar className="w-3 h-3 mr-1" />
-              {season}
+              {formatDateRange()}
             </Badge>
             
           </div>
         </div>
         
         <div className="flex items-center gap-1 ml-4">
-          <Button size="icon" variant="ghost" className="h-10 w-10 hover:bg-secondary hover:text-primary transition-colors">
+          <Button 
+            size="icon" 
+            variant="ghost" 
+            onClick={() => navigate(`/job/${id}`)}
+            className="h-10 w-10 hover:bg-secondary hover:text-primary transition-colors"
+          >
             <Eye className="w-4 h-4" />
           </Button>
-          <Button size="icon" variant="ghost" className="h-10 w-10 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+          <Button 
+            size="icon" 
+            variant="ghost" 
+            onClick={() => navigate(`/edit-job/${id}`)}
+            className="h-10 w-10 hover:bg-blue-100 hover:text-blue-600 transition-colors"
+          >
             <Pencil className="w-4 h-4" />
           </Button>
-          <Button size="icon" variant="ghost" className="h-10 w-10 hover:bg-red-100 hover:text-red-600 transition-colors">
+          <Button 
+            size="icon" 
+            variant="ghost" 
+            onClick={() => {/* TODO: Add delete functionality */}}
+            className="h-10 w-10 hover:bg-red-100 hover:text-red-600 transition-colors"
+          >
             <Trash2 className="w-4 h-4" />
           </Button>
         </div>

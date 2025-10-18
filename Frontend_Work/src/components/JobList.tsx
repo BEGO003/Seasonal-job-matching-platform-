@@ -1,40 +1,67 @@
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { JobCard } from "./JobCard";
-
-const mockJobs = [
-  {
-    id: 1,
-    title: "Summer Camp Counselor",
-    location: "Denver, CO",
-    salary: "$15-18/hour",
-    applications: 24,
-    views: 156,
-    status: "active" as const,
-    season: "Summer Seasonal",
-  },
-  {
-    id: 2,
-    title: "Holiday Retail Associate",
-    location: "Boulder, CO",
-    salary: "$16-20/hour",
-    applications: 0,
-    views: 0,
-    status: "draft" as const,
-    season: "Holiday Seasonal",
-  },
-  {
-    id: 3,
-    title: "Ski Instructor",
-    location: "Aspen, CO",
-    salary: "$25-35/hour",
-    applications: 87,
-    views: 342,
-    status: "closed" as const,
-    season: "Winter Seasonal",
-  },
-];
+import { jobApi } from "@/services/api";
+import { Job } from "@/types/job";
 
 export const JobList = () => {
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        setLoading(true);
+        const jobsData = await jobApi.getJobs();
+        setJobs(jobsData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch jobs');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div className="text-center">
+          <h2 className="text-4xl font-bold text-foreground mb-4 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
+            Job Posts
+          </h2>
+        </div>
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-muted-foreground">Loading jobs...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-8">
+        <div className="text-center">
+          <h2 className="text-4xl font-bold text-foreground mb-4 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
+            Job Posts
+          </h2>
+        </div>
+        <div className="text-center py-8">
+          <p className="text-red-500 mb-4">Error: {error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       <div className="text-center">
@@ -63,33 +90,63 @@ export const JobList = () => {
         </div>
 
         <TabsContent value="all" className="space-y-4">
-          {mockJobs.map((job) => (
-            <JobCard key={job.id} {...job} />
-          ))}
+          {jobs.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No jobs found</p>
+            </div>
+          ) : (
+            jobs.map((job) => (
+              <JobCard key={job.id} job={job} />
+            ))
+          )}
         </TabsContent>
 
         <TabsContent value="active" className="space-y-4">
-          {mockJobs
+          {jobs
             .filter((job) => job.status === "active")
-            .map((job) => (
-              <JobCard key={job.id} {...job} />
-            ))}
+            .length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No active jobs found</p>
+            </div>
+          ) : (
+            jobs
+              .filter((job) => job.status === "active")
+              .map((job) => (
+                <JobCard key={job.id} job={job} />
+              ))
+          )}
         </TabsContent>
 
         <TabsContent value="drafts" className="space-y-4">
-          {mockJobs
+          {jobs
             .filter((job) => job.status === "draft")
-            .map((job) => (
-              <JobCard key={job.id} {...job} />
-            ))}
+            .length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No draft jobs found</p>
+            </div>
+          ) : (
+            jobs
+              .filter((job) => job.status === "draft")
+              .map((job) => (
+                <JobCard key={job.id} job={job} />
+              ))
+          )}
         </TabsContent>
 
         <TabsContent value="closed" className="space-y-4">
-          {mockJobs
+          {jobs
             .filter((job) => job.status === "closed")
-            .map((job) => (
-              <JobCard key={job.id} {...job} />
-            ))}
+            .length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No closed jobs found</p>
+            </div>
+          ) : (
+            jobs
+              .filter((job) => job.status === "closed")
+              .map((job) => (
+                <JobCard key={job.id} job={job} />
+              ))
+          )}
         </TabsContent>
       </Tabs>
     </div>
