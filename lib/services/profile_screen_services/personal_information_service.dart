@@ -2,7 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:job_seeker/core/dio_provider.dart';
-import 'package:job_seeker/models/personal_information_model.dart';
+import 'package:job_seeker/endpoints.dart';
+import 'package:job_seeker/models/profile_screen_models/personal_information_model.dart';
 
 final personalInformationServiceProvider = Provider<PersonalInformationService>(
   (ref) {
@@ -15,8 +16,8 @@ class PersonalInformationService {
   final Dio _dio;
   PersonalInformationService(this._dio);
 
-  String userPath = '5';
-  // String editPath = ;
+  String userPath = USER;
+  String editPath = EDITUSER ?? USER;
 
   Future<PersonalInformationModel> fetchUserData() async {
     // debugPrint("This is response _________________________________________ HE ENtered Fetch");
@@ -31,7 +32,7 @@ class PersonalInformationService {
 
   Future<void> updateName(String vlaue) async {
     try {
-      await _dio.post("edit/$userPath", data: {'name': vlaue});
+      await _dio.post(editPath, data: {'name': vlaue});
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -39,7 +40,7 @@ class PersonalInformationService {
 
   Future<void> updateEmail(String vlaue) async {
     try {
-      await _dio.post("edit/$userPath", data: {'email': vlaue});
+      await _dio.post(editPath, data: {'email': vlaue});
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -47,7 +48,7 @@ class PersonalInformationService {
 
   Future<void> updatePhone(String vlaue) async {
     try {
-      await _dio.post("edit/$userPath", data: {'number': vlaue});
+      await _dio.post(editPath, data: {'number': vlaue});
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -55,7 +56,7 @@ class PersonalInformationService {
 
   Future<void> updateCountry(String vlaue) async {
     try {
-      await _dio.post("edit/$userPath", data: {'country': vlaue});
+      await _dio.post(editPath, data: {'country': vlaue});
     } on DioException catch (e) {
       throw _handleError(e);
     }

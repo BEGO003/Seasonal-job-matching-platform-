@@ -1,4 +1,4 @@
-import 'package:job_seeker/models/personal_information_model.dart';
+import 'package:job_seeker/models/profile_screen_models/personal_information_model.dart';
 
 class PersonalInformationState {
   final bool isLoading;

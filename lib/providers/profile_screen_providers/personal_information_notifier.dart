@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:job_seeker/models/personal_information_model.dart';
+import 'package:job_seeker/models/profile_screen_models/personal_information_model.dart';
 // import 'package:job_seeker/models/personal_information_state_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:job_seeker/services/personal_information_service.dart';
+import 'package:job_seeker/services/profile_screen_services/personal_information_service.dart';
 
 final personalInformationProvider =
     AsyncNotifierProvider<

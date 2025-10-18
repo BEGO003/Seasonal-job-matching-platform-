@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:job_seeker/constants/constants.dart';
-import 'package:job_seeker/providers/personal_information_notifier.dart';
+import 'package:job_seeker/providers/profile_screen_providers/personal_information_notifier.dart';
 
 class ProfileInfoCard extends ConsumerWidget {
   final IconData icon;
