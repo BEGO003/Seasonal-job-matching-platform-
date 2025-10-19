@@ -61,7 +61,7 @@ const commonHeaders: HeadersInit = {
 
 export const jobApi = {
   getJobs: async (): Promise<Job[]> => {
-    const response = await fetch(`${API_BASE_URL}/job/all`, { headers: commonHeaders });
+    const response = await fetch(`${API_BASE_URL}/job`, { headers: commonHeaders }); // Too fokin Important
     const payload = await handleResponse<any>(response);
     const list = Array.isArray(payload) ? payload : (payload?.data ?? []);
     return list.map(mapApiJobToJob);

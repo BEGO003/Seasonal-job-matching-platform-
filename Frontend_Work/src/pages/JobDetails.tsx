@@ -36,20 +36,7 @@ const JobDetails = () => {
     navigate(-1);
   };
 
-  const handleEdit = () => {
-    navigate(`/edit-job/${id}`);
-  };
 
-  const handleDelete = async () => {
-    if (!id || !confirm('Are you sure you want to delete this job?')) return;
-    
-    try {
-      await jobApi.deleteJob(Number(id));
-      navigate('/');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete job');
-    }
-  };
 
   const statusConfig = {
     active: { 
@@ -172,23 +159,7 @@ const JobDetails = () => {
               </div>
             </div>
             
-            <div className="flex items-center gap-2 ml-4">
-              <Button 
-                onClick={handleEdit}
-                className="flex items-center gap-2"
-              >
-                <Edit className="w-4 h-4" />
-                Edit
-              </Button>
-              <Button 
-                variant="destructive"
-                onClick={handleDelete}
-                className="flex items-center gap-2"
-              >
-                <Trash2 className="w-4 h-4" />
-                Delete
-              </Button>
-            </div>
+
           </div>
 
           <div className="space-y-6">
