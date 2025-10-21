@@ -48,9 +48,9 @@ public class JobService {
     @Transactional
     public JobResponseDTO createJob(JobCreateDTO dto) { //does it need any validation like unique user email?
         Job job = jobMapper.maptoAddJob(dto);
-        User user = userRepository.findById(dto.getJobposterID()).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(dto.getJobposterId()).orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Fetch the User ID using user repo?  
+        // Fetch the User Id using user repo?  
         job.setjobposter(user);
         List<Job> ownedjobs = user.getOwnedjobs();
         ownedjobs.add(job);

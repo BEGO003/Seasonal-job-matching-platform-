@@ -49,7 +49,7 @@ public class UserController {
 
     }
 
-    @GetMapping("/jobs")
+    @GetMapping("/{id}/jobs")
     public List<JobResponseDTO> findUserJobs(@PathVariable long id) {
         return users_service.findUserJobs(id);
     }

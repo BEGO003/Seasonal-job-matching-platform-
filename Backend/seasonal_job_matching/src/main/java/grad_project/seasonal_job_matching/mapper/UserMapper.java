@@ -8,7 +8,7 @@ import grad_project.seasonal_job_matching.dto.requests.UserEditDTO;
 import grad_project.seasonal_job_matching.dto.responses.UserResponseDTO;
 import grad_project.seasonal_job_matching.model.User;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {JobMapper.class})
 public interface UserMapper {
 
 
@@ -22,7 +22,7 @@ public interface UserMapper {
     @Mapping(target = "ownedjobs", ignore = true)
     //@Mapping(target = "favoritedjobs", ignore = true)
     User maptoEditUser(UserEditDTO dto);
-
+    @Mapping(target = "ownjobList", source = "ownedjobs")
     UserResponseDTO maptoreturnUser(User user);
 
 }

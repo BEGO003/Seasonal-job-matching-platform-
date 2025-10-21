@@ -28,6 +28,7 @@ public class UserService {
     //like singleton, only one instantiation of code which is in mapper so it gets that one instead of creating a new one in this class
     @Autowired
     private UserMapper userMapper;
+    @Autowired
     private JobMapper jobMapper;
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
@@ -52,15 +53,15 @@ public class UserService {
         return userRepository.findById(id)
             .map(userMapper::maptoreturnUser);
     }
-
+/* 
     //means we do this method after dependency injection 
-    @PostConstruct
+     @PostConstruct
     public void init(){
         User seeker = new User("Baher", "Egypt", "0122234344", "test@gmail.com", "1234");
         //return user dto
         userRepository.save(seeker);
     }
-    
+*/    
     public UserResponseDTO createUser(UserCreateDTO dto) {
         //if email is NOT present, save new user
         if (!userRepository.existsByEmail(dto.getEmail())) {

@@ -48,7 +48,7 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @JsonIgnoreProperties
+    //@JsonIgnoreProperties
     @OneToMany(mappedBy = "jobposter", cascade = CascadeType.ALL)
     private List<Job> ownedjobs;
     

@@ -29,7 +29,7 @@ public class JobCreateDTO {
     @JsonFormat(pattern = "dd-MM-yyyy")
     private Date endDate;   
     @NotNull
-    private long jobposterID;
+    private long jobposterId;
     @PositiveOrZero
     private float salary;
     private JobStatus status;

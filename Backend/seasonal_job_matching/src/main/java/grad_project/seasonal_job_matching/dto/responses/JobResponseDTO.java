@@ -19,6 +19,7 @@ public class JobResponseDTO {
     private String title;
     private String description;
     @NotNull
+    private long id;
     private JobType type;
     private String location;
     @JsonFormat(pattern = "dd-MM-yyyy")
