@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 
 import grad_project.seasonal_job_matching.dto.requests.UserCreateDTO;
 import grad_project.seasonal_job_matching.dto.requests.UserEditDTO;
+import grad_project.seasonal_job_matching.dto.responses.JobResponseDTO;
 import grad_project.seasonal_job_matching.dto.responses.UserResponseDTO;
+import grad_project.seasonal_job_matching.mapper.JobMapper;
 import grad_project.seasonal_job_matching.mapper.UserMapper;
 import grad_project.seasonal_job_matching.model.User;
 import grad_project.seasonal_job_matching.repository.UserRepository;
@@ -26,7 +28,7 @@ public class UserService {
     //like singleton, only one instantiation of code which is in mapper so it gets that one instead of creating a new one in this class
     @Autowired
     private UserMapper userMapper;
-
+    private JobMapper jobMapper;
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -39,6 +41,11 @@ public class UserService {
         //can(user -> userMapper.maptoreturnUser(user))
         .map(userMapper::maptoreturnUser) // applies maptoreturn user from usermapper to each user in stream, turns user into a DTO
         .collect(Collectors.toList()); //gathers all transformer users back into list 
+    }
+
+    public List<JobResponseDTO> findUserJobs(long id){
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
+        return user.getOwnedjobs().stream().map(jobMapper::maptoreturnJob).collect(Collectors.toList());
     }
 
     public Optional<UserResponseDTO> findByID(long id){
@@ -114,5 +121,6 @@ public class UserService {
     public void deleteUser(Long id){
         userRepository.deleteById(id);
     }
+
 
 }

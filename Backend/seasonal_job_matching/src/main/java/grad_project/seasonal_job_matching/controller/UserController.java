@@ -17,11 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import grad_project.seasonal_job_matching.dto.requests.UserCreateDTO;
 import grad_project.seasonal_job_matching.dto.requests.UserEditDTO;
+import grad_project.seasonal_job_matching.dto.responses.JobResponseDTO;
 import grad_project.seasonal_job_matching.dto.responses.UserResponseDTO;
 import grad_project.seasonal_job_matching.services.UserService;
 import jakarta.validation.Valid;
-
-
 
 
 @CrossOrigin(origins = "*")
@@ -49,6 +48,12 @@ public class UserController {
         return ResponseEntity.ok(user.get());
 
     }
+
+    @GetMapping("/jobs")
+    public List<JobResponseDTO> findUserJobs(@PathVariable long id) {
+        return users_service.findUserJobs(id);
+    }
+    
     
     @PostMapping
     public ResponseEntity<?> createUser(@Valid @RequestBody UserCreateDTO userdto){//if user is from mobile than type is jobseeker, else it is employer  

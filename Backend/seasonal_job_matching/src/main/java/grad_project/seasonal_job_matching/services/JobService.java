@@ -52,10 +52,11 @@ public class JobService {
 
         // Fetch the User ID using user repo?  
         job.setjobposter(user);
-        
+        List<Job> ownedjobs = user.getOwnedjobs();
+        ownedjobs.add(job);
+        user.setOwnedjobs(ownedjobs);
         return jobMapper.maptoreturnJob(jobRepository.save(job));
 
-        
     }
 
     public JobResponseDTO editJob(JobEditDTO dto, long id){ 

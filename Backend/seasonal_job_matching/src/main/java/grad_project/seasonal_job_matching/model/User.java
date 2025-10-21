@@ -7,14 +7,11 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -55,11 +52,13 @@ public class User {
     @OneToMany(mappedBy = "jobposter", cascade = CascadeType.ALL)
     private List<Job> ownedjobs;
     
+    
+    /*
     @ElementCollection
     @CollectionTable(name = "user_favorited_jobs", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "job_id")
     private List<Job> favoritedjobs;
-    /*
+    
     @OneToMany(mappedBy = "id")
     private List<Application> ownedApplications;
      */
