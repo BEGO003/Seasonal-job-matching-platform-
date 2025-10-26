@@ -37,6 +37,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>grad_project.seasonal_job_matching.SeasonalJobMatchingApplication</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>
