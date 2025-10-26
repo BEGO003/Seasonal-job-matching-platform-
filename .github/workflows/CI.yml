@@ -1,4 +1,3 @@
-# CI: build, unit tests, cache Maven
 name: CI
 
 on:
