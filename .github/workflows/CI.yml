@@ -9,8 +9,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Backend/seasonal_job_matching  # 👈 default folder for all steps
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -21,10 +25,9 @@ jobs:
           cache: 'maven'
 
       - name: Make mvnw executable
-        run: chmod +x Backend/seasonal_job_matching/mvnw
+        run: chmod +x mvnw
 
       - name: Build and run unit tests
-        working-directory: Backend/seasonal_job_matching
         run: ./mvnw -B clean verify
 
       - name: Upload test reports
