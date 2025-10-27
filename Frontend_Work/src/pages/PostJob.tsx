@@ -1,19 +1,35 @@
 import { useState } from "react";
-import { ArrowLeft, Briefcase, MapPin, DollarSign, Calendar, Users } from "lucide-react";
+import {
+  ArrowLeft,
+  Briefcase,
+  MapPin,
+  DollarSign,
+  Calendar,
+  Users,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
-import { jobApi } from "@/services/api";
-import { JobFormData } from "@/types/job";
+import { jobApi, ApiError } from "@/api";
+import { JobFormData, WorkArrangement, JobType } from "@/types/job";
 
 const PostJob = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [jobType, setJobType] = useState<"full-time" | "part-time" | "contract" | "temporary" | "">("");
+  const [jobType, setJobType] = useState<JobType | "">("");
+  const [workArrangement, setWorkArrangement] = useState<WorkArrangement | "">(
+    ""
+  );
 
   const handleBack = () => navigate(-1);
 
@@ -22,10 +38,13 @@ const PostJob = () => {
     if (!data.description?.trim()) return "Job description is required.";
     if (!data.location?.trim()) return "Location is required.";
     if (!data.jobType) return "Please select a job type.";
+    if (!data.workArrangement) return "Please select a work arrangement.";
     if (!data.startDate) return "Start date is required.";
     if (!data.endDate) return "End date is required.";
-    if (isNaN(data.salary) || data.salary <= 0) return "Salary must be a valid positive number.";
-    if (isNaN(data.positions) || data.positions <= 0) return "Number of positions must be a valid positive number.";
+    if (isNaN(data.salary) || data.salary <= 0)
+      return "Salary must be a valid positive number.";
+    if (isNaN(data.positions) || data.positions <= 0)
+      return "Number of positions must be a valid positive number.";
 
     const start = new Date(data.startDate);
     const end = new Date(data.endDate);
@@ -45,6 +64,7 @@ const PostJob = () => {
       description: formData.get("jobdescription") as string,
       location: formData.get("location") as string,
       jobType: jobType as "full-time" | "part-time" | "contract" | "temporary",
+      workArrangement: workArrangement as WorkArrangement,
       startDate: formData.get("startDate") as string,
       endDate: formData.get("endDate") as string,
       salary: Number(formData.get("salary")),
@@ -63,7 +83,15 @@ const PostJob = () => {
       await jobApi.createJob(jobData);
       navigate(-1);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create job");
+      if (err instanceof ApiError) {
+        if (err.status === 401) {
+          setError("Please login first or check your authorization");
+        } else {
+          setError(`API Error: ${err.message}`);
+        }
+      } else {
+        setError(err instanceof Error ? err.message : "Failed to create job");
+      }
     } finally {
       setLoading(false);
     }
@@ -80,6 +108,7 @@ const PostJob = () => {
       description: formData.get("jobdescription") as string,
       location: formData.get("location") as string,
       jobType: jobType as "full-time" | "part-time" | "contract" | "temporary",
+      workArrangement: workArrangement as WorkArrangement,
       startDate: formData.get("startDate") as string,
       endDate: formData.get("endDate") as string,
       salary: Number(formData.get("salary")),
@@ -87,9 +116,9 @@ const PostJob = () => {
       status: "draft",
     };
 
-    const validationError = validateForm(jobData);
-    if (validationError) {
-      setError(validationError);
+    // For drafts, only validate that there's at least some data
+    if (!jobData.title?.trim() && !jobData.description?.trim()) {
+      setError("Please fill at least the job title or description to save a draft");
       setLoading(false);
       return;
     }
@@ -125,7 +154,9 @@ const PostJob = () => {
         <Card className="p-8">
           <div className="mb-8 flex items-center gap-3">
             <Briefcase className="w-6 h-6 text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">Job Information</h2>
+            <h2 className="text-xl font-semibold text-foreground">
+              Job Information
+            </h2>
           </div>
 
           {error && (
@@ -137,19 +168,31 @@ const PostJob = () => {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-2">
               <Label htmlFor="jobTitle">Job Title *</Label>
-              <Input id="jobTitle" name="jobTitle" placeholder="e.g., Software Engineer" />
+              <Input
+                id="jobTitle"
+                name="jobTitle"
+                placeholder="e.g., Software Engineer"
+              />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="jobdescription">Job Description *</Label>
-              <Input id="jobdescription" name="jobdescription" placeholder="e.g., We need a backend developer" />
+              <Input
+                id="jobdescription"
+                name="jobdescription"
+                placeholder="e.g., We need a backend developer"
+              />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="location" className="flex items-center gap-2">
                 <MapPin className="w-4 h-4" /> Location *
               </Label>
-              <Input id="location" name="location" placeholder="e.g., Cairo, Egypt" />
+              <Input
+                id="location"
+                name="location"
+                placeholder="e.g., Cairo, Egypt"
+              />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -157,7 +200,14 @@ const PostJob = () => {
                 <Label htmlFor="salary" className="flex items-center gap-2">
                   <DollarSign className="w-4 h-4" /> Salary *
                 </Label>
-                <Input id="salary" name="salary" type="number" placeholder="e.g., 5000" min="0" step="0.01" />
+                <Input
+                  id="salary"
+                  name="salary"
+                  type="number"
+                  placeholder="e.g., 5000"
+                  min="0"
+                  step="0.01"
+                />
               </div>
 
               <div className="space-y-2">
@@ -171,6 +221,27 @@ const PostJob = () => {
                     <SelectItem value="part-time">Part-time</SelectItem>
                     <SelectItem value="contract">Contract</SelectItem>
                     <SelectItem value="temporary">Temporary</SelectItem>
+                    <SelectItem value="freelance">Freelance</SelectItem>
+                    <SelectItem value="volunteer">Volunteer</SelectItem>
+                    <SelectItem value="internship">Internship</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="workArrangement">Work Arrangement *</Label>
+                <Select
+                  onValueChange={(value) =>
+                    setWorkArrangement(value as WorkArrangement)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select work arrangement" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="remote">Remote</SelectItem>
+                    <SelectItem value="hybrid">Hybrid</SelectItem>
+                    <SelectItem value="onsite">Onsite</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -196,11 +267,21 @@ const PostJob = () => {
               <Label htmlFor="positions" className="flex items-center gap-2">
                 <Users className="w-4 h-4" /> Number of Positions *
               </Label>
-              <Input id="positions" name="positions" type="number" placeholder="e.g., 3" min="1" />
+              <Input
+                id="positions"
+                name="positions"
+                type="number"
+                placeholder="e.g., 3"
+                min="1"
+              />
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-border">
-              <Button type="submit" disabled={loading} className="bg-primary hover:bg-primary/90 text-white px-8 py-2">
+            <div className="flex flex-col sm:flex-row gap-4 pt-6 ">
+              <Button
+                type="submit"
+                disabled={loading}
+                className="bg-primary hover:bg-primary/90 text-white px-8 py-2"
+              >
                 {loading ? "Posting..." : "Post Job"}
               </Button>
               <Button
@@ -214,10 +295,10 @@ const PostJob = () => {
               </Button>
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 onClick={handleBack}
                 disabled={loading}
-                className="text-muted-foreground hover:text-foreground px-8 py-2"
+                className="border-secondary text-foreground hover:bg-secondary px-8 py-2"
               >
                 Cancel
               </Button>

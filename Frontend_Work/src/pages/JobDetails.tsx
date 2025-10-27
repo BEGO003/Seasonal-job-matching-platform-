@@ -4,8 +4,9 @@ import { ArrowLeft, MapPin, DollarSign, Users, Eye, Calendar, Clock, Edit, Trash
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { jobApi } from "@/services/api";
+import { jobApi } from "@/api";
 import { Job } from "@/types/job";
+import { formatDateRange, formatDateDDMMYYYY } from "@/lib/date";
 
 const JobDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -36,7 +37,20 @@ const JobDetails = () => {
     navigate(-1);
   };
 
+  const handleEdit = () => {
+    navigate(`/edit-job/${id}`);
+  };
 
+  const handleDelete = async () => {
+    if (!id || !confirm('Are you sure you want to delete this job?')) return;
+    
+    try {
+      await jobApi.deleteJob(Number(id));
+      navigate('/');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete job');
+    }
+  };
 
   const statusConfig = {
     active: { 
@@ -85,12 +99,6 @@ const JobDetails = () => {
       return `$${job.salary.toFixed(2)}`;
     }
     return 'Salary not specified';
-  };
-
-  const formatDateRange = () => {
-    const start = new Date(job.startDate).toLocaleDateString();
-    const end = new Date(job.endDate).toLocaleDateString();
-    return `${start} - ${end}`;
   };
 
   return (
@@ -146,7 +154,7 @@ const JobDetails = () => {
               <div className="flex items-center gap-3 mb-6">
                 <Badge variant="outline" className="text-xs border-secondary text-foreground bg-secondary">
                   <Calendar className="w-3 h-3 mr-1" />
-                  {formatDateRange()}
+                  {formatDateRange(job.startDate, job.endDate)}
                 </Badge>
                 <Badge variant="outline" className="text-xs border-secondary text-foreground bg-secondary">
                   <Users className="w-3 h-3 mr-1" />
@@ -159,7 +167,23 @@ const JobDetails = () => {
               </div>
             </div>
             
-
+            <div className="flex items-center gap-2 ml-4">
+              <Button 
+                onClick={handleEdit}
+                className="flex items-center gap-2"
+              >
+                <Edit className="w-4 h-4" />
+                Edit
+              </Button>
+              <Button 
+                variant="destructive"
+                onClick={handleDelete}
+                className="flex items-center gap-2"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete
+              </Button>
+            </div>
           </div>
 
           <div className="space-y-6">
@@ -192,15 +216,15 @@ const JobDetails = () => {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Start Date:</span>
-                    <span className="font-medium">{new Date(job.startDate).toLocaleDateString()}</span>
+                    <span className="font-medium">{formatDateDDMMYYYY(job.startDate)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">End Date:</span>
-                    <span className="font-medium">{new Date(job.endDate).toLocaleDateString()}</span>
+                    <span className="font-medium">{formatDateDDMMYYYY(job.endDate)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Created:</span>
-                    <span className="font-medium">{new Date(job.createdAt).toLocaleDateString()}</span>
+                    <span className="font-medium">{formatDateDDMMYYYY(job.createdAt)}</span>
                   </div>
                 </div>
               </div>

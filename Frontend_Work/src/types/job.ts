@@ -1,16 +1,21 @@
+export type WorkArrangement = "remote" | "hybrid" | "onsite";
+export type JobType = "full-time" | "part-time" | "contract" | "temporary" | "freelance" | "volunteer" | "internship";
+export type JobStatus = "active" | "draft" | "closed";
+
 export interface Job {
   id: number;
   title: string;
   description: string;
   location: string;
-  jobType: 'full-time' | 'part-time' | 'contract' | 'temporary';
+  jobType: JobType;
   startDate: string;
   endDate: string;
-  salary: number; 
+  salary: number;
   positions: number;
-  status: 'active' | 'draft' | 'closed';
+  status: JobStatus;
   applications: number;
   views: number;
+  workArrangement: WorkArrangement;
   createdAt: string;
   updatedAt: string;
 }
@@ -19,12 +24,13 @@ export interface JobFormData {
   title: string;
   description: string;
   location: string;
-  jobType: 'full-time' | 'part-time' | 'contract' | 'temporary';
+  jobType: JobType;
   startDate: string;
   endDate: string;
-  salary: number; 
+  salary: number;
   positions: number;
-  status: 'active' | 'draft';
+  workArrangement: WorkArrangement;
+  status: "active" | "draft";
 }
 
 export interface JobStats {
