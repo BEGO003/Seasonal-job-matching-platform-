@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:job_seeker/services/applications_screen_services/applications_service.dart';
-import 'package:job_seeker/widgets/common/gradient_background.dart';
-import 'package:job_seeker/widgets/common/glass_container.dart';
+import 'package:job_seeker/widgets/common/app_card.dart';
 
 class ApplicationDetailScreen extends StatelessWidget {
   final ApplicationWithJob item;
@@ -18,10 +17,9 @@ class ApplicationDetailScreen extends StatelessWidget {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
       ),
-      body: GradientBackground(
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
-        child: GlassContainer(
+        child: AppCard(
           padding: const EdgeInsets.all(20),
           child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,7 +84,7 @@ class ApplicationDetailScreen extends StatelessWidget {
         ),
       ),
       ),
-    ));
+    );
   }
 }
 

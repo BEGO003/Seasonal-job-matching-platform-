@@ -72,6 +72,14 @@ class PersonalInformationService {
     }
   }
 
+  Future<void> updateOwnedApplications(List<int> applicationIds) async {
+    try {
+      await _dio.patch(editPath, data: {'ownedapplications': applicationIds});
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   String _handleError(DioException error) {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:

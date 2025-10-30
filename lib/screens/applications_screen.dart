@@ -4,7 +4,7 @@ import 'package:job_seeker/providers/applications_screen_providers/applications_
 import 'package:job_seeker/services/applications_screen_services/applications_service.dart';
 import 'package:job_seeker/widgets/common/async_value_view.dart';
 import 'package:job_seeker/screens/applications_detail_screen.dart';
-import 'package:job_seeker/widgets/common/glass_container.dart';
+import 'package:job_seeker/widgets/common/app_card.dart';
 
 class ApplicationsScreen extends ConsumerWidget {
   const ApplicationsScreen({super.key});
@@ -54,7 +54,7 @@ class ApplicationCardWidget extends StatelessWidget {
     return InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: onTap,
-        child: GlassContainer(
+        child: AppCard(
           padding: const EdgeInsets.all(18.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:job_seeker/constants/constants.dart';
 import 'package:job_seeker/providers/profile_screen_providers/personal_information_notifier.dart';
-import 'package:job_seeker/widgets/common/glass_container.dart';
+import 'package:job_seeker/widgets/common/app_card.dart';
 
 class ProfileInfoCard extends ConsumerWidget {
   final IconData icon;
@@ -197,7 +197,7 @@ class ProfileInfoCard extends ConsumerWidget {
             InkWell(
               onTap: onTap,
               borderRadius: BorderRadius.circular(12.0),
-              child: GlassContainer(
+              child: AppCard(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16.0,
                   vertical: 12.0,

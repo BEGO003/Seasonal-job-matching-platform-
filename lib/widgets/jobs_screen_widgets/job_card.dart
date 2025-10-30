@@ -4,7 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:job_seeker/models/jobs_screen_models/job_model.dart';
 import 'package:job_seeker/widgets/jobs_screen_widgets/job_view.dart';
 import 'package:job_seeker/providers/profile_screen_providers/personal_information_notifier.dart';
-import 'package:job_seeker/widgets/common/glass_container.dart';
+import 'package:job_seeker/widgets/common/app_card.dart';
+import 'package:job_seeker/providers/home_screen_providers/favorites_controller.dart';
 
 class JobCard extends ConsumerWidget {
   final JobModel job;
@@ -39,7 +40,7 @@ class JobCard extends ConsumerWidget {
                 ),
               );
             },
-            child: GlassContainer(
+            child: AppCard(
               padding: const EdgeInsets.all(18.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,7 +88,7 @@ class JobCard extends ConsumerWidget {
                             ),
                             child: IconButton(
                               onPressed: () {
-                                ref.read(personalInformationProvider.notifier).toggleFavoriteJob(job.id);
+                                ref.read(favoritesControllerProvider.notifier).toggle(job.id);
                               },
                               icon: Icon(isFav ? Icons.favorite : Icons.favorite_border),
                               color: Colors.red.shade400,
