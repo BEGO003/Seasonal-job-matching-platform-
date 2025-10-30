@@ -13,11 +13,10 @@ final personalInformationProvider =
 
 class PersonalInformationAsyncNotifier
     extends AsyncNotifier<PersonalInformationModel> {
-  late final PersonalInformationService _service;
+  late final PersonalInformationService _service = ref.read(personalInformationServiceProvider); // <--- moved assignment here
 
   @override
   Future<PersonalInformationModel> build() async {
-    _service = ref.read(personalInformationServiceProvider);
     return await _service.fetchUserData();
   }
 
@@ -25,7 +24,6 @@ class PersonalInformationAsyncNotifier
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await _service.updateName(vlaue);
-      // await Future.delayed(Duration(seconds: 3));
       return state.value!.copyWith(name: vlaue);
     });
   }

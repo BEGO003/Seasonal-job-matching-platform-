@@ -14,17 +14,7 @@ class JobCardSection extends ConsumerWidget {
         physics: BouncingScrollPhysics(),
         // shrinkWrap: true,
         itemCount: data.length,
-        itemBuilder: (context, index) => JobCard(
-          title: data[index].title,
-          posterName: data[index].jobposterName,
-          location: data[index].location,
-          startDate: data[index].startDate,
-          endtDate: data[index].endDate,
-          salary: data[index].salary,
-          numofpositions: data[index].numofpositions,
-          type: data[index].type,
-          workarrangement: data[index].workarrangement,
-        ),
+        itemBuilder: (context, index) => JobCard(job: data[index]),
       ),
       error: (error, stackTrace) {
         return Text(error.toString());

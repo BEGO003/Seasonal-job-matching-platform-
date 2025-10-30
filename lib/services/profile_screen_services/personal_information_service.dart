@@ -16,15 +16,18 @@ class PersonalInformationService {
   final Dio _dio;
   PersonalInformationService(this._dio);
 
-  String userPath = USER;
-  String editPath = EDITUSER ?? USER;
+  // Show profile for first user in DB by default (db.json), can make configurable
+  final String _userId = '1';
+  late final String userPath = userById(_userId);
+  late final String editPath = editUserById(_userId);
 
   Future<PersonalInformationModel> fetchUserData() async {
-    // debugPrint("This is response _________________________________________ HE ENtered Fetch");
-      final response = await _dio.get(userPath);
-      debugPrint("This is response _________________________________________ $response");
+    final response = await _dio.get(userPath);
+    print('Profile API response: ${response.data}');
+    final fixed = Map<String, dynamic>.from(response.data);
+    if (fixed['id'] != null && fixed['id'] is! String) fixed['id'] = fixed['id'].toString();
     try {
-      return PersonalInformationModel.fromJson(response.data);
+      return PersonalInformationModel.fromJson(fixed);
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -32,7 +35,7 @@ class PersonalInformationService {
 
   Future<void> updateName(String vlaue) async {
     try {
-      await _dio.post(editPath, data: {'name': vlaue});
+      await _dio.patch(editPath, data: {'name': vlaue});
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -40,7 +43,7 @@ class PersonalInformationService {
 
   Future<void> updateEmail(String vlaue) async {
     try {
-      await _dio.post(editPath, data: {'email': vlaue});
+      await _dio.patch(editPath, data: {'email': vlaue});
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -48,7 +51,7 @@ class PersonalInformationService {
 
   Future<void> updatePhone(String vlaue) async {
     try {
-      await _dio.post(editPath, data: {'number': vlaue});
+      await _dio.patch(editPath, data: {'number': vlaue});
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -56,7 +59,7 @@ class PersonalInformationService {
 
   Future<void> updateCountry(String vlaue) async {
     try {
-      await _dio.post(editPath, data: {'country': vlaue});
+      await _dio.patch(editPath, data: {'country': vlaue});
     } on DioException catch (e) {
       throw _handleError(e);
     }

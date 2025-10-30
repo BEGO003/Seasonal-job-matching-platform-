@@ -1,5 +1,7 @@
-const BASEURL ="http://192.168.1.44:3000/";
-// const BASEURL ="https://shella-whitish-elliana.ngrok-free.dev/api/";
-const USER = "user/5";
-const EDITUSER = null;
-const JOBS = "jobs";
+// API path segments (base URL is provided by AppConfig)
+const String USERS = "users";
+const String JOBS = "jobs";
+
+// Example user routes
+String userById(String id) => "$USERS/$id";
+String editUserById(String id) => "$USERS/$id"; // adjust if different

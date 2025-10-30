@@ -1,0 +1,1028 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "MOhamed",
+      "email": "john.smith@example.com",
+      "password": "password123",
+      "country": "United States",
+      "number": "+1234567890",
+      "ownedjobs": [
+        1,
+        2,
+        7
+      ],
+      "ownedapplications": [
+        1,
+        5
+      ],
+      "favoriteJobs": [
+        1,
+        3,
+        8
+      ],
+      "resume": 1,
+      "profileImage": "https://randomuser.me/api/portraits/men/1.jpg",
+      "joinedDate": "2023-01-15"
+    },
+    {
+      "id": 2,
+      "name": "Maria Garcia",
+      "email": "maria.garcia@example.com",
+      "password": "password456",
+      "country": "Spain",
+      "number": "+34123456789",
+      "ownedjobs": [
+        3,
+        8
+      ],
+      "ownedapplications": [
+        2,
+        6
+      ],
+      "favoriteJobs": [
+        2,
+        5
+      ],
+      "resume": 2,
+      "profileImage": "https://randomuser.me/api/portraits/women/2.jpg",
+      "joinedDate": "2023-02-20"
+    },
+    {
+      "id": 3,
+      "name": "David Chen",
+      "email": "david.chen@example.com",
+      "password": "password789",
+      "country": "Canada",
+      "number": "+14165551234",
+      "ownedjobs": [
+        4,
+        9
+      ],
+      "ownedapplications": [
+        3,
+        7
+      ],
+      "favoriteJobs": [
+        4,
+        6,
+        10
+      ],
+      "resume": 3,
+      "profileImage": "https://randomuser.me/api/portraits/men/3.jpg",
+      "joinedDate": "2023-03-10"
+    },
+    {
+      "id": 4,
+      "name": "Sarah Johnson",
+      "email": "sarah.johnson@example.com",
+      "password": "password321",
+      "country": "United Kingdom",
+      "number": "+441234567890",
+      "ownedjobs": [
+        5,
+        10
+      ],
+      "ownedapplications": [
+        4,
+        8
+      ],
+      "favoriteJobs": [
+        7,
+        9
+      ],
+      "resume": 4,
+      "profileImage": "https://randomuser.me/api/portraits/women/4.jpg",
+      "joinedDate": "2023-04-05"
+    },
+    {
+      "id": 5,
+      "name": "Ahmed Hassan",
+      "email": "ahmed.hassan@example.com",
+      "password": "password654",
+      "country": "Egypt",
+      "number": "+201234567890",
+      "ownedjobs": [
+        6,
+        11
+      ],
+      "ownedapplications": [
+        9,
+        12
+      ],
+      "favoriteJobs": [
+        11,
+        14
+      ],
+      "resume": 5,
+      "profileImage": "https://randomuser.me/api/portraits/men/5.jpg",
+      "joinedDate": "2023-05-12"
+    },
+    {
+      "id": 6,
+      "name": "Lisa Wang",
+      "email": "lisa.wang@example.com",
+      "password": "password987",
+      "country": "China",
+      "number": "+8612345678901",
+      "ownedjobs": [
+        12
+      ],
+      "ownedapplications": [
+        10,
+        13
+      ],
+      "favoriteJobs": [
+        3,
+        12,
+        15
+      ],
+      "resume": 6,
+      "profileImage": "https://randomuser.me/api/portraits/women/6.jpg",
+      "joinedDate": "2023-06-18"
+    },
+    {
+      "id": 7,
+      "name": "Carlos Rodriguez",
+      "email": "carlos.rodriguez@example.com",
+      "password": "password159",
+      "country": "Mexico",
+      "number": "+521234567890",
+      "ownedjobs": [
+        13,
+        14
+      ],
+      "ownedapplications": [
+        11,
+        14
+      ],
+      "favoriteJobs": [
+        8,
+        13
+      ],
+      "resume": 7,
+      "profileImage": "https://randomuser.me/api/portraits/men/7.jpg",
+      "joinedDate": "2023-07-22"
+    },
+    {
+      "id": 8,
+      "name": "Emma Thompson",
+      "email": "emma.thompson@example.com",
+      "password": "password753",
+      "country": "Australia",
+      "number": "+61123456789",
+      "ownedjobs": [
+        15
+      ],
+      "ownedapplications": [
+        15,
+        16
+      ],
+      "favoriteJobs": [
+        1,
+        4,
+        10
+      ],
+      "resume": 8,
+      "profileImage": "https://randomuser.me/api/portraits/women/8.jpg",
+      "joinedDate": "2023-08-30"
+    }
+  ],
+  "jobs": [
+    {
+      "id": 1,
+      "title": "Senior Flutter Developer",
+      "description": "We are looking for an experienced Flutter developer to join our innovative mobile team. You will be responsible for building high-quality mobile applications for both iOS and Android platforms.",
+      "type": "Full-time",
+      "location": "Remote",
+      "startdate": "2024-03-01",
+      "enddate": "2024-12-31",
+      "jobposter": 1,
+      "salary": 95000,
+      "numofpositions": 2,
+      "status": "Active",
+      "workarrangement": "Remote",
+      "listofjobapplications": [
+        1,
+        2,
+        5
+      ],
+      "company": "Tech Innovations Inc.",
+      "companyLogo": "https://logo.clearbit.com/techinnovations.com",
+      "requirements": [
+        "3+ years Flutter experience",
+        "Dart proficiency",
+        "REST API integration",
+        "State management",
+        "Git knowledge"
+      ],
+      "benefits": [
+        "Health insurance",
+        "Flexible hours",
+        "Remote work",
+        "Learning budget"
+      ],
+      "category": "Mobile Development",
+      "experienceLevel": "Senior",
+      "postedDate": "2024-01-10"
+    },
+    {
+      "id": 2,
+      "title": "Junior Mobile Developer",
+      "description": "Great opportunity for junior developers to learn and grow in a supportive environment. We provide mentorship and training to help you succeed in mobile development.",
+      "type": "Part-time",
+      "location": "New York, NY",
+      "startdate": "2024-02-15",
+      "enddate": "2024-06-30",
+      "jobposter": 1,
+      "salary": 55000,
+      "numofpositions": 1,
+      "status": "Active",
+      "workarrangement": "Hybrid",
+      "listofjobapplications": [
+        3
+      ],
+      "company": "Startup Ventures",
+      "companyLogo": "https://logo.clearbit.com/startupventures.com",
+      "requirements": [
+        "Basic Flutter knowledge",
+        "Willingness to learn",
+        "Problem-solving skills",
+        "Team player"
+      ],
+      "benefits": [
+        "Mentorship program",
+        "Flexible schedule",
+        "Career growth",
+        "Stock options"
+      ],
+      "category": "Mobile Development",
+      "experienceLevel": "Junior",
+      "postedDate": "2024-01-12"
+    },
+    {
+      "id": 3,
+      "title": "Backend Developer (Node.js)",
+      "description": "Looking for backend developer with Node.js experience to build scalable APIs and microservices for our growing platform.",
+      "type": "Full-time",
+      "location": "San Francisco, CA",
+      "startdate": "2024-04-01",
+      "enddate": "2024-12-31",
+      "jobposter": 2,
+      "salary": 120000,
+      "numofpositions": 3,
+      "status": "Active",
+      "workarrangement": "On-site",
+      "listofjobapplications": [
+        4,
+        6
+      ],
+      "company": "Cloud Systems Ltd.",
+      "companyLogo": "https://logo.clearbit.com/cloudsystems.com",
+      "requirements": [
+        "Node.js",
+        "Express.js",
+        "MongoDB",
+        "REST APIs",
+        "Docker",
+        "AWS"
+      ],
+      "benefits": [
+        "Competitive salary",
+        "Health benefits",
+        "401(k) matching",
+        "Gym membership"
+      ],
+      "category": "Backend Development",
+      "experienceLevel": "Mid-Level",
+      "postedDate": "2024-01-08"
+    },
+    {
+      "id": 4,
+      "title": "Frontend React Developer",
+      "description": "Join our frontend team to build beautiful, responsive web applications using React, TypeScript, and modern CSS frameworks.",
+      "type": "Full-time",
+      "location": "Austin, TX",
+      "startdate": "2024-03-15",
+      "enddate": "2024-09-30",
+      "jobposter": 3,
+      "salary": 85000,
+      "numofpositions": 2,
+      "status": "Active",
+      "workarrangement": "Hybrid",
+      "listofjobapplications": [
+        7,
+        8
+      ],
+      "company": "Web Solutions Co.",
+      "companyLogo": "https://logo.clearbit.com/websolutions.com",
+      "requirements": [
+        "React",
+        "TypeScript",
+        "CSS/SCSS",
+        "Redux",
+        "Jest",
+        "Git"
+      ],
+      "benefits": [
+        "Remote flexibility",
+        "Health insurance",
+        "Professional development",
+        "Team events"
+      ],
+      "category": "Frontend Development",
+      "experienceLevel": "Mid-Level",
+      "postedDate": "2024-01-15"
+    },
+    {
+      "id": 5,
+      "title": "DevOps Engineer",
+      "description": "We need a DevOps engineer to help us build and maintain our CI/CD pipelines, cloud infrastructure, and monitoring systems.",
+      "type": "Full-time",
+      "location": "Remote",
+      "startdate": "2024-02-01",
+      "enddate": "2024-08-31",
+      "jobposter": 4,
+      "salary": 110000,
+      "numofpositions": 1,
+      "status": "Active",
+      "workarrangement": "Remote",
+      "listofjobapplications": [
+        9
+      ],
+      "company": "InfraTech Solutions",
+      "companyLogo": "https://logo.clearbit.com/infratechsolutions.com",
+      "requirements": [
+        "AWS/Azure",
+        "Docker/Kubernetes",
+        "CI/CD",
+        "Terraform",
+        "Linux",
+        "Monitoring tools"
+      ],
+      "benefits": [
+        "Full remote",
+        "Equipment provided",
+        "Learning budget",
+        "Unlimited PTO"
+      ],
+      "category": "DevOps",
+      "experienceLevel": "Senior",
+      "postedDate": "2024-01-05"
+    },
+    {
+      "id": 6,
+      "title": "UI/UX Designer",
+      "description": "Create amazing user experiences and beautiful interfaces for our digital products. Work closely with product managers and developers.",
+      "type": "Contract",
+      "location": "Los Angeles, CA",
+      "startdate": "2024-02-20",
+      "enddate": "2024-05-20",
+      "jobposter": 5,
+      "salary": 75000,
+      "numofpositions": 1,
+      "status": "Active",
+      "workarrangement": "On-site",
+      "listofjobapplications": [
+        10,
+        11
+      ],
+      "company": "Creative Design Studio",
+      "companyLogo": "https://logo.clearbit.com/creativedesignstudio.com",
+      "requirements": [
+        "Figma/Sketch",
+        "User research",
+        "Prototyping",
+        "Design systems",
+        "HTML/CSS basics"
+      ],
+      "benefits": [
+        "Creative freedom",
+        "Latest tools",
+        "Portfolio projects",
+        "Flexible schedule"
+      ],
+      "category": "Design",
+      "experienceLevel": "Mid-Level",
+      "postedDate": "2024-01-18"
+    },
+    {
+      "id": 7,
+      "title": "Data Scientist",
+      "description": "Use machine learning and statistical analysis to derive insights from our data and build predictive models.",
+      "type": "Full-time",
+      "location": "Boston, MA",
+      "startdate": "2024-03-01",
+      "enddate": "2024-12-31",
+      "jobposter": 1,
+      "salary": 105000,
+      "numofpositions": 2,
+      "status": "Active",
+      "workarrangement": "Hybrid",
+      "listofjobapplications": [
+        12
+      ],
+      "company": "Data Analytics Pro",
+      "companyLogo": "https://logo.clearbit.com/dataanalyticspro.com",
+      "requirements": [
+        "Python",
+        "Machine Learning",
+        "SQL",
+        "Statistics",
+        "Pandas/NumPy",
+        "TensorFlow/PyTorch"
+      ],
+      "benefits": [
+        "Research opportunities",
+        "Conference attendance",
+        "Competitive salary",
+        "Health benefits"
+      ],
+      "category": "Data Science",
+      "experienceLevel": "Senior",
+      "postedDate": "2024-01-14"
+    },
+    {
+      "id": 8,
+      "title": "Product Manager",
+      "description": "Lead product development from conception to launch. Work with cross-functional teams to deliver exceptional products.",
+      "type": "Full-time",
+      "location": "Seattle, WA",
+      "startdate": "2024-04-15",
+      "enddate": "2024-10-15",
+      "jobposter": 2,
+      "salary": 115000,
+      "numofpositions": 1,
+      "status": "Active",
+      "workarrangement": "On-site",
+      "listofjobapplications": [
+        13,
+        14
+      ],
+      "company": "Product Vision Inc.",
+      "companyLogo": "https://logo.clearbit.com/productvision.com",
+      "requirements": [
+        "Product management",
+        "Agile methodology",
+        "Market research",
+        "Data analysis",
+        "Leadership"
+      ],
+      "benefits": [
+        "Stock options",
+        "Performance bonuses",
+        "Health insurance",
+        "Professional development"
+      ],
+      "category": "Product Management",
+      "experienceLevel": "Senior",
+      "postedDate": "2024-01-20"
+    },
+    {
+      "id": 9,
+      "title": "QA Automation Engineer",
+      "description": "Build and maintain automated test suites to ensure product quality and reliability across our applications.",
+      "type": "Full-time",
+      "location": "Chicago, IL",
+      "startdate": "2024-02-01",
+      "enddate": "2024-07-31",
+      "jobposter": 3,
+      "salary": 80000,
+      "numofpositions": 1,
+      "status": "Active",
+      "workarrangement": "Hybrid",
+      "listofjobapplications": [
+        15
+      ],
+      "company": "Quality First Tech",
+      "companyLogo": "https://logo.clearbit.com/qualityfirsttech.com",
+      "requirements": [
+        "Selenium/Cypress",
+        "Java/Python",
+        "Test frameworks",
+        "CI/CD",
+        "Bug tracking"
+      ],
+      "benefits": [
+        "Quality bonuses",
+        "Health insurance",
+        "Flexible hours",
+        "Team building"
+      ],
+      "category": "Quality Assurance",
+      "experienceLevel": "Mid-Level",
+      "postedDate": "2024-01-11"
+    },
+    {
+      "id": 10,
+      "title": "Full Stack Developer",
+      "description": "Work on both frontend and backend development. Perfect for developers who enjoy working across the entire stack.",
+      "type": "Full-time",
+      "location": "Denver, CO",
+      "startdate": "2024-03-10",
+      "enddate": "2024-09-10",
+      "jobposter": 4,
+      "salary": 92000,
+      "numofpositions": 2,
+      "status": "Active",
+      "workarrangement": "Remote",
+      "listofjobapplications": [
+        16
+      ],
+      "company": "Stack Masters LLC",
+      "companyLogo": "https://logo.clearbit.com/stackmasters.com",
+      "requirements": [
+        "JavaScript/TypeScript",
+        "React",
+        "Node.js",
+        "SQL/NoSQL",
+        "REST APIs",
+        "AWS"
+      ],
+      "benefits": [
+        "Remote work",
+        "Equipment stipend",
+        "Learning budget",
+        "Health benefits"
+      ],
+      "category": "Full Stack Development",
+      "experienceLevel": "Mid-Level",
+      "postedDate": "2024-01-16"
+    },
+    {
+      "id": 11,
+      "title": "iOS Developer (Swift)",
+      "description": "Create amazing native iOS applications using Swift and SwiftUI. Join our mobile team building cutting-edge apps.",
+      "type": "Full-time",
+      "location": "Miami, FL",
+      "startdate": "2024-02-25",
+      "enddate": "2024-08-25",
+      "jobposter": 5,
+      "salary": 98000,
+      "numofpositions": 1,
+      "status": "Active",
+      "workarrangement": "On-site",
+      "listofjobapplications": [
+        17
+      ],
+      "company": "Mobile First Inc.",
+      "companyLogo": "https://logo.clearbit.com/mobilefirst.com",
+      "requirements": [
+        "Swift",
+        "SwiftUI",
+        "iOS SDK",
+        "REST APIs",
+        "Git",
+        "App Store deployment"
+      ],
+      "benefits": [
+        "Latest Mac equipment",
+        "App Store credits",
+        "Health insurance",
+        "Flexible PTO"
+      ],
+      "category": "Mobile Development",
+      "experienceLevel": "Mid-Level",
+      "postedDate": "2024-01-09"
+    },
+    {
+      "id": 12,
+      "title": "Android Developer (Kotlin)",
+      "description": "Build native Android applications using Kotlin and modern Android development practices.",
+      "type": "Full-time",
+      "location": "Remote",
+      "startdate": "2024-03-05",
+      "enddate": "2024-09-05",
+      "jobposter": 6,
+      "salary": 95000,
+      "numofpositions": 1,
+      "status": "Active",
+      "workarrangement": "Remote",
+      "listofjobapplications": [
+        18
+      ],
+      "company": "Android Experts Co.",
+      "companyLogo": "https://logo.clearbit.com/androidexperts.com",
+      "requirements": [
+        "Kotlin",
+        "Android SDK",
+        "Jetpack Compose",
+        "REST APIs",
+        "Material Design"
+      ],
+      "benefits": [
+        "Remote work",
+        "Android device budget",
+        "Learning resources",
+        "Health benefits"
+      ],
+      "category": "Mobile Development",
+      "experienceLevel": "Mid-Level",
+      "postedDate": "2024-01-13"
+    },
+    {
+      "id": 13,
+      "title": "Technical Writer",
+      "description": "Create clear and comprehensive documentation for our APIs, SDKs, and developer tools.",
+      "type": "Part-time",
+      "location": "Portland, OR",
+      "startdate": "2024-02-10",
+      "enddate": "2024-06-10",
+      "jobposter": 7,
+      "salary": 60000,
+      "numofpositions": 1,
+      "status": "Active",
+      "workarrangement": "Hybrid",
+      "listofjobapplications": [
+        19
+      ],
+      "company": "DocuTech Solutions",
+      "companyLogo": "https://logo.clearbit.com/docutechsolutions.com",
+      "requirements": [
+        "Technical writing",
+        "API documentation",
+        "Markdown",
+        "Git",
+        "Basic programming knowledge"
+      ],
+      "benefits": [
+        "Flexible schedule",
+        "Remote options",
+        "Professional development",
+        "Creative control"
+      ],
+      "category": "Technical Writing",
+      "experienceLevel": "Mid-Level",
+      "postedDate": "2024-01-17"
+    },
+    {
+      "id": 14,
+      "title": "Scrum Master",
+      "description": "Facilitate agile processes and help our development teams deliver high-quality software efficiently.",
+      "type": "Full-time",
+      "location": "Atlanta, GA",
+      "startdate": "2024-03-20",
+      "enddate": "2024-12-20",
+      "jobposter": 7,
+      "salary": 85000,
+      "numofpositions": 1,
+      "status": "Active",
+      "workarrangement": "On-site",
+      "listofjobapplications": [
+        20
+      ],
+      "company": "Agile Masters Inc.",
+      "companyLogo": "https://logo.clearbit.com/agilemasters.com",
+      "requirements": [
+        "Scrum certification",
+        "Agile methodology",
+        "Team facilitation",
+        "Jira/Confluence",
+        "Coaching skills"
+      ],
+      "benefits": [
+        "Certification support",
+        "Health insurance",
+        "Performance bonuses",
+        "Team events"
+      ],
+      "category": "Project Management",
+      "experienceLevel": "Mid-Level",
+      "postedDate": "2024-01-19"
+    },
+    {
+      "id": 15,
+      "title": "Cybersecurity Analyst",
+      "description": "Protect our systems and data from security threats. Implement security measures and monitor for vulnerabilities.",
+      "type": "Full-time",
+      "location": "Washington, DC",
+      "startdate": "2024-04-01",
+      "enddate": "2024-10-01",
+      "jobposter": 8,
+      "salary": 105000,
+      "numofpositions": 1,
+      "status": "Active",
+      "workarrangement": "Hybrid",
+      "listofjobapplications": [
+        21
+      ],
+      "company": "Secure Systems Ltd.",
+      "companyLogo": "https://logo.clearbit.com/securesystems.com",
+      "requirements": [
+        "Network security",
+        "SIEM tools",
+        "Vulnerability assessment",
+        "Incident response",
+        "Security frameworks"
+      ],
+      "benefits": [
+        "Security training",
+        "Health benefits",
+        "Remote options",
+        "Professional certifications"
+      ],
+      "category": "Cybersecurity",
+      "experienceLevel": "Senior",
+      "postedDate": "2024-01-21"
+    }
+  ],
+  "resumes": [
+    {
+      "id": 1,
+      "education": "Bachelor of Computer Science - MIT (2020)\nMaster of Software Engineering - Stanford University (2022)",
+      "experience": "3 years as Mobile Developer at Tech Corp\n1 year as Flutter Developer at Mobile Solutions Inc.",
+      "certificates": "Flutter Certified Developer, AWS Developer Associate, Google Mobile Web Specialist",
+      "skills": "Flutter, Dart, Firebase, REST APIs, State Management, Git, CI/CD",
+      "languages": "English (Native), Spanish (Intermediate), French (Basic)"
+    },
+    {
+      "id": 2,
+      "education": "Master of Software Engineering - Stanford University (2021)\nBachelor of Computer Engineering - UC Berkeley (2019)",
+      "experience": "2 years as Full Stack Developer at Startup Inc.\n1 year as Backend Developer at Web Services Co.",
+      "certificates": "Google Cloud Certified, Scrum Master, AWS Solutions Architect",
+      "skills": "JavaScript, Node.js, React, PostgreSQL, MongoDB, Docker, Kubernetes",
+      "languages": "Spanish (Native), English (Fluent), Portuguese (Basic)"
+    },
+    {
+      "id": 3,
+      "education": "Bachelor of Computer Science - University of Toronto (2019)\nDiploma in Data Science - Coursera (2021)",
+      "experience": "3 years as Software Developer at FinTech Solutions\n2 years as Backend Engineer at Bank Systems",
+      "certificates": "Oracle Java Certified, Microsoft Azure Developer, Docker Certified Associate",
+      "skills": "Java, Spring Boot, Python, SQL, Microservices, Azure, Docker",
+      "languages": "English (Native), Mandarin (Fluent), Cantonese (Basic)"
+    },
+    {
+      "id": 4,
+      "education": "Bachelor of Design - Rhode Island School of Design (2020)\nUX Design Bootcamp - General Assembly (2021)",
+      "experience": "2 years as UI/UX Designer at Creative Agency\n1 year as Product Designer at E-commerce Platform",
+      "certificates": "Google UX Design Professional, Adobe Creative Suite Certified, Design Thinking Practitioner",
+      "skills": "Figma, Sketch, Adobe Creative Suite, User Research, Prototyping, Design Systems",
+      "languages": "English (Native), German (Intermediate), Japanese (Basic)"
+    },
+    {
+      "id": 5,
+      "education": "Bachelor of Computer Engineering - Cairo University (2018)\nMaster of Data Science - edX (2022)",
+      "experience": "3 years as DevOps Engineer at Cloud Services Inc.\n2 years as System Administrator at IT Solutions",
+      "certificates": "AWS DevOps Professional, Kubernetes Administrator, Terraform Associate",
+      "skills": "AWS, Docker, Kubernetes, Terraform, CI/CD, Python, Bash Scripting",
+      "languages": "Arabic (Native), English (Fluent), French (Intermediate)"
+    },
+    {
+      "id": 6,
+      "education": "Bachelor of Computer Science - Tsinghua University (2019)\nMobile Development Bootcamp - Udacity (2021)",
+      "experience": "2 years as Android Developer at Mobile Games Studio\n1 year as Kotlin Developer at FinTech Startup",
+      "certificates": "Google Associate Android Developer, Kotlin Certified, Jetpack Compose Specialist",
+      "skills": "Kotlin, Java, Android SDK, Jetpack Compose, REST APIs, Material Design",
+      "languages": "Mandarin (Native), English (Fluent), Japanese (Intermediate)"
+    },
+    {
+      "id": 7,
+      "education": "Bachelor of Information Technology - Universidad Nacional (2018)\nWeb Development Bootcamp - Le Wagon (2020)",
+      "experience": "3 years as Full Stack Developer at Digital Agency\n2 years as React Developer at SaaS Company",
+      "certificates": "React Professional, Node.js Certified, MongoDB Developer",
+      "skills": "JavaScript, React, Node.js, MongoDB, Express, GraphQL, TypeScript",
+      "languages": "Spanish (Native), English (Fluent), Portuguese (Intermediate)"
+    },
+    {
+      "id": 8,
+      "education": "Bachelor of Business & IT - University of Sydney (2019)\nProduct Management Certification - Product School (2021)",
+      "experience": "2 years as Product Manager at Tech Startup\n1 year as Business Analyst at Consulting Firm",
+      "certificates": "Pragmatic Marketing Certified, Scrum Product Owner, Google Analytics Certified",
+      "skills": "Product Strategy, Agile Methodology, Data Analysis, User Research, Roadmapping",
+      "languages": "English (Native), French (Intermediate), German (Basic)"
+    }
+  ],
+  "applications": [
+    {
+      "id": 1,
+      "jobID": 1,
+      "userID": 1,
+      "applicationstatus": "Pending",
+      "createdat": "10:30:00",
+      "updatedat": "10:30:00",
+      "describeyourself": "Experienced Flutter developer with 3+ years in mobile app development. I have successfully delivered 10+ apps to both App Store and Play Store. Strong expertise in state management, API integration, and performance optimization.",
+      "coverLetter": "I am excited about the opportunity to work on innovative mobile projects at Tech Innovations Inc. My experience aligns perfectly with your requirements.",
+      "appliedDate": "2024-01-15"
+    },
+    {
+      "id": 2,
+      "jobID": 1,
+      "userID": 2,
+      "applicationstatus": "Reviewed",
+      "createdat": "14:15:00",
+      "updatedat": "16:45:00",
+      "describeyourself": "Passionate about mobile development and eager to learn new technologies. Recently completed several Flutter projects and looking for a challenging role to grow my skills.",
+      "coverLetter": "I admire Tech Innovations Inc.'s work in the mobile space and believe I can contribute fresh perspectives and dedication to your team.",
+      "appliedDate": "2024-01-14"
+    },
+    {
+      "id": 3,
+      "jobID": 2,
+      "userID": 3,
+      "applicationstatus": "Interview",
+      "createdat": "09:00:00",
+      "updatedat": "11:20:00",
+      "describeyourself": "Recent computer science graduate with strong foundation in mobile development. Completed several Flutter projects during studies and internships.",
+      "coverLetter": "I'm eager to start my professional journey and believe Startup Ventures provides the perfect environment for growth and learning.",
+      "appliedDate": "2024-01-16"
+    },
+    {
+      "id": 4,
+      "jobID": 3,
+      "userID": 4,
+      "applicationstatus": "Rejected",
+      "createdat": "13:45:00",
+      "updatedat": "15:30:00",
+      "describeyourself": "Backend developer with 4 years of experience in Node.js and cloud technologies. Built scalable systems handling millions of requests.",
+      "coverLetter": "I'm impressed by Cloud Systems Ltd.'s infrastructure and would love to contribute to your backend architecture.",
+      "appliedDate": "2024-01-13"
+    },
+    {
+      "id": 5,
+      "jobID": 1,
+      "userID": 1,
+      "applicationstatus": "Accepted",
+      "createdat": "11:20:00",
+      "updatedat": "14:10:00",
+      "describeyourself": "Senior Flutter developer with expertise in complex state management and native bridge development. Led mobile teams in previous roles.",
+      "coverLetter": "Ready to take on leadership responsibilities and help scale your mobile development practices.",
+      "appliedDate": "2024-01-12"
+    },
+    {
+      "id": 6,
+      "jobID": 3,
+      "userID": 2,
+      "applicationstatus": "Pending",
+      "createdat": "16:00:00",
+      "updatedat": "16:00:00",
+      "describeyourself": "Full stack developer transitioning to specialized backend role. Strong Node.js skills and experience with microservices architecture.",
+      "coverLetter": "Looking to deepen my backend expertise at a company known for technical excellence.",
+      "appliedDate": "2024-01-17"
+    },
+    {
+      "id": 7,
+      "jobID": 4,
+      "userID": 3,
+      "applicationstatus": "Interview",
+      "createdat": "10:15:00",
+      "updatedat": "14:25:00",
+      "describeyourself": "Frontend specialist with 3 years of React experience. Passionate about creating responsive and accessible web applications.",
+      "coverLetter": "Excited about the opportunity to work on Web Solutions Co.'s diverse project portfolio.",
+      "appliedDate": "2024-01-15"
+    },
+    {
+      "id": 8,
+      "jobID": 4,
+      "userID": 4,
+      "applicationstatus": "Pending",
+      "createdat": "14:30:00",
+      "updatedat": "14:30:00",
+      "describeyourself": "UI/UX designer transitioning to frontend development. Strong design background with growing React and TypeScript skills.",
+      "coverLetter": "My unique combination of design and development skills could bring valuable perspective to your team.",
+      "appliedDate": "2024-01-18"
+    },
+    {
+      "id": 9,
+      "jobID": 5,
+      "userID": 5,
+      "applicationstatus": "Reviewed",
+      "createdat": "09:45:00",
+      "updatedat": "13:15:00",
+      "describeyourself": "DevOps engineer with AWS expertise and containerization experience. Implemented CI/CD pipelines for multiple organizations.",
+      "coverLetter": "Ready to help InfraTech Solutions optimize their deployment processes and infrastructure.",
+      "appliedDate": "2024-01-14"
+    },
+    {
+      "id": 10,
+      "jobID": 6,
+      "userID": 6,
+      "applicationstatus": "Interview",
+      "createdat": "11:10:00",
+      "updatedat": "15:40:00",
+      "describeyourself": "UI/UX designer with portfolio of successful mobile and web projects. Strong user research and prototyping skills.",
+      "coverLetter": "Creative Design Studio's work inspires me, and I'd love to contribute to your innovative projects.",
+      "appliedDate": "2024-01-16"
+    },
+    {
+      "id": 11,
+      "jobID": 6,
+      "userID": 7,
+      "applicationstatus": "Pending",
+      "createdat": "15:20:00",
+      "updatedat": "15:20:00",
+      "describeyourself": "Product designer with focus on design systems and component libraries. Experience in both startup and enterprise environments.",
+      "coverLetter": "Interested in helping Creative Design Studio establish robust design practices.",
+      "appliedDate": "2024-01-19"
+    },
+    {
+      "id": 12,
+      "jobID": 7,
+      "userID": 5,
+      "applicationstatus": "Accepted",
+      "createdat": "13:00:00",
+      "updatedat": "16:30:00",
+      "describeyourself": "Data scientist with machine learning expertise and published research. Experience in predictive modeling and data visualization.",
+      "coverLetter": "Eager to apply my data science skills to real-world problems at Data Analytics Pro.",
+      "appliedDate": "2024-01-13"
+    },
+    {
+      "id": 13,
+      "jobID": 8,
+      "userID": 6,
+      "applicationstatus": "Interview",
+      "createdat": "10:45:00",
+      "updatedat": "14:50:00",
+      "describeyourself": "Product manager with technical background and successful product launches. Experience in agile environments and cross-functional leadership.",
+      "coverLetter": "Product Vision Inc.'s approach to product development aligns with my philosophy and experience.",
+      "appliedDate": "2024-01-17"
+    },
+    {
+      "id": 14,
+      "jobID": 8,
+      "userID": 7,
+      "applicationstatus": "Pending",
+      "createdat": "14:15:00",
+      "updatedat": "14:15:00",
+      "describeyourself": "Senior product manager with 8 years of experience in SaaS products. Track record of improving user engagement and revenue.",
+      "coverLetter": "Confident I can help Product Vision Inc. achieve its product roadmap goals.",
+      "appliedDate": "2024-01-20"
+    },
+    {
+      "id": 15,
+      "jobID": 9,
+      "userID": 8,
+      "applicationstatus": "Reviewed",
+      "createdat": "11:30:00",
+      "updatedat": "15:10:00",
+      "describeyourself": "QA engineer with automation expertise and attention to detail. Experience in both web and mobile application testing.",
+      "coverLetter": "Quality First Tech's commitment to excellence matches my professional standards.",
+      "appliedDate": "2024-01-15"
+    },
+    {
+      "id": 16,
+      "jobID": 10,
+      "userID": 8,
+      "applicationstatus": "Pending",
+      "createdat": "16:45:00",
+      "updatedat": "16:45:00",
+      "describeyourself": "Full stack developer comfortable across the entire technology stack. Enjoy solving complex problems and learning new technologies.",
+      "coverLetter": "Stack Masters LLC's full stack approach resonates with my development philosophy.",
+      "appliedDate": "2024-01-18"
+    },
+    {
+      "id": 17,
+      "jobID": 11,
+      "userID": 5,
+      "applicationstatus": "Interview",
+      "createdat": "09:30:00",
+      "updatedat": "13:45:00",
+      "describeyourself": "iOS developer passionate about native app development and SwiftUI. Multiple successful App Store publications.",
+      "coverLetter": "Excited about the opportunity to work with Mobile First Inc.'s talented mobile team.",
+      "appliedDate": "2024-01-16"
+    },
+    {
+      "id": 18,
+      "jobID": 12,
+      "userID": 6,
+      "applicationstatus": "Pending",
+      "createdat": "12:20:00",
+      "updatedat": "12:20:00",
+      "describeyourself": "Android developer with Kotlin expertise and modern development practices. Experience with Jetpack Compose and material design.",
+      "coverLetter": "Android Experts Co.'s focus on native Android development aligns with my career goals.",
+      "appliedDate": "2024-01-19"
+    },
+    {
+      "id": 19,
+      "jobID": 13,
+      "userID": 7,
+      "applicationstatus": "Accepted",
+      "createdat": "14:50:00",
+      "updatedat": "17:20:00",
+      "describeyourself": "Technical writer with engineering background. Experience creating comprehensive documentation for APIs and developer tools.",
+      "coverLetter": "Ready to help DocuTech Solutions improve their documentation and developer experience.",
+      "appliedDate": "2024-01-14"
+    },
+    {
+      "id": 20,
+      "jobID": 14,
+      "userID": 8,
+      "applicationstatus": "Interview",
+      "createdat": "10:00:00",
+      "updatedat": "14:35:00",
+      "describeyourself": "Certified Scrum Master with experience facilitating agile teams in fast-paced environments. Strong coaching and facilitation skills.",
+      "coverLetter": "Interested in helping Agile Masters Inc. optimize their agile processes and team collaboration.",
+      "appliedDate": "2024-01-17"
+    },
+    {
+      "id": 21,
+      "jobID": 15,
+      "userID": 1,
+      "applicationstatus": "Pending",
+      "createdat": "15:40:00",
+      "updatedat": "15:40:00",
+      "describeyourself": "Cybersecurity professional with network security and incident response experience. Certifications in security frameworks and tools.",
+      "coverLetter": "Eager to contribute to Secure Systems Ltd.'s mission of protecting critical infrastructure.",
+      "appliedDate": "2024-01-20"
+    }
+  ]
+}

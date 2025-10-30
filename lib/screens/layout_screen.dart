@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:job_seeker/screens/profile_screen.dart';
+import 'package:job_seeker/screens/Profile/profile_screen.dart';
 
 import 'applications_screen.dart';
 import 'home_screen.dart';
@@ -59,17 +59,18 @@ class _LayoutScreenState extends State<LayoutScreen> {
       appBar: AppBar(
         elevation: 0,
         // backgroundColor: Colors.transparent,
-          scrolledUnderElevation: 0.0,
-          title:Text(
+        scrolledUnderElevation: 0.0,
+        title: Text(
           titles[currentIndex],
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
-          ),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+        ),
         centerTitle: false,
       ),
+      // body: currentIndex == 3
+      //     ? Column(children: [screens[currentIndex], _buildFloatingButton()])
+      //     : screens[currentIndex],
       body: screens[currentIndex],
+
       bottomNavigationBar: NavigationBar(
         backgroundColor: Colors.transparent,
         indicatorColor: Theme.of(context).colorScheme.secondaryContainer,
@@ -86,4 +87,17 @@ class _LayoutScreenState extends State<LayoutScreen> {
       ),
     );
   }
+
+  // Widget _buildFloatingButton() {
+  //   return FloatingActionButton(
+  //     onPressed: () {
+  //       // Add your button's onPressed logic here
+  //     },
+  //     backgroundColor: Theme.of(context).colorScheme.secondary,
+  //     elevation: 0,
+  //     splashColor: Colors.transparent,
+  //     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+  //     child: Icon(Icons.add),
+  //   );
+  // }
 }

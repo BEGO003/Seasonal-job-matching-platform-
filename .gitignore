@@ -32,7 +32,6 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
-
 # Symbolication related
 app.*.symbols
 
@@ -43,3 +42,27 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Node.js dependencies and build/output
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Node environment files
+.env
+.env.local
+.env.*.local
+
+# Godot, Next.js, and other random node/JS tools might create these:
+.next/
+out/
+dist/
+coverage/
+
+# Optional: common node scripting output
+*.tsbuildinfonode_modules/

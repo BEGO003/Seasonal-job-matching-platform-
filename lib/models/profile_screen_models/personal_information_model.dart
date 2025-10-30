@@ -1,48 +1,24 @@
-class PersonalInformationModel {
-  final String name;
-  final String email;
-  final String number;
-  final String country;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const PersonalInformationModel({
-    this.name = 'Jhon Doe',
-    this.email = 'jhonatDoe26@gmail.com',
-    this.number = '123-456-789',
-    this.country = 'Egypt',
-  });
-  
-  static const empty = PersonalInformationModel();
+part 'personal_information_model.freezed.dart';
+part 'personal_information_model.g.dart';
 
-  PersonalInformationModel copyWith({
-    String? name,
-    String? email,
-    String? number,
-    String? country,
-  }) {
-    return PersonalInformationModel(
-      name: name ?? this.name,
-      email: email ?? this.email,
-      number: number ?? this.number,
-      country: country ?? this.country,
-    );
-  }
+@freezed
+abstract class PersonalInformationModel with _$PersonalInformationModel {
+  const factory PersonalInformationModel({
+    required String id,
+    required String name,
+    required String email,
+    required String number,
+    required String country,
+    String? profileImage,
+    String? joinedDate,
+    String? password,
+    int? resume,
+    @Default([]) List<int> ownedjobs,
+    @Default([]) List<int> ownedapplications,
+    @Default([]) List<int> favoriteJobs,
+  }) = _PersonalInformationModel;
 
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'email': email,
-      'number': number,
-      'country': country,
-    };
-  }
-
-  factory PersonalInformationModel.fromJson(Map<String, dynamic> json) {
-    return PersonalInformationModel(
-      name: json['name'] ?? '',
-      email: json['email'] ?? '',
-      number: json['number'] ?? '',
-      country: json['country'] ?? '',
-    );
-  }
-
+  factory PersonalInformationModel.fromJson(Map<String, dynamic> json) => _$PersonalInformationModelFromJson(json);
 }

@@ -19,22 +19,39 @@ class JobsServicesProvider {
   Future<List<JobModel>> fetchJobs() async {
     try {
       final response = await _dio.get(jobsPath);
-      final jobs = (response.data as List)  
-          .map((json) => JobModel.fromJson(json as Map<String, dynamic>))
+      print('Jobs API response: \nresponse.data=${response.data}');
+      final List dataList = response.data as List;
+      // Map id - ensure string
+      final jobs = dataList
+          .map((json) {
+            final fixed = Map<String, dynamic>.from(json);
+            if (fixed['id'] != null && fixed['id'] is! String) fixed['id'] = fixed['id'].toString();
+            return JobModel.fromJson(fixed);
+          })
           .toList();
       return jobs;  
     } on DioException catch (e) {
+      print('Jobs fetch error: $e');
       throw _handleError(e);
+    } catch (e, st) {
+      print('Jobs unexpected error: $e\n$st');
+      rethrow;
     }
   }
-
 
   Future<JobModel> fetchJobById(String jobId) async {
     try {
       final response = await _dio.get('$jobsPath/$jobId');
-      return JobModel.fromJson(response.data as Map<String, dynamic>);
+      print('JobById API response: ${response.data}');
+      final fixed = Map<String, dynamic>.from(response.data as Map);
+      if (fixed['id'] != null && fixed['id'] is! String) fixed['id'] = fixed['id'].toString();
+      return JobModel.fromJson(fixed);
     } on DioException catch (e) {
+      print('fetchJobById error: $e');
       throw _handleError(e);
+    } catch (e, st) {
+      print('JobById unexpected error: $e\n$st');
+      rethrow;
     }
   }
 

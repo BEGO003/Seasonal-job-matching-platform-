@@ -6,43 +6,45 @@ class PersonalInformationState {
   final PersonalInformationModel data;
   final String? error;
 
-  const PersonalInformationState({
-    this.isLoading = false,
-    this.isChanged = false,
-    this.data = PersonalInformationModel.empty,
-    this.error,
-  });
+  PersonalInformationState(this.isLoading, this.isChanged, this.data, this.error);
 
-  static const initial = PersonalInformationState();
+  // const PersonalInformationState({
+  //   this.isLoading = false,
+  //   this.isChanged = false,
+  //   // this.data = PersonalInformationModel.empty,
+  //   this.error,
+  // });
 
-  PersonalInformationState copyWith({
-    bool? isLoading,
-    bool? isChanged,
-    PersonalInformationModel? data,
-    String? error,
-  }) {
-    return PersonalInformationState(
-      isLoading: isLoading ?? this.isLoading,
-      isChanged: isChanged ?? this.isChanged,
-      data: data ?? this.data,
-      error: error ?? this.error,
-    );
-  }
+  // static const initial = PersonalInformationState();
+
+  // PersonalInformationState copyWith({
+  //   bool? isLoading,
+  //   bool? isChanged,
+  //   PersonalInformationModel? data,
+  //   String? error,
+  // }) {
+  //   return PersonalInformationState(
+  //     isLoading: isLoading ?? this.isLoading,
+  //     isChanged: isChanged ?? this.isChanged,
+  //     data: data ?? this.data,
+  //     error: error ?? this.error,
+  //   );
+  // }
   
-  PersonalInformationState toLoading() {
-    return copyWith(isLoading: true, error: null);
-  }
+  // PersonalInformationState toLoading() {
+  //   return copyWith(isLoading: true, error: null);
+  // }
 
-  PersonalInformationState toError(String errorMessage) {
-    return copyWith(isLoading: false, error: errorMessage);
-  }
+  // PersonalInformationState toError(String errorMessage) {
+  //   return copyWith(isLoading: false, error: errorMessage);
+  // }
 
-  PersonalInformationState toSuccess(PersonalInformationModel data) {
-    return copyWith(
-      isLoading: false,
-      isChanged: true,
-      data: data,
-      error: null,
-    );
-  }
+  // PersonalInformationState toSuccess(PersonalInformationModel data) {
+  //   return copyWith(
+  //     isLoading: false,
+  //     isChanged: true,
+  //     data: data,
+  //     error: null,
+  //   );
+  // }
 }

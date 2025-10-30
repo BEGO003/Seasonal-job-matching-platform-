@@ -1,29 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:job_seeker/models/jobs_screen_models/job_model.dart';
+import 'package:job_seeker/widgets/jobs_screen_widgets/job_view.dart';
 
 class JobCard extends StatelessWidget {
-  final String title;
-  final String posterName;
-  final String location;
-  final String startDate;
-  final String endtDate;
-  final double salary;
-  final int numofpositions;
-  final String? workarrangement;
-  final String? type;
+  final JobModel job;
 
-  const JobCard({
-    super.key,
-    required this.title,
-    required this.posterName,
-    required this.location,
-    required this.startDate,
-    required this.endtDate,
-    required this.salary,
-    required this.numofpositions,
-    this.workarrangement,
-    this.type,
-  });
+  const JobCard({super.key, required this.job});
 
   String _formatDate(String dateStr) {
     try {
@@ -36,12 +19,19 @@ class JobCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formattedStart = _formatDate(startDate);
-    final formattedEnd = _formatDate(endtDate);
+    final formattedStart = _formatDate(job.startDate);
+    final formattedEnd = _formatDate(job.endDate);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: AnimatedContainer(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: Colors.black,
+            width: 3,
+          ),
+        ),
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOut,
         child: Card(
@@ -54,13 +44,20 @@ class JobCard extends StatelessWidget {
           child: InkWell(
             borderRadius: BorderRadius.circular(18),
             splashColor: Colors.blue.shade50,
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (context) => JobView(
+                    job: job,
+                  ),
+                ),
+              );
+            },
             child: Padding(
               padding: const EdgeInsets.all(18.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -69,8 +66,9 @@ class JobCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              title,
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              job.title,
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 20,
                                   ),
@@ -79,7 +77,7 @@ class JobCard extends StatelessWidget {
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              posterName,
+                              job.company ?? '',
                               style: TextStyle(
                                 color: Colors.blue.shade700,
                                 fontSize: 16,
@@ -110,7 +108,7 @@ class JobCard extends StatelessWidget {
                   // Job Info
                   _InfoRow(
                     icon: Icons.location_on,
-                    text: location,
+                    text: job.location,
                     iconColor: Colors.red.shade400,
                   ),
                   const SizedBox(height: 10),
@@ -122,26 +120,27 @@ class JobCard extends StatelessWidget {
                   const SizedBox(height: 10),
                   _InfoRow(
                     icon: Icons.attach_money,
-                    text: "\$${salary.toStringAsFixed(0)}",
+                    text: "\$${job.salary.toStringAsFixed(0)}",
                     iconColor: Colors.green.shade600,
                   ),
                   const SizedBox(height: 10),
                   _InfoRow(
                     icon: Icons.people,
-                    text: "Positions: $numofpositions",
+                    text: "Positions: ${job.numOfPositions}",
                     iconColor: Colors.purple.shade400,
                   ),
 
                   const SizedBox(height: 16),
 
                   // Tags
-                  if (type != null || workarrangement != null)
+                  if (job.type != '' || job.workArrangement != '')
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        if (type != null) _Tag(label: type!),
-                        if (workarrangement != null) _Tag(label: workarrangement!),
+                        if (job.type != '') _Tag(label: job.type!),
+                        if (job.workArrangement != '')
+                          _Tag(label: job.workArrangement!),
                       ],
                     ),
                 ],
