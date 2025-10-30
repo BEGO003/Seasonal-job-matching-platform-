@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:job_seeker/models/jobs_screen_models/job_model.dart';
 import 'package:job_seeker/widgets/jobs_screen_widgets/job_view.dart';
+import 'package:job_seeker/providers/profile_screen_providers/personal_information_notifier.dart';
+import 'package:job_seeker/widgets/common/glass_container.dart';
 
-class JobCard extends StatelessWidget {
+class JobCard extends ConsumerWidget {
   final JobModel job;
 
   const JobCard({super.key, required this.job});
@@ -18,30 +21,13 @@ class JobCard extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final formattedStart = _formatDate(job.startDate);
     final formattedEnd = _formatDate(job.endDate);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: AnimatedContainer(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: Colors.black,
-            width: 3,
-          ),
-        ),
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOut,
-        child: Card(
-          color: Colors.white,
-          elevation: 4,
-          shadowColor: Colors.black12,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: InkWell(
+      child: InkWell(
             borderRadius: BorderRadius.circular(18),
             splashColor: Colors.blue.shade50,
             onTap: () {
@@ -53,7 +39,7 @@ class JobCard extends StatelessWidget {
                 ),
               );
             },
-            child: Padding(
+            child: GlassContainer(
               padding: const EdgeInsets.all(18.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,16 +73,27 @@ class JobCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.red.shade50,
-                          shape: BoxShape.circle,
-                        ),
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.favorite_border),
-                          color: Colors.red.shade400,
-                        ),
+                      Consumer(
+                        builder: (context, ref, _) {
+                          final personalInfo = ref.watch(personalInformationProvider);
+                          final isFav = personalInfo.maybeWhen(
+                            data: (u) => u.favoriteJobs.contains(int.tryParse(job.id) ?? -1),
+                            orElse: () => false,
+                          );
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade50,
+                              shape: BoxShape.circle,
+                            ),
+                            child: IconButton(
+                              onPressed: () {
+                                ref.read(personalInformationProvider.notifier).toggleFavoriteJob(job.id);
+                              },
+                              icon: Icon(isFav ? Icons.favorite : Icons.favorite_border),
+                              color: Colors.red.shade400,
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -146,8 +143,6 @@ class JobCard extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-        ),
       ),
     );
   }

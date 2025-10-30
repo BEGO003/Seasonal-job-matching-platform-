@@ -64,6 +64,14 @@ class PersonalInformationService {
     }
   }
 
+  Future<void> updateFavoriteJobs(List<int> favoriteJobs) async {
+    try {
+      await _dio.patch(editPath, data: {'favoriteJobs': favoriteJobs});
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   String _handleError(DioException error) {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:

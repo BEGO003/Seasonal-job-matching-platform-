@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:job_seeker/constants/constants.dart';
 import 'package:job_seeker/providers/profile_screen_providers/personal_information_notifier.dart';
+import 'package:job_seeker/widgets/common/glass_container.dart';
 
 class ProfileInfoCard extends ConsumerWidget {
   final IconData icon;
@@ -190,24 +191,17 @@ class ProfileInfoCard extends ConsumerWidget {
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Card(
-        elevation: 2,
-        shadowColor: Colors.black.withValues(alpha: .1),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        child: Stack(
+      child: Stack(
           alignment: Alignment.center,
           children: [
             InkWell(
               onTap: onTap,
               borderRadius: BorderRadius.circular(12.0),
-              child: Padding(
+              child: GlassContainer(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16.0,
                   vertical: 12.0,
                 ),
-
                 child: Row(
                   children: [
                     CircleAvatar(
@@ -257,7 +251,7 @@ class ProfileInfoCard extends ConsumerWidget {
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: .3),
+                    color: Colors.black.withValues(alpha: .05),
                     borderRadius: BorderRadius.circular(12.0),
                   ),
                   child: const Center(
@@ -267,7 +261,7 @@ class ProfileInfoCard extends ConsumerWidget {
               ),
           ],
         ),
-      ),
-    );
+      );
+    
   }
 }

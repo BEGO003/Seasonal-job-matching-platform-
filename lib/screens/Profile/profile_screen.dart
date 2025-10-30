@@ -4,6 +4,7 @@ import 'package:job_seeker/screens/Profile/resume_screen.dart';
 
 import '../../widgets/profile_screen_widgets/profile_info_section.dart';
 import '../../widgets/profile_screen_widgets/account_settings_section.dart';
+import '../../widgets/common/gradient_background.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -77,8 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       children: [
         SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
-          child: Container(
-            color: Theme.of(context).colorScheme.surface,
+          child: GradientBackground(
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
