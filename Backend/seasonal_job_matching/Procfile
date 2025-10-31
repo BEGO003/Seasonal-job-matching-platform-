@@ -1,23 +1,7 @@
 <!--
  web: java -Dserver.port=$PORT $JAVA_OPTS -jar target/seasonal_job_matching-0.0.1-SNAPSHOT.jareb: java -Dserver.port=$PORT $JAVA_OPTS -jar target/seasonal_job_matching-0.0.1-SNAPSHOT.jar
 -->
-web: java -jar target/seasonal_job_matching-0.0.1-SNAPSHOT.jar
-<plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>3.1.5</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>grad_project.seasonal_job_matching.SeasonalJobMatchingApplication</mainClass>
-                            <classifier>spring-boot</classifier>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+web: java -Dserver.port=$PORT $JAVA_OPTS -jar target/seasonal_job_matching-0.0.1-SNAPSHOT.jar
 <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
