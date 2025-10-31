@@ -1,7 +1,7 @@
 <!--
  web: java -Dserver.port=$PORT $JAVA_OPTS -jar target/seasonal_job_matching-0.0.1-SNAPSHOT.jareb: java -Dserver.port=$PORT $JAVA_OPTS -jar target/seasonal_job_matching-0.0.1-SNAPSHOT.jar
 -->
-web: java -Dserver.port=$PORT $JAVA_OPTS -jar target/seasonal_job_matching-0.0.1-SNAPSHOT.jar
+web: java -Dserver.port=$PORT $JAVA_OPTS -jar seasonal_job_matching-0.0.1-SNAPSHOT.jar
 <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
