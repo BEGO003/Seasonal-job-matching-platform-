@@ -17,7 +17,6 @@ import grad_project.seasonal_job_matching.mapper.JobMapper;
 import grad_project.seasonal_job_matching.mapper.UserMapper;
 import grad_project.seasonal_job_matching.model.User;
 import grad_project.seasonal_job_matching.repository.UserRepository;
-import jakarta.annotation.PostConstruct;
 
 @Service
 public class UserService {

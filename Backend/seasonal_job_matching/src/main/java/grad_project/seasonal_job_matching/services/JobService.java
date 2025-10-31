@@ -61,72 +61,72 @@ public class JobService {
 
     public JobResponseDTO editJob(JobEditDTO dto, long id){ 
         
-        Job existingjJob = jobRepository.findById(id).orElseThrow(()-> new RuntimeException("Job not found with ID: " + id));
+        Job existingJob = jobRepository.findById(id).orElseThrow(()-> new RuntimeException("Job not found with ID: " + id));
         //has new fields that are changed
         Job updatedJob = jobMapper.maptoEditJob(dto);
 
         //if field thats updated is title and new title isn't empty
         if(dto.getTitle() != null){
-            existingjJob.setTitle(updatedJob.getTitle());
+            existingJob.setTitle(updatedJob.getTitle());
         }
 
         //update description
         if (updatedJob.getDescription() != null) {
-            existingjJob.setDescription(updatedJob.getDescription());
+            existingJob.setDescription(updatedJob.getDescription());
         }
 
         //update work arrangement
         if (updatedJob.getWorkarrangement() != null) {
-            existingjJob.setWorkarrangement(updatedJob.getWorkarrangement());
+            existingJob.setWorkarrangement(updatedJob.getWorkarrangement());
         }
 
         //add salary, checks if salary is updated
         if (updatedJob.getSalary() > 0) {
-            existingjJob.setSalary(updatedJob.getSalary());
+            existingJob.setSalary(updatedJob.getSalary());
         }
 
 
         //update start date
         if (updatedJob.getStartDate() != null) {
-            existingjJob.setStartDate(updatedJob.getStartDate());
+            existingJob.setStartDate(updatedJob.getStartDate());
         }
 
         //update end date
         if (updatedJob.getEndDate() != null) {
-            existingjJob.setEndDate(updatedJob.getEndDate());
+            existingJob.setEndDate(updatedJob.getEndDate());
         }
 
         //update status
         if (updatedJob.getStatus() != null) {
-            existingjJob.setStatus(updatedJob.getStatus());
+            existingJob.setStatus(updatedJob.getStatus());
         }
 
         //update salary
         if (updatedJob.getSalary() > 0) {
-            existingjJob.setSalary(updatedJob.getSalary());
+            existingJob.setSalary(updatedJob.getSalary());
         }
 
         //update location
         if (updatedJob.getLocation() != null ) {
-            existingjJob.setLocation(updatedJob.getLocation());
+            existingJob.setLocation(updatedJob.getLocation());
         }
 
         //update number of positions available
         if (updatedJob.getNumofpositions() > 0 ) {
-            existingjJob.setNumofpositions(updatedJob.getNumofpositions());
+            existingJob.setNumofpositions(updatedJob.getNumofpositions());
         }
 
         //update job type
         if (updatedJob.getType() != null) {
-            existingjJob.setType(updatedJob.getType());
+            existingJob.setType(updatedJob.getType());
         }
 
         if (dto.getWorkarrangement() != null) {
-            existingjJob.setWorkarrangement(dto.getWorkarrangement());
+            existingJob.setWorkarrangement(dto.getWorkarrangement());
         }
 
         //cant edit userID, id of job
-        Job savedjob = jobRepository.save(existingjJob);
+        Job savedjob = jobRepository.save(existingJob);
         return jobMapper.maptoreturnJob(savedjob);
 
     }

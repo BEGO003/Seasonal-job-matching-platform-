@@ -12,7 +12,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -52,7 +54,11 @@ public class User {
     @OneToMany(mappedBy = "jobposter", cascade = CascadeType.ALL)
     private List<Job> ownedjobs;
     
+    @OneToOne //user has one resume, might change later on
+    @JoinColumn(name = "resume", referencedColumnName = "id")// foreign key from user table
+    private Resume resume;
     
+
     /*
     @ElementCollection
     @CollectionTable(name = "user_favorited_jobs", joinColumns = @JoinColumn(name = "user_id"))

@@ -34,6 +34,6 @@ public class JobCreateDTO {
     private float salary;
     private JobStatus status;
     private int numofpositions;
-    private WorkArrangement workarrangment;
+    private WorkArrangement workarrangement;
 
 }

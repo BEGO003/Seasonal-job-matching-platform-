@@ -5,7 +5,6 @@ import java.util.List;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
-import grad_project.seasonal_job_matching.model.Job;
 @Data
 public class UserResponseDTO {
 
@@ -19,6 +18,7 @@ public class UserResponseDTO {
     @Email
     private String email;
 
+    //might be unneccessary except for testing
     private List<JobResponseDTO> ownjobList;
 
 }

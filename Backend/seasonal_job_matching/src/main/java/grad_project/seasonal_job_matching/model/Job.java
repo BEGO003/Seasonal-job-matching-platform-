@@ -9,6 +9,8 @@ import grad_project.seasonal_job_matching.model.enums.JobType;
 import grad_project.seasonal_job_matching.model.enums.WorkArrangement;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -39,6 +41,7 @@ public class Job {
     @Column
     private String description;
 
+    @Enumerated(EnumType.ORDINAL)
     @Column
     private JobType type;
 
@@ -60,12 +63,15 @@ public class Job {
     @Column
     private float salary;
 
+    //STILL NEED TO CHANGE TO STRING, ONCE ON NEW DATABASE
+    @Enumerated(EnumType.ORDINAL)
     @Column(nullable = false)
     private JobStatus status;
 
     @Column
     private int numofpositions;
 
+    @Enumerated(EnumType.ORDINAL)
     @Column
     private WorkArrangement workarrangement;
 

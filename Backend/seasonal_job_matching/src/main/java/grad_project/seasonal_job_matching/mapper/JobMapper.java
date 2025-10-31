@@ -13,6 +13,7 @@ public interface JobMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "jobposter", ignore = true)
+    @Mapping(target = "workarrangement", source = "workarrangement")  // Explicit mapping
     Job maptoAddJob(JobCreateDTO dto);
 
     @Mapping(target = "id", ignore = true)
