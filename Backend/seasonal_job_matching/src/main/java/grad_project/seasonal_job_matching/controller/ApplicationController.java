@@ -1,10 +1,3 @@
-// package grad_project.seasonal_job_matching.controller;
-
-// public class ApplicationController {
-
-// }1h 30m on application so far
-
-//add another 3 hours 15 mins,making applications work and adding fields in user and job
 package grad_project.seasonal_job_matching.controller;
 
 import grad_project.seasonal_job_matching.dto.requests.ApplicationCreateDTO;

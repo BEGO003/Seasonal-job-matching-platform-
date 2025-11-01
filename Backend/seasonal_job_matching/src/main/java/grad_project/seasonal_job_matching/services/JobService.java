@@ -79,8 +79,8 @@ public class JobService {
         }
 
         //update work arrangement
-        if (updatedJob.getWorkarrangement() != null) {
-            existingjJob.setWorkarrangement(updatedJob.getWorkarrangement());
+        if (updatedJob.getWorkArrangement() != null) {
+            existingjJob.setWorkArrangement(updatedJob.getWorkArrangement());
         }
 
         //add salary, checks if salary is updated
@@ -124,8 +124,8 @@ public class JobService {
             existingjJob.setType(updatedJob.getType());
         }
 
-        if (dto.getWorkarrangement() != null) {
-            existingjJob.setWorkarrangement(dto.getWorkarrangement());
+        if (dto.getWorkArrangement() != null) {
+            existingjJob.setWorkArrangement(dto.getWorkArrangement());
         }
         // Handle requirements - add/remove with deduplication
     if (dto.getRequirementsToAdd() != null || dto.getRequirementsToRemove() != null) {

@@ -31,7 +31,7 @@ public class JobResponseDTO {
     private float salary;
     private JobStatus status;
     private int numofpositions;
-    private WorkArrangement workarrangement;
+    private WorkArrangement workArrangement;
 
     private long jobposterId;
     private String jobposterName;

@@ -7,7 +7,8 @@ import grad_project.seasonal_job_matching.dto.requests.ApplicationCreateDTO;
 import grad_project.seasonal_job_matching.dto.responses.ApplicationResponseDTO;
 import grad_project.seasonal_job_matching.model.Application;
 
-@Mapper(componentModel = "spring")
+//uses tells the mapper to convert job into jobresponsedto
+@Mapper(componentModel = "spring", uses = {JobMapper.class})
 public interface ApplicationMapper {
     
     @Mapping(target = "id", ignore = true)
@@ -20,6 +21,6 @@ public interface ApplicationMapper {
 
 
     @Mapping(source = "user.id", target = "userId")//gets user id, basically like application.getUser().getId()
-    @Mapping(source = "job", target = "job")
+    @Mapping(source = "job", target = "job") //so this now uses jobmapper
     ApplicationResponseDTO maptoreturnApplication(Application application);
 }

@@ -57,8 +57,6 @@ public class User {
     @OneToMany(mappedBy="user", cascade = CascadeType.ALL) //user has many application
     private List<Application> ownedApplications;
     
-    @Column
-    private String coverLetter;
 
     @Column
     private List<String> fieldsOfInterest;

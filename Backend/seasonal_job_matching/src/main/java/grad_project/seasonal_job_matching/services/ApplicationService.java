@@ -1,8 +1,3 @@
-// package grad_project.seasonal_job_matching.services;
-
-// public class ApplicationService {
-
-// }
 package grad_project.seasonal_job_matching.services;
 
 import grad_project.seasonal_job_matching.dto.requests.ApplicationCreateDTO;

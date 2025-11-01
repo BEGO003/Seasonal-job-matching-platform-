@@ -22,9 +22,11 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "ownedJobs", ignore = true)
     @Mapping(target = "ownedApplications", ignore = true)
+    @Mapping(target = "fieldsOfInterest", ignore = true)
     //@Mapping(target = "favoritedjobs", ignore = true)
     User maptoEditUser(UserEditDTO dto);
-    @Mapping(target = "ownjobList", source = "ownedJobs")
+    
+    //@Mapping(target = "ownjobList", source = "ownedJobs")
     UserResponseDTO maptoreturnUser(User user);
 
 }

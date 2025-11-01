@@ -25,7 +25,7 @@ public class JobEditDTO {
     private float salary;
     private JobStatus status;
     private int numofpositions;
-    private WorkArrangement workarrangement;
+    private WorkArrangement workArrangement;
 
     // Requirements - add/remove pattern
     private List<String> requirementsToAdd;

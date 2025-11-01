@@ -11,6 +11,8 @@ import grad_project.seasonal_job_matching.model.enums.WorkArrangement;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -43,6 +45,7 @@ public class Job {
     private String description;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private JobType type;
 
     @Column(nullable = false)
@@ -64,13 +67,15 @@ public class Job {
     private float salary;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private JobStatus status;
 
     @Column
     private int numofpositions;
 
     @Column
-    private WorkArrangement workarrangement;
+    @Enumerated(EnumType.STRING)
+    private WorkArrangement workArrangement;
 
     // Add to job table
     @OneToMany(mappedBy="job", cascade = CascadeType.ALL) //job has many applications
@@ -98,7 +103,7 @@ public class Job {
         this.salary = salary;
         this.numofpositions = numofpositions;
         this.status = status;
-        this.workarrangement = workarrangement;
+        this.workArrangement = workarrangement;
     }
     
 }
