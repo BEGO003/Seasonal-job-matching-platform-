@@ -1,6 +1,7 @@
 package grad_project.seasonal_job_matching.dto.requests;
 
 import java.sql.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -25,4 +26,16 @@ public class JobEditDTO {
     private JobStatus status;
     private int numofpositions;
     private WorkArrangement workarrangement;
+
+    // Requirements - add/remove pattern
+    private List<String> requirementsToAdd;
+    private List<String> requirementsToRemove;
+
+    // Categories - add/remove pattern
+    private List<String> categoriesToAdd;
+    private List<String> categoriesToRemove;
+
+    // Benefits - add/remove pattern
+    private List<String> benefitsToAdd;
+    private List<String> benefitsToRemove;
 }

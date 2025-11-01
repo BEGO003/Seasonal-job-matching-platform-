@@ -48,23 +48,27 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    //@JsonIgnoreProperties
-    @OneToMany(mappedBy = "jobposter", cascade = CascadeType.ALL)
-    private List<Job> ownedjobs;
+    @JsonIgnoreProperties("jobPoster")
+    @OneToMany(mappedBy = "jobPoster", cascade = CascadeType.ALL)
+    private List<Job> ownedJobs;
     
     
+    @JsonIgnoreProperties("user")
+    @OneToMany(mappedBy="user", cascade = CascadeType.ALL) //user has many application
+    private List<Application> ownedApplications;
+    
+    @Column
+    private String coverLetter;
+
+    @Column
+    private List<String> fieldsOfInterest;
+
     /*
-    @ElementCollection
-    @CollectionTable(name = "user_favorited_jobs", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "job_id")
     private List<Job> favoritedjobs;
     
-    @OneToMany(mappedBy = "id")
-    private List<Application> ownedApplications;
      */
 
     // Default constructor required for JPA
-
     public User(String name, String country, String number, String email, String password){
 
         this.name = name;

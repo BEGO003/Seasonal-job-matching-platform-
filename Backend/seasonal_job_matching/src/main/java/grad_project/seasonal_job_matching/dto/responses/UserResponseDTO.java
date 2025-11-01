@@ -5,9 +5,11 @@ import java.util.List;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
-import grad_project.seasonal_job_matching.model.Job;
+
 @Data
 public class UserResponseDTO {
+    
+    private long id;
 
     private String name;
 
@@ -19,6 +21,7 @@ public class UserResponseDTO {
     @Email
     private String email;
 
-    private List<JobResponseDTO> ownjobList;
+    private List<JobResponseDTO> ownjobList;//probably add JSONignoreproperties here because you dont need all jobs and applications when loading user
+    //will need to add ownedapplications here
 
 }
