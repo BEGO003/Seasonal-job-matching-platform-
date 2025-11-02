@@ -1,6 +1,7 @@
 package grad_project.seasonal_job_matching.dto.requests;
 
 import java.sql.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -16,7 +17,6 @@ import lombok.Data;
 @Data
 public class JobCreateDTO {
 
-    private int id;
     
     @NotBlank
     private String title;
@@ -34,6 +34,9 @@ public class JobCreateDTO {
     private float salary;
     private JobStatus status;
     private int numofpositions;
-    private WorkArrangement workarrangment;
+    private WorkArrangement workArrangement;
+    private List<String> requirements;
+    private List<String> categories;
+    private List<String> benefits;
 
 }

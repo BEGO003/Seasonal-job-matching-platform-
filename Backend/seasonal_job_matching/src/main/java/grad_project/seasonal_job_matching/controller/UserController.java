@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import grad_project.seasonal_job_matching.dto.requests.UserCreateDTO;
 import grad_project.seasonal_job_matching.dto.requests.UserEditDTO;
+import grad_project.seasonal_job_matching.dto.requests.UserLoginDTO;
 import grad_project.seasonal_job_matching.dto.responses.JobResponseDTO;
 import grad_project.seasonal_job_matching.dto.responses.UserResponseDTO;
 import grad_project.seasonal_job_matching.services.UserService;
@@ -47,6 +49,22 @@ public class UserController {
         }
         return ResponseEntity.ok(user.get());
 
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginDTO dto) {
+        try {
+            UserResponseDTO user = users_service.loginUser(dto);
+            // Authentication successful
+            return ResponseEntity.ok().body(Map.of(
+                "message", "Login successful",
+                "user", user
+            ));
+        } catch (RuntimeException e) {
+            // Authentication failed (from service)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                 .body(Map.of("error", e.getMessage()));
+        }
     }
 
     @GetMapping("/{id}/jobs")

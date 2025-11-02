@@ -1,5 +1,7 @@
 package grad_project.seasonal_job_matching.dto.requests;
 
+import java.util.List;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -20,4 +22,9 @@ public class UserEditDTO {
 
     @Size(min = 8, max = 100)
     private String password;
+
+     // Fields of Interest - add/remove pattern
+     private List<String> fieldsOfInterestToAdd;
+     private List<String> fieldsOfInterestToRemove;
+ 
 }
