@@ -45,7 +45,7 @@ public class Job {
     private String description;
 
     @Column
-    //@Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private JobType type;
 
     @Column(nullable = false)
@@ -67,14 +67,14 @@ public class Job {
     private float salary;
 
     @Column(nullable = false)
-    //@Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private JobStatus status;
 
     @Column
     private int numofpositions;
 
     @Column
-    //@Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private WorkArrangement workArrangement;
 
     // Add to job table
