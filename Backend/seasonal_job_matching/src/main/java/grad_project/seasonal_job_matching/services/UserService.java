@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
 
 import grad_project.seasonal_job_matching.dto.requests.UserCreateDTO;
 import grad_project.seasonal_job_matching.dto.requests.UserEditDTO;
+import grad_project.seasonal_job_matching.dto.requests.UserLoginDTO;
 import grad_project.seasonal_job_matching.dto.responses.JobResponseDTO;
 import grad_project.seasonal_job_matching.dto.responses.UserResponseDTO;
 import grad_project.seasonal_job_matching.mapper.JobMapper;
 import grad_project.seasonal_job_matching.mapper.UserMapper;
 import grad_project.seasonal_job_matching.model.User;
 import grad_project.seasonal_job_matching.repository.UserRepository;
-import jakarta.annotation.PostConstruct;
 
 @Service
 public class UserService {
@@ -46,7 +46,23 @@ public class UserService {
 
     public List<JobResponseDTO> findUserJobs(long id){
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
-        return user.getOwnedjobs().stream().map(jobMapper::maptoreturnJob).collect(Collectors.toList());
+        return user.getOwnedJobs().stream().map(jobMapper::maptoreturnJob).collect(Collectors.toList());
+    }
+
+    public UserResponseDTO loginUser(UserLoginDTO dto) {
+        
+        // 1. Find the user by their email
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new RuntimeException("Authentication failed: Invalid credentials."));
+
+        // 2. Check if the provided password matches the stored hashed password
+        if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            // 3. Passwords match, return the user's data (without the password)
+            return userMapper.maptoreturnUser(user);
+        } else {
+            // 4. Passwords do not match
+            throw new RuntimeException("Authentication failed: Invalid credentials.");
+        }
     }
 
     public Optional<UserResponseDTO> findByID(long id){

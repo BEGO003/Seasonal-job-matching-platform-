@@ -12,14 +12,14 @@ import grad_project.seasonal_job_matching.model.Job;
 public interface JobMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "jobposter", ignore = true)
+    @Mapping(target = "jobPoster", ignore = true)
     Job maptoAddJob(JobCreateDTO dto);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "jobposter", ignore = true)
+    @Mapping(target = "jobPoster", ignore = true)
     Job maptoEditJob(JobEditDTO dto);
 
-    @Mapping(target = "jobposterId", source = "jobposter.id")
-    @Mapping(target = "jobposterName", source = "jobposter.name")
+    @Mapping(target = "jobposterId", source = "jobPoster.id")
+    @Mapping(target = "jobposterName", source = "jobPoster.name")
     JobResponseDTO maptoreturnJob(Job job);
 }
