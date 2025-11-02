@@ -19,7 +19,7 @@ public class UserResponseDTO {
     @Email
     private String email;
 
-    //private List<JobResponseDTO> ownjobList;//probably add JSONignoreproperties here because you dont need all jobs and applications when loading user
+    private List<JobResponseDTO> ownjobList;//probably add JSONignoreproperties here because you dont need all jobs and applications when loading user
     //will need to add ownedapplications here
 
 }
