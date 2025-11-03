@@ -11,24 +11,23 @@ abstract class JobModel with _$JobModel {
     required String description,
     @JsonKey(name: 'type') String? type,
     required String location,
-    @JsonKey(name: 'startdate') required String startDate,
-    @JsonKey(name: 'enddate') required String endDate,
+    @JsonKey(name: 'startDate') required String startDate,
+    @JsonKey(name: 'endDate') required String endDate,
     required double salary,
     required String status,
     @JsonKey(name: 'numofpositions') required int numOfPositions,
-    @JsonKey(name: 'workarrangement') String? workArrangement,
-    @JsonKey(name: 'jobposter') required int jobPosterId,
-    String? jobPosterName,
+    @JsonKey(name: 'workArrangement') String? workArrangement,
+    @JsonKey(name: 'jobposterId') required int jobPosterId,
+    String? jobposterName,
     String? company,
     String? companyLogo,
     List<String>? requirements,
     List<String>? benefits,
-    String? category,
+    @JsonKey(name: 'categories') List<String>? categories,
     String? experienceLevel,
     String? postedDate,
     @Default([])
-    @JsonKey(name: 'listofjobapplications')
-    List<int> jobApplications,
+    List<int>? jobApplications,
   }) = _JobModel;
 
   factory JobModel.fromJson(Map<String, dynamic> json) => _$JobModelFromJson(json);

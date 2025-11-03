@@ -12,14 +12,14 @@ _JobModel _$JobModelFromJson(Map<String, dynamic> json) => _JobModel(
   description: json['description'] as String,
   type: json['type'] as String?,
   location: json['location'] as String,
-  startDate: json['startdate'] as String,
-  endDate: json['enddate'] as String,
+  startDate: json['startDate'] as String,
+  endDate: json['endDate'] as String,
   salary: (json['salary'] as num).toDouble(),
   status: json['status'] as String,
   numOfPositions: (json['numofpositions'] as num).toInt(),
-  workArrangement: json['workarrangement'] as String?,
-  jobPosterId: (json['jobposter'] as num).toInt(),
-  jobPosterName: json['jobPosterName'] as String?,
+  workArrangement: json['workArrangement'] as String?,
+  jobPosterId: (json['jobposterId'] as num).toInt(),
+  jobposterName: json['jobposterName'] as String?,
   company: json['company'] as String?,
   companyLogo: json['companyLogo'] as String?,
   requirements: (json['requirements'] as List<dynamic>?)
@@ -28,11 +28,13 @@ _JobModel _$JobModelFromJson(Map<String, dynamic> json) => _JobModel(
   benefits: (json['benefits'] as List<dynamic>?)
       ?.map((e) => e as String)
       .toList(),
-  category: json['category'] as String?,
+  categories: (json['categories'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
   experienceLevel: json['experienceLevel'] as String?,
   postedDate: json['postedDate'] as String?,
   jobApplications:
-      (json['listofjobapplications'] as List<dynamic>?)
+      (json['jobApplications'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
           .toList() ??
       const [],
@@ -44,20 +46,20 @@ Map<String, dynamic> _$JobModelToJson(_JobModel instance) => <String, dynamic>{
   'description': instance.description,
   'type': instance.type,
   'location': instance.location,
-  'startdate': instance.startDate,
-  'enddate': instance.endDate,
+  'startDate': instance.startDate,
+  'endDate': instance.endDate,
   'salary': instance.salary,
   'status': instance.status,
   'numofpositions': instance.numOfPositions,
-  'workarrangement': instance.workArrangement,
-  'jobposter': instance.jobPosterId,
-  'jobPosterName': instance.jobPosterName,
+  'workArrangement': instance.workArrangement,
+  'jobposterId': instance.jobPosterId,
+  'jobposterName': instance.jobposterName,
   'company': instance.company,
   'companyLogo': instance.companyLogo,
   'requirements': instance.requirements,
   'benefits': instance.benefits,
-  'category': instance.category,
+  'categories': instance.categories,
   'experienceLevel': instance.experienceLevel,
   'postedDate': instance.postedDate,
-  'listofjobapplications': instance.jobApplications,
+  'jobApplications': instance.jobApplications,
 };

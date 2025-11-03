@@ -14,8 +14,24 @@ class JobCard extends ConsumerWidget {
 
   String _formatDate(String dateStr) {
     try {
+      // Handle "15-12-2025" format (day-month-year)
+      if (dateStr.contains('-')) {
+        final parts = dateStr.split('-');
+        if (parts.length == 3) {
+          final day = int.tryParse(parts[0]);
+          final month = int.tryParse(parts[1]);
+          final year = int.tryParse(parts[2]);
+          
+          if (day != null && month != null && year != null) {
+            final date = DateTime(year, month, day);
+            return DateFormat('d MMM, yyyy').format(date);
+          }
+        }
+      }
+      
+      // Fallback to default parsing for other formats
       final date = DateTime.parse(dateStr);
-      return DateFormat('d MMMM, yyyy').format(date);
+      return DateFormat('d MMM, yyyy').format(date);
     } catch (_) {
       return dateStr;
     }
@@ -25,192 +41,217 @@ class JobCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final formattedStart = _formatDate(job.startDate);
     final formattedEnd = _formatDate(job.endDate);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: InkWell(
-            borderRadius: BorderRadius.circular(18),
-            splashColor: Colors.blue.shade50,
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (context) => JobView(
-                    job: job,
-                  ),
-                ),
-              );
-            },
-            child: AppCard(
-              padding: const EdgeInsets.all(18.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              job.title,
-                              style: Theme.of(context).textTheme.titleLarge
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                  ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              job.company ?? '',
-                              style: TextStyle(
-                                color: Colors.blue.shade700,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
+    return AppCard(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (context) => JobView(job: job),
+          ),
+        );
+      },
+      interactive: true,
+      padding: const EdgeInsets.all(20),
+      borderRadius: 16,
+      elevation: 2,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header with title and favorite button
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      job.title,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
+                        height: 1.3,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 6),
+                    if (job.company != null && job.company!.isNotEmpty)
+                      Text(
+                        job.company!,
+                        style: TextStyle(
+                          color: theme.colorScheme.primary,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                      Consumer(
-                        builder: (context, ref, _) {
-                          final personalInfo = ref.watch(personalInformationProvider);
-                          final isFav = personalInfo.maybeWhen(
-                            data: (u) => u.favoriteJobs.contains(int.tryParse(job.id) ?? -1),
-                            orElse: () => false,
-                          );
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: Colors.red.shade50,
-                              shape: BoxShape.circle,
-                            ),
-                            child: IconButton(
-                              onPressed: () {
-                                ref.read(favoritesControllerProvider.notifier).toggle(job.id);
-                              },
-                              icon: Icon(isFav ? Icons.favorite : Icons.favorite_border),
-                              color: Colors.red.shade400,
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 14),
-                  Divider(color: Colors.grey.shade300, height: 1),
-                  const SizedBox(height: 14),
-
-                  // Job Info
-                  _InfoRow(
-                    icon: Icons.location_on,
-                    text: job.location,
-                    iconColor: Colors.red.shade400,
-                  ),
-                  const SizedBox(height: 10),
-                  _InfoRow(
-                    icon: Icons.calendar_today_rounded,
-                    text: "$formattedStart - $formattedEnd",
-                    iconColor: Colors.blue.shade500,
-                  ),
-                  const SizedBox(height: 10),
-                  _InfoRow(
-                    icon: Icons.attach_money,
-                    text: "\$${job.salary.toStringAsFixed(0)}",
-                    iconColor: Colors.green.shade600,
-                  ),
-                  const SizedBox(height: 10),
-                  _InfoRow(
-                    icon: Icons.people,
-                    text: "Positions: ${job.numOfPositions}",
-                    iconColor: Colors.purple.shade400,
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Tags
-                  if (job.type != '' || job.workArrangement != '')
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        if (job.type != '') _Tag(label: job.type!),
-                        if (job.workArrangement != '')
-                          _Tag(label: job.workArrangement!),
-                      ],
-                    ),
-                ],
+                  ],
+                ),
               ),
+              const SizedBox(width: 12),
+              Consumer(
+                builder: (context, ref, _) {
+                  final personalInfo = ref.watch(personalInformationProvider);
+                  final isFav = personalInfo.maybeWhen(
+                    data: (u) => u.favoriteJobs.contains(int.tryParse(job.id) ?? -1),
+                    orElse: () => false,
+                  );
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: isFav 
+                          ? Colors.red.shade50 
+                          : Colors.grey.shade100,
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      onPressed: () {
+                        ref.read(favoritesControllerProvider.notifier).toggle(job.id);
+                      },
+                      icon: Icon(
+                        isFav ? Icons.favorite : Icons.favorite_outline,
+                        size: 20,
+                      ),
+                      color: isFav ? Colors.red.shade400 : Colors.grey.shade600,
+                      padding: const EdgeInsets.all(8),
+                      constraints: const BoxConstraints(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // Job details in compact grid
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              _InfoChip(
+                icon: Icons.location_on_outlined,
+                text: job.location,
+                color: Colors.blue.shade600,
+              ),
+              _InfoChip(
+                icon: Icons.calendar_today_outlined,
+                text: "$formattedStart - $formattedEnd",
+                color: Colors.purple.shade600,
+              ),
+              _InfoChip(
+                icon: Icons.attach_money_outlined,
+                text: "\$${job.salary.toStringAsFixed(0)}/mo",
+                color: Colors.green.shade600,
+              ),
+              _InfoChip(
+                icon: Icons.people_outline,
+                text: "${job.numOfPositions} position${job.numOfPositions > 1 ? 's' : ''}",
+                color: Colors.orange.shade600,
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // Tags and status
+          if (job.type != null || job.workArrangement != null)
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                if (job.type != null && job.type!.isNotEmpty)
+                  _TagChip(label: job.type!),
+                if (job.workArrangement != null && job.workArrangement!.isNotEmpty)
+                  _TagChip(label: job.workArrangement!),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: job.status.toLowerCase() == 'open' 
+                        ? Colors.green.shade50
+                        : Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    job.status,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: job.status.toLowerCase() == 'open'
+                          ? Colors.green.shade700
+                          : Colors.grey.shade700,
+                    ),
+                  ),
+                ),
+              ],
             ),
+        ],
       ),
     );
   }
 }
 
-// Info Row Widget
-class _InfoRow extends StatelessWidget {
+// Compact info chip for job details
+class _InfoChip extends StatelessWidget {
   final IconData icon;
   final String text;
-  final Color iconColor;
+  final Color color;
 
-  const _InfoRow({
+  const _InfoChip({
     required this.icon,
     required this.text,
-    required this.iconColor,
+    required this.color,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(7),
-          decoration: BoxDecoration(
-            color: iconColor.withValues(alpha: .1),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(icon, color: iconColor, size: 18),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 4),
+          Text(
             text,
             style: TextStyle(
-              fontSize: 14.5,
-              color: Colors.grey.shade800,
+              fontSize: 12,
               fontWeight: FontWeight.w500,
+              color: color,
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
-// Tag Widget
-class _Tag extends StatelessWidget {
+// Tag chip for job type and arrangement
+class _TagChip extends StatelessWidget {
   final String label;
 
-  const _Tag({required this.label});
+  const _TagChip({required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: Colors.blue.shade50,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.blue.shade200, width: 1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.blue.shade100, width: 1),
       ),
       child: Text(
         label,
         style: TextStyle(
-          fontSize: 12.5,
-          color: Colors.blue.shade700,
+          fontSize: 11,
           fontWeight: FontWeight.w600,
-          letterSpacing: 0.2,
+          color: Colors.blue.shade700,
         ),
       ),
     );

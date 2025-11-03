@@ -4,28 +4,8 @@
       "id": 1,
       "name": "MOhamed",
       "email": "john.smith@example.com",
-      "password": "password123",
       "country": "United States",
-      "number": "+1234567890",
-      "ownedjobs": [
-        1,
-        2,
-        7
-      ],
-      "ownedapplications": [
-        1,
-        5,
-        22,
-        23,
-        24
-      ],
-      "favoriteJobs": [
-        3,
-        1
-      ],
-      "resume": 1,
-      "profileImage": "https://randomuser.me/api/portraits/men/1.jpg",
-      "joinedDate": "2023-01-15"
+      "number": "+1234567890"
     },
     {
       "id": 2,
@@ -1058,6 +1038,17 @@
       "coverLetter": "i knwo al ittle bit of flutter and something like that",
       "appliedDate": "2025-10-30",
       "id": 24
+    },
+    {
+      "jobID": "3",
+      "userID": "1",
+      "applicationstatus": "Pending",
+      "createdat": "16:56:21",
+      "updatedat": "16:56:21",
+      "describeyourself": "adasdasdasd",
+      "coverLetter": "adasdasdasd",
+      "appliedDate": "2025-10-31",
+      "id": 25
     }
   ]
 }

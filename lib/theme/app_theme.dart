@@ -12,7 +12,7 @@ class AppTheme {
         backgroundColor: colorScheme.surface,
         foregroundColor: colorScheme.onSurface,
         centerTitle: false,
-        titleTextStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+        titleTextStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700,color: Colors.black),
       ),
       cardTheme: const CardThemeData(
         elevation: 2,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:job_seeker/screens/Profile/profile_screen.dart';
 
-import 'applications_screen.dart';
+import 'my_applications/applications_screen.dart';
 import 'home_screen.dart';
 import 'jobs_screen.dart';
 
