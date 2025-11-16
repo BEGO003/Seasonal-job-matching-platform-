@@ -1,0 +1,39 @@
+Auth flow decisions
+
+- Architecture
+  - Followed existing Clean Architecture layering:
+    - data/: AuthRepository performs HTTP calls
+    - domain/: LoginUseCase, SignupUseCase expose small units of business logic
+    - providers/: auth_providers.dart composes repository/usecases and exposes reactive AuthState via Riverpod
+    - screens/: onboarding/login/signup UIs, using shared AppCard and Material theme for consistency
+
+- Riverpod patterns
+  - Repository provided via Provider (stateless)
+  - Use cases as Providers (simple wrappers)
+  - Auth controller as NotifierProvider with immutable AuthState {user,isLoading,error}
+  - Hydration: on build, attempts to read persisted user from AuthStorage (repurposed token slot to store user JSON string)
+  - ConsumerWidget at app root decides start screen based on auth.isAuthenticated
+
+- Persisted state
+  - Used existing AuthStorage; stored serialized user in the same secure key for simplicity to avoid adding new storage abstraction
+  - This avoids over-engineering while enabling session restore
+
+- UI decisions
+  - Reused AppCard and theme for visual consistency
+  - Forms are single-column, constrained width for readability on large screens
+  - Loading states: disable primary button and show inline spinner
+  - Error surfaced via SnackBar, while controller also tracks error for potential future UI binding
+
+- Integration with existing features
+  - Main now gates between OnboardingScreen and LayoutScreen based on auth state
+  - Further integration points (personal info service reading auth user id) intentionally deferred to a small follow-up to avoid broad refactors in one change. Current code remains compatible and can be switched to the auth user id with a small service edit reading authControllerProvider.
+
+- Trade-offs
+  - No token handling in API (per the provided endpoints). We store and read the user only. If tokens are added later, AuthStorage already exists for that purpose.
+  - No route package introduced (kept MaterialPageRoute) to avoid overhauling navigation. go_router can be plugged in later.
+
+- Naming conventions
+  - Repositories under data/repositories
+  - Use cases under domain/usecases with verb names (LoginUseCase, SignupUseCase)
+  - Providers grouped under providers/auth
+  - Screens grouped under screens/auth

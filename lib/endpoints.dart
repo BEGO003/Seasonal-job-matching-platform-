@@ -2,6 +2,7 @@
 const String USERS = "users";
 const String JOBS = "jobs";
 const String APPLICATIONS = "applications";
+const String LOGIN = "users/login";
 // const String APPLY_FOR_JOB = "$APPLICATIONS/USE";
 // Example user routes
 String userById(String id) => "$USERS/$id";

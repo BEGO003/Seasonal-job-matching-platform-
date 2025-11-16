@@ -2,27 +2,32 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:job_seeker/core/dio_provider.dart';
 import 'package:job_seeker/endpoints.dart';
+import 'package:job_seeker/providers/auth/auth_providers.dart';
 import 'package:job_seeker/models/profile_screen_models/personal_information_model.dart';
 
 final personalInformationServiceProvider = Provider<PersonalInformationService>(
   (ref) {
     final dio = ref.watch(dioProvider);
-    return PersonalInformationService(dio);
+    return PersonalInformationService(dio, ref);
   },
 );
 
 class PersonalInformationService {
   final Dio _dio;
-  PersonalInformationService(this._dio);
+  final Ref _ref;
+  
+  PersonalInformationService(this._dio, this._ref);
 
-  // Show profile for first user in DB by default (db.json), can make configurable
-  final String _userId = '1';
-  late final String userPath = userById(_userId);
-  late final String editPath = editUserById(_userId);
+  String _userId() {
+    final auth = _ref.read(authControllerProvider);
+    final id = auth.user?['id'];
+    return id?.toString() ?? '1';
+  }
 
   Future<PersonalInformationModel> fetchUserData() async {
-    final response = await _dio.get(userPath);
-    print('Profile API response: ${response.data}');
+    final id = _userId();
+    final response = await _dio.get(userById(id));
+    // print('Profile API response: ${response.data}');
     final fixed = Map<String, dynamic>.from(response.data);
     if (fixed['id'] != null && fixed['id'] is! String) fixed['id'] = fixed['id'].toString();
     try {
@@ -32,33 +37,37 @@ class PersonalInformationService {
     }
   }
 
-  Future<void> updateName(String vlaue) async {
+  Future<void> updateName(String value) async {
     try {
-      await _dio.patch(editPath, data: {'name': vlaue});
+      final id = _userId();
+      await _dio.patch(editUserById(id), data: {'name': value});
     } on DioException catch (e) {
       throw _handleError(e);
     }
   }
 
-  Future<void> updateEmail(String vlaue) async {
+  Future<void> updateEmail(String value) async {
     try {
-      await _dio.patch(editPath, data: {'email': vlaue});
+      final id = _userId();
+      await _dio.patch(editUserById(id), data: {'email': value});
     } on DioException catch (e) {
       throw _handleError(e);
     }
   }
 
-  Future<void> updatePhone(String vlaue) async {
+  Future<void> updatePhone(String value) async {
     try {
-      await _dio.patch(editPath, data: {'number': vlaue});
+      final id = _userId();
+      await _dio.patch(editUserById(id), data: {'number': value});
     } on DioException catch (e) {
       throw _handleError(e);
     }
   }
 
-  Future<void> updateCountry(String vlaue) async {
+  Future<void> updateCountry(String value) async {
     try {
-      await _dio.patch(editPath, data: {'country': vlaue});
+      final id = _userId();
+      await _dio.patch(editUserById(id), data: {'country': value});
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -66,7 +75,8 @@ class PersonalInformationService {
 
   Future<void> updateFavoriteJobs(List<int> favoriteJobs) async {
     try {
-      await _dio.patch(editPath, data: {'favoriteJobs': favoriteJobs});
+      final id = _userId();
+      await _dio.patch(editUserById(id), data: {'favoriteJobs': favoriteJobs});
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -74,7 +84,8 @@ class PersonalInformationService {
 
   Future<void> updateOwnedApplications(List<int> applicationIds) async {
     try {
-      await _dio.patch(editPath, data: {'ownedapplications': applicationIds});
+      final id = _userId();
+      await _dio.patch(editUserById(id), data: {'ownedapplications': applicationIds});
     } on DioException catch (e) {
       throw _handleError(e);
     }

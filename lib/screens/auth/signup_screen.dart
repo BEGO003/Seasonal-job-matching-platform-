@@ -1,0 +1,119 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:job_seeker/providers/auth/auth_providers.dart';
+import 'package:job_seeker/widgets/common/app_card.dart';
+
+class SignupScreen extends ConsumerStatefulWidget {
+  const SignupScreen({super.key});
+  @override
+  ConsumerState<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends ConsumerState<SignupScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameCtrl = TextEditingController();
+  final _countryCtrl = TextEditingController();
+  final _numberCtrl = TextEditingController();
+  final _emailCtrl = TextEditingController();
+  final _passwordCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    _countryCtrl.dispose();
+    _numberCtrl.dispose();
+    _emailCtrl.dispose();
+    _passwordCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final auth = ref.watch(authControllerProvider);
+    final isLoading = auth.isLoading;
+    return Scaffold(
+      appBar: AppBar(title: const Text('Create account')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: AppCard(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TextFormField(
+                      controller: _nameCtrl,
+                      decoration: const InputDecoration(labelText: 'Name'),
+                      validator: (v) => v == null || v.isEmpty ? 'Name required' : null,
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _countryCtrl,
+                      decoration: const InputDecoration(labelText: 'Country'),
+                      validator: (v) => v == null || v.isEmpty ? 'Country required' : null,
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _numberCtrl,
+                      decoration: const InputDecoration(labelText: 'Phone number'),
+                      validator: (v) => v == null || v.isEmpty ? 'Number required' : null,
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _emailCtrl,
+                      decoration: const InputDecoration(labelText: 'Email'),
+                      validator: (v) => v == null || v.isEmpty ? 'Email required' : null,
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _passwordCtrl,
+                      obscureText: true,
+                      decoration: const InputDecoration(labelText: 'Password'),
+                      validator: (v) => v == null || v.isEmpty ? 'Password required' : null,
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: isLoading
+                          ? null
+                          : () async {
+                              if (!(_formKey.currentState?.validate() ?? false)) return;
+                              try {
+                                await ref.read(authControllerProvider.notifier).signup(
+                                      name: _nameCtrl.text.trim(),
+                                      country: _countryCtrl.text.trim(),
+                                      number: _numberCtrl.text.trim(),
+                                      email: _emailCtrl.text.trim(),
+                                      password: _passwordCtrl.text.trim(),
+                                    );
+                                if (context.mounted) Navigator.of(context).pop();
+                              } catch (e) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Signup failed: $e')),
+                                  );
+                                }
+                              }
+                            },
+                      child: isLoading
+                          ? const SizedBox(
+                              height: 18,
+                              width: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                            )
+                          : const Text('Create account'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:job_seeker/screens/Profile/cover_letter_screen.dart';
 import 'package:job_seeker/screens/Profile/resume_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:job_seeker/providers/auth/auth_providers.dart';
 
 import '../../widgets/profile_screen_widgets/profile_info_section.dart';
 import '../../widgets/profile_screen_widgets/account_settings_section.dart';
@@ -101,6 +103,27 @@ class _ProfileScreenState extends State<ProfileScreen>
                       ),
                     ),
                     AccountSettingsSection(),
+                    const SizedBox(height: 16),
+                    Consumer(
+                      builder: (context, ref, _) {
+                        return Align(
+                          alignment: Alignment.centerLeft,
+                          child: OutlinedButton.icon(
+                            onPressed: () async {
+                              await ref.read(authControllerProvider.notifier).logout();
+                              if (!context.mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Logged out')),
+                              );
+                              // Return to root; main will show onboarding due to auth gate
+                              Navigator.of(context).popUntil((route) => route.isFirst);
+                            },
+                            icon: const Icon(Icons.logout),
+                            label: const Text('Logout'),
+                          ),
+                        );
+                      },
+                    ),
                     const SizedBox(height: 80), // Extra space for FAB
                   ],
                 ),

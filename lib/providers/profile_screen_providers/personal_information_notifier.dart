@@ -4,6 +4,7 @@ import 'package:job_seeker/models/profile_screen_models/personal_information_mod
 // import 'package:job_seeker/models/personal_information_state_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:job_seeker/services/profile_screen_services/personal_information_service.dart';
+import 'package:job_seeker/providers/auth/auth_providers.dart';
 import 'package:job_seeker/providers/home_screen_providers/favorites_provider.dart';
 
 final personalInformationProvider =
@@ -18,6 +19,8 @@ class PersonalInformationAsyncNotifier
 
   @override
   Future<PersonalInformationModel> build() async {
+    // Rebuild when authenticated user changes
+    ref.watch(authControllerProvider);
     return await _service.fetchUserData();
   }
 
