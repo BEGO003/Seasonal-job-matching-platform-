@@ -11,7 +11,6 @@ import lombok.Data;
 @Data
 public class UserCreateDTO {
 
-    private long id;
 
     private String name;
 
@@ -28,6 +27,6 @@ public class UserCreateDTO {
     @Pattern(regexp = ".*[0-9].*", message = "Password must contain at least one number")
     private String password;
 
-    private List<String> fieldsOfInterest;
+    //private List<String> fieldsOfInterest;
 
 }

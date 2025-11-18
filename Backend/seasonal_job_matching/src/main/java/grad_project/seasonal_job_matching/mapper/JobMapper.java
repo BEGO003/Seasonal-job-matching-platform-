@@ -13,10 +13,14 @@ public interface JobMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "jobPoster", ignore = true)
+    @Mapping(target = "workArrangement", source = "workArrangement") 
+    @Mapping(target = "listOfJobApplications", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     Job maptoAddJob(JobCreateDTO dto);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "jobPoster", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     Job maptoEditJob(JobEditDTO dto);
 
     @Mapping(target = "jobposterId", source = "jobPoster.id")

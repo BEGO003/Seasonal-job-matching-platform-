@@ -1,6 +1,7 @@
 package grad_project.seasonal_job_matching.dto.responses;
 
 import java.sql.Date;
+import java.sql.Time;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -32,6 +33,7 @@ public class JobResponseDTO {
     private JobStatus status;
     private int numofpositions;
     private WorkArrangement workArrangement;
+    private Date createdAt;
 
     private long jobposterId;
     private String jobposterName;
