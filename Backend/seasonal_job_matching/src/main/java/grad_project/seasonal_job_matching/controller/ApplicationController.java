@@ -3,6 +3,7 @@ package grad_project.seasonal_job_matching.controller;
 import grad_project.seasonal_job_matching.dto.requests.ApplicationCreateDTO;
 import grad_project.seasonal_job_matching.dto.requests.ApplicationStatusUpdateDTO;
 import grad_project.seasonal_job_matching.dto.responses.ApplicationResponseDTO;
+import grad_project.seasonal_job_matching.dto.responses.JobIdsFromApplicationsResponseDTO;
 import grad_project.seasonal_job_matching.services.ApplicationService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +54,20 @@ public class ApplicationController {
         try {
             List<ApplicationResponseDTO> applications = applicationService.getApplicationsForUser(userId);
             if (applications.isEmpty()) {
+                // Return 200 OK with an empty list rather than an error
+                return ResponseEntity.ok(applications);
+            }
+            return ResponseEntity.ok(applications);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/userjobs/{userId}")
+    public ResponseEntity<?> getJobIdsFromApplications(@PathVariable long userId) {
+        try {
+            JobIdsFromApplicationsResponseDTO applications = applicationService.getJobIdsFromApplications(userId);
+            if (applications.getJobIds() == null || applications.getJobIds().isEmpty()) {
                 // Return 200 OK with an empty list rather than an error
                 return ResponseEntity.ok(applications);
             }

@@ -12,4 +12,5 @@ public interface ApplicationRepository extends JpaRepository <Application, Long>
     @Query("SELECT a FROM Application a JOIN FETCH a.job WHERE a.user.id = :userId")
     List<Application> findByUserId(@Param("userId") long userId);
 
+    boolean existsByUserIdAndJobId(long userId, long jobId);
 }

@@ -1,6 +1,7 @@
 package grad_project.seasonal_job_matching.model;
 
 import java.sql.Date;
+import java.sql.Time;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -71,7 +72,10 @@ public class Job {
     private JobStatus status;
 
     @Column
-    private int numofpositions;
+    private Integer numOfPositions; 
+
+    @Column
+    private Date createdAt;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -80,7 +84,7 @@ public class Job {
     // Add to job table
     @OneToMany(mappedBy="job", cascade = CascadeType.ALL) //job has many applications
     @JsonIgnoreProperties("job")
-    private List<Application> listofJobApplications;
+    private List<Application> listOfJobApplications;
     
     @Column
     private List<String> requirements;
@@ -101,7 +105,7 @@ public class Job {
         this.endDate = endDate;
         this.jobPoster = jobposter;
         this.salary = salary;
-        this.numofpositions = numofpositions;
+        this.numOfPositions = numofpositions;
         this.status = status;
         this.workArrangement = workarrangement;
     }

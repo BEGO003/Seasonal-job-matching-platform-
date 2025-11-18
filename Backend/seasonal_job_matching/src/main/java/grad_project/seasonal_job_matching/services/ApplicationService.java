@@ -3,6 +3,7 @@ package grad_project.seasonal_job_matching.services;
 import grad_project.seasonal_job_matching.dto.requests.ApplicationCreateDTO;
 import grad_project.seasonal_job_matching.dto.requests.ApplicationStatusUpdateDTO;
 import grad_project.seasonal_job_matching.dto.responses.ApplicationResponseDTO;
+import grad_project.seasonal_job_matching.dto.responses.JobIdsFromApplicationsResponseDTO;
 import grad_project.seasonal_job_matching.mapper.ApplicationMapper;
 import grad_project.seasonal_job_matching.model.Application;
 import grad_project.seasonal_job_matching.model.Job;
@@ -86,6 +87,29 @@ public class ApplicationService {
                 .map(applicationMapper::maptoreturnApplication)
                 .collect(Collectors.toList());
     }
+    
+    @Transactional(readOnly = true)
+    public JobIdsFromApplicationsResponseDTO getJobIdsFromApplications(long userId) {
+        //User user = userRepository.findById(userId)
+        //    .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+        
+        //    List<Application> apps = user.getOwnedApplications();
+        List<Application> applications = applicationRepository.findByUserId(userId);
+
+        List<Long> jobIds = applications.stream()
+        .map(application -> application.getJob().getId())
+        .collect(Collectors.toList());
+
+        JobIdsFromApplicationsResponseDTO dto = new JobIdsFromApplicationsResponseDTO();
+        dto.setJobIds(jobIds);
+        return dto;
+
+    }
+
+    @Transactional(readOnly = true)
+    public boolean hasUserAppliedToJob(long userId, long jobId) {
+        return applicationRepository.existsByUserIdAndJobId(userId, jobId);
+    }
 
     /**
      * Gets all applications that have been submitted for a specific job.
@@ -96,7 +120,7 @@ public class ApplicationService {
                 .orElseThrow(() -> new RuntimeException("Job not found with ID: " + jobId));
 
         // Use the 'listofJobApplications' list from the Job entity
-        List<Application> applications = job.getListofJobApplications();
+        List<Application> applications = job.getListOfJobApplications();
 
         // Map the list of entities to a list of DTOs
         return applications.stream()

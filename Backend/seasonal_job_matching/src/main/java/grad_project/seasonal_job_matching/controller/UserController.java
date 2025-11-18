@@ -21,6 +21,7 @@ import grad_project.seasonal_job_matching.dto.requests.UserEditDTO;
 import grad_project.seasonal_job_matching.dto.requests.UserLoginDTO;
 import grad_project.seasonal_job_matching.dto.responses.JobResponseDTO;
 import grad_project.seasonal_job_matching.dto.responses.UserResponseDTO;
+import grad_project.seasonal_job_matching.services.ApplicationService;
 import grad_project.seasonal_job_matching.services.UserService;
 import jakarta.validation.Valid;
 
@@ -30,9 +31,11 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/users")
 public class UserController {
     final private UserService users_service;
+    final private ApplicationService application_service;
 
-    public UserController(UserService service){
+    public UserController(UserService service, ApplicationService application_service){
         this.users_service = service;
+        this.application_service = application_service;
     }
 
     
@@ -70,6 +73,18 @@ public class UserController {
     @GetMapping("/{id}/jobs")
     public List<JobResponseDTO> findUserJobs(@PathVariable long id) {
         return users_service.findUserJobs(id);
+    }
+
+    @GetMapping("/{userId}/applied/{jobId}")
+    public ResponseEntity<?> hasUserAppliedToJob(
+            @PathVariable long userId, 
+            @PathVariable long jobId) {
+        try {
+            boolean hasApplied = application_service.hasUserAppliedToJob(userId, jobId);
+            return ResponseEntity.ok(Map.of("hasApplied", hasApplied));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
     
     
