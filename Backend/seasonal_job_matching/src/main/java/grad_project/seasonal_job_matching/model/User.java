@@ -62,7 +62,7 @@ public class User {
     private List<String> fieldsOfInterest;
 
     /*
-    private List<Job> favoritedjobs;
+    private List<Job> favoriteJobs;
     
      */
 

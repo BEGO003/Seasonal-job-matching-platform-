@@ -10,13 +10,13 @@ import lombok.Data;
 @Data
 public class ApplicationCreateDTO {
 
-    private User user; //user that applied, has ID 
+    //private User user; //automatically assigned from pathvariable
 
-    private ApplicationStatus applicationStatus; 
+    //private ApplicationStatus applicationStatus;  //always pending at start
 
-    private Job job;
+    //private Job job; //will be automatically assigned
 
-    private Date createdAt;
+    //private Date createdAt; //using time function,, automatically assigned
 
     private String describeYourself;
 

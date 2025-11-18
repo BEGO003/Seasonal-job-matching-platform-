@@ -1,5 +1,6 @@
 package grad_project.seasonal_job_matching.services;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -58,6 +59,7 @@ public class JobService {
         List<Job> ownedjobs = user.getOwnedJobs();
         ownedjobs.add(job);
         user.setOwnedJobs(ownedjobs);
+        job.setCreatedAt(Date.valueOf(java.time.LocalDate.now()));
         return jobMapper.maptoreturnJob(jobRepository.save(job));
 
     }
@@ -115,8 +117,8 @@ public class JobService {
         }
 
         //update number of positions available
-        if (updatedJob.getNumofpositions() > 0 ) {
-            existingjJob.setNumofpositions(updatedJob.getNumofpositions());
+        if (updatedJob.getNumOfPositions() > 0 ) {
+            existingjJob.setNumOfPositions(updatedJob.getNumOfPositions());
         }
 
         //update job type
