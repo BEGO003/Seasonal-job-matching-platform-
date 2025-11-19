@@ -5,6 +5,7 @@ import 'package:job_seeker/providers/jobs_screen_providers/job_apply_provider.da
 import 'package:job_seeker/providers/home_screen_providers/favorites_controller.dart';
 import 'package:job_seeker/providers/profile_screen_providers/personal_information_notifier.dart';
 import 'package:job_seeker/widgets/common/app_card.dart';
+import 'package:job_seeker/widgets/jobs_screen_widgets/job_view/job_apply_dialog.dart';
 
 class JobView extends ConsumerWidget {
   final JobModel job;
@@ -13,13 +14,12 @@ class JobView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isOpen = job.status.toLowerCase() == "active" || job.status == "Active";
-    final appliedValue = ref.watch(jobAppliedProvider(job.id));
-    final applyCtrl = ref.watch(applyControllerProvider);
+    final isOpen = job.status.toLowerCase() == "open" || job.status == "OPEN";
 
     final personal = ref.watch(personalInformationProvider);
     final isFav = personal.maybeWhen(
-      data: (u) => u.favoriteJobs.contains(int.tryParse(job.id) ?? -1),
+      data: (u) =>
+          u.favoriteJobs.contains(int.tryParse(job.id.toString()) ?? -1),
       orElse: () => false,
     );
     return Scaffold(
@@ -35,7 +35,9 @@ class JobView extends ConsumerWidget {
         actions: [
           IconButton(
             onPressed: () {
-              ref.read(favoritesControllerProvider.notifier).toggle(job.id);
+              ref
+                  .read(favoritesControllerProvider.notifier)
+                  .toggle(job.id.toString());
             },
             icon: Icon(isFav ? Icons.bookmark : Icons.bookmark_border),
           ),
@@ -139,7 +141,7 @@ class JobView extends ConsumerWidget {
                             const SizedBox(width: 8),
                             if (job.type != '')
                               Text(
-                                job.type!,
+                                job.type,
                                 style: TextStyle(
                                   fontSize: 15,
                                   color: Colors.grey[700],
@@ -213,11 +215,11 @@ class JobView extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        _DetailRow(
-                          icon: Icons.person_outline,
-                          label: "Posted by",
-                          value: job.company ?? '',
-                        ),
+                        // _DetailRow(
+                        //   icon: Icons.person_outline,
+                        //   label: "Posted by",
+                        //   value: job.company ?? '',
+                        // ),
                         // const Divider(height: 24),
                         const SizedBox(height: 22),
                         _DetailRow(
@@ -227,7 +229,7 @@ class JobView extends ConsumerWidget {
                         ),
                         // const Divider(height: 24),
                         const SizedBox(height: 22),
-                        if (job.workArrangement != '')
+                        if (job.workArrangement != null)
                           _DetailRow(
                             icon: Icons.work_outline,
                             label: "Work Arrangement",
@@ -238,7 +240,7 @@ class JobView extends ConsumerWidget {
                         _DetailRow(
                           icon: Icons.people_outline,
                           label: "Positions Available",
-                          value: "${job.numOfPositions}",
+                          value: "${job.numofpositions}",
                         ),
                       ],
                     ),
@@ -281,7 +283,6 @@ class JobView extends ConsumerWidget {
               ],
             ),
           ),
-
           // Apply Button
           Align(
             alignment: Alignment.bottomCenter,
@@ -292,8 +293,8 @@ class JobView extends ConsumerWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.grey.shade50.withValues(alpha: 0.0),
-                    Colors.grey.shade50.withValues(alpha: 0.8),
+                    Colors.grey.shade50.withOpacity(0.0),
+                    Colors.grey.shade50.withOpacity(0.8),
                     Colors.grey.shade50,
                   ],
                 ),
@@ -302,51 +303,90 @@ class JobView extends ConsumerWidget {
                 child: SizedBox(
                   width: double.infinity,
                   height: 56,
-                  child: ElevatedButton(
-                    onPressed: (isOpen && appliedValue.value != true && !applyCtrl.isLoading)
-                        ? () async {
-                            await _showApplyDialog(context, ref, job.id);
-                          }
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue.shade600,
-                      disabledBackgroundColor: Colors.grey.shade300,
-                      elevation: 8,
-                      shadowColor: Colors.blue.shade600.withValues(alpha: 0.4),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (applyCtrl.isLoading) ...[
-                          const SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                            ),
+                  child: Consumer(
+                    builder: (context, ref, _) {
+                      final hasApplied = ref.watch(
+                        jobAppliedProvider(job.id.toString()),
+                      );
+                      final applyState = ref.watch(applyControllerProvider);
+
+                      final isLoading = applyState.isLoading;
+
+                      final isEnabled = isOpen && !isLoading && !hasApplied;
+
+                      return ElevatedButton(
+                        onPressed: isEnabled
+                            ? () async {
+                                await showJobApplyDialog(context, ref, job.id);
+                              }
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue.shade600,
+                          disabledBackgroundColor: Colors.grey.shade400,
+                          elevation: 8,
+                          shadowColor: Colors.blue.shade600.withOpacity(0.4),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                        ] else ...[
-                          Text(
-                            appliedValue.value == true ? "Applied" : "Apply Now",
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                        const SizedBox(width: 8),
-                        const Icon(
-                          Icons.arrow_forward,
-                          size: 20,
-                          color: Colors.white,
                         ),
-                      ],
-                    ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (isLoading) ...[
+                              const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                "Checking...",
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ] else if (hasApplied) ...[
+                              const Icon(
+                                Icons.check_circle,
+                                size: 20,
+                                color: Colors.white,
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                "Applied",
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ] else ...[
+                              const Text(
+                                "Apply Now",
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const Icon(
+                                Icons.arrow_forward,
+                                size: 20,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
@@ -409,72 +449,4 @@ class _DetailRow extends StatelessWidget {
       ],
     );
   }
-}
-
-Future<void> _showApplyDialog(BuildContext context, WidgetRef ref, String jobId) async {
-  final controller = TextEditingController();
-  final formKey = GlobalKey<FormState>();
-  String? errorText;
-  await showDialog(
-    context: context,
-    builder: (ctx) {
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: const Text('Apply for this job'),
-            content: Form(
-              key: formKey,
-              child: TextFormField(
-                controller: controller,
-                maxLines: 5,
-                decoration: InputDecoration(
-                  labelText: 'Describe yourself',
-                  hintText: 'Tell the employer why you are a great fit...',
-                  errorText: errorText,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  alignLabelWithHint: true,
-                ),
-                validator: (v) {
-                  if (v == null || v.trim().isEmpty) {
-                    return 'Description cannot be empty';
-                  }
-                  return null;
-                },
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Cancel'),
-              ),
-              FilledButton(
-                onPressed: () async {
-                  if (!(formKey.currentState?.validate() ?? false)) {
-                    setState(() => errorText = 'Description cannot be empty.');
-                    return;
-                  }
-                  try {
-                    await ref.read(applyControllerProvider.notifier).apply(jobId: jobId, description: controller.text.trim());
-                    if (context.mounted) {
-                      Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Application submitted successfully.')),
-                      );
-                    }
-                  } catch (e) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Failed to apply: $e')),
-                      );
-                    }
-                  }
-                },
-                child: const Text('Submit'),
-              ),
-            ],
-          );
-        },
-      );
-    },
-  );
 }

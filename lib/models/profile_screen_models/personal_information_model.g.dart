@@ -9,15 +9,16 @@ part of 'personal_information_model.dart';
 _PersonalInformationModel _$PersonalInformationModelFromJson(
   Map<String, dynamic> json,
 ) => _PersonalInformationModel(
-  id: json['id'] as String,
+  id: (json['id'] as num).toInt(),
   name: json['name'] as String,
-  email: json['email'] as String,
-  number: json['number'] as String,
   country: json['country'] as String,
-  profileImage: json['profileImage'] as String?,
-  joinedDate: json['joinedDate'] as String?,
-  password: json['password'] as String?,
-  resume: (json['resume'] as num?)?.toInt(),
+  number: json['number'] as String,
+  email: json['email'] as String,
+  favoriteJobs:
+      (json['favoriteJobs'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toList() ??
+      const [],
   ownedjobs:
       (json['ownedjobs'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
@@ -28,11 +29,14 @@ _PersonalInformationModel _$PersonalInformationModelFromJson(
           ?.map((e) => (e as num).toInt())
           .toList() ??
       const [],
-  favoriteJobs:
-      (json['favoriteJobs'] as List<dynamic>?)
+  resume:
+      (json['resume'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
           .toList() ??
       const [],
+  fieldsOfInterest: (json['fieldsOfInterest'] as List<dynamic>?)
+      ?.map((e) => e as String)
+      .toList(),
 );
 
 Map<String, dynamic> _$PersonalInformationModelToJson(
@@ -40,14 +44,12 @@ Map<String, dynamic> _$PersonalInformationModelToJson(
 ) => <String, dynamic>{
   'id': instance.id,
   'name': instance.name,
-  'email': instance.email,
-  'number': instance.number,
   'country': instance.country,
-  'profileImage': instance.profileImage,
-  'joinedDate': instance.joinedDate,
-  'password': instance.password,
-  'resume': instance.resume,
+  'number': instance.number,
+  'email': instance.email,
+  'favoriteJobs': instance.favoriteJobs,
   'ownedjobs': instance.ownedjobs,
   'ownedapplications': instance.ownedapplications,
-  'favoriteJobs': instance.favoriteJobs,
+  'resume': instance.resume,
+  'fieldsOfInterest': instance.fieldsOfInterest,
 };

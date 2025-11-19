@@ -6,15 +6,19 @@ class ApplicationsRepository {
   ApplicationsRepository(this._dio);
 
   Future<bool> hasApplied({required String userId, required String jobId}) async {
-    final res = await _dio.get(
-      APPLICATIONS,
-      queryParameters: {
-        'userID': userId,
-        'jobID': jobId,
-      },
-    );
-    final list = (res.data as List?);
-    return (list != null && list.isNotEmpty);
+    try {
+      final res = await _dio.get(getUserApplications(userId));
+      final List applications = res.data as List;
+      
+      // Check if any application in the list matches the job ID
+      return applications.any((app) {
+        final jobData = app['job'] as Map<String, dynamic>;
+        return jobData['id'].toString() == jobId;
+      });
+    } catch (e) {
+      print('Error checking application status: $e');
+      rethrow;
+    }
   }
 
   Future<Map<String, dynamic>> apply({
@@ -22,27 +26,22 @@ class ApplicationsRepository {
     required String jobId,
     required String description,
   }) async {
-    final now = DateTime.now();
-    final res = await _dio.post(
-      APPLICATIONS,
-      data: {
-        'jobID': jobId,
-        'userID': userId,
-        'applicationstatus': 'Pending',
-        'createdat': _formatTime(now),
-        'updatedat': _formatTime(now),
-        'describeyourself': description,
-        'coverLetter': description,
-        'appliedDate': _formatDate(now),
-      },
-    );
-    return Map<String, dynamic>.from(res.data as Map);
+    try {
+      // First check if user has already applied
+      if (await hasApplied(userId: userId, jobId: jobId)) {
+        throw Exception('You have already applied for this job');
+      }
+
+      final res = await _dio.post(
+        applyForJob(userId, jobId),
+        data: {
+          'describeYourself': description,
+        },
+      );
+      return Map<String, dynamic>.from(res.data as Map);
+    } catch (e) {
+      print('Error submitting application: $e');
+      rethrow;
+    }
   }
-
-  String _formatDate(DateTime dt) =>
-      '${dt.year.toString().padLeft(4, '0')}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}' ;
-  String _formatTime(DateTime dt) =>
-      '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}' ;
 }
-
-

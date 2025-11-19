@@ -5,7 +5,7 @@ class SettingsOptionCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final bool isDanger;
-  // final VoidCallback? onTap;
+  final VoidCallback? onTap;
 
   const SettingsOptionCard({
     super.key,
@@ -13,10 +13,12 @@ class SettingsOptionCard extends StatelessWidget {
     required this.title,
     required this.subtitle,
     this.isDanger = false,
-    // this.onTap,
+    this.onTap,
   });
 
-  void _onTap() {}
+  void _onTap() {
+    if (onTap != null) onTap!();
+  }
 
   @override
   Widget build(BuildContext context) {

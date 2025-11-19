@@ -8,13 +8,13 @@ part of 'application_model.dart';
 
 _ApplicationModel _$ApplicationModelFromJson(Map<String, dynamic> json) =>
     _ApplicationModel(
-      id: json['id'] as String,
-      jobId: json['jobID'] as String,
-      userId: json['userID'] as String,
-      applicationStatus: json['applicationstatus'] as String,
-      createdat: json['createdat'] as String?,
-      updatedat: json['updatedat'] as String?,
-      describeyourself: json['describeyourself'] as String?,
+      id: (json['id'] as num).toInt(),
+      userId: (json['userId'] as num).toInt(),
+      applicationStatus: json['applicationStatus'] as String,
+      job: JobModel.fromJson(json['job'] as Map<String, dynamic>),
+      createdAt: json['createdAt'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+      describeYourself: json['describeYourself'] as String?,
       coverLetter: json['coverLetter'] as String?,
       appliedDate: json['appliedDate'] as String?,
     );
@@ -22,12 +22,12 @@ _ApplicationModel _$ApplicationModelFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$ApplicationModelToJson(_ApplicationModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'jobID': instance.jobId,
-      'userID': instance.userId,
-      'applicationstatus': instance.applicationStatus,
-      'createdat': instance.createdat,
-      'updatedat': instance.updatedat,
-      'describeyourself': instance.describeyourself,
+      'userId': instance.userId,
+      'applicationStatus': instance.applicationStatus,
+      'job': instance.job,
+      'createdAt': instance.createdAt,
+      'updatedAt': instance.updatedAt,
+      'describeYourself': instance.describeYourself,
       'coverLetter': instance.coverLetter,
       'appliedDate': instance.appliedDate,
     };

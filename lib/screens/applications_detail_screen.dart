@@ -25,10 +25,10 @@ class ApplicationDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(job.title, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-            if (job.company != null) ...[
-              const SizedBox(height: 4),
-              Text(job.company!, style: const TextStyle(fontSize: 18, color: Colors.blue)),
-            ],
+            // if (job.company != null) ...[
+            //   const SizedBox(height: 4),
+            //   Text(job.company!, style: const TextStyle(fontSize: 18, color: Colors.blue)),
+            // ],
             const SizedBox(height: 16),
             Row(
               children: [
@@ -44,9 +44,9 @@ class ApplicationDetailScreen extends StatelessWidget {
             Text('Application Status:', style: const TextStyle(fontWeight: FontWeight.w600)),
             Text(app.applicationStatus, style: const TextStyle(fontSize: 16)),
             const SizedBox(height: 12),
-            if (app.describeyourself != null) ...[
+            if (app.describeYourself != null) ...[
               Text('About You:', style: const TextStyle(fontWeight: FontWeight.w600)),
-              Text(app.describeyourself!, style: const TextStyle(fontSize: 15)),
+              Text(app.describeYourself!, style: const TextStyle(fontSize: 15)),
               const SizedBox(height: 12),
             ],
             if (app.coverLetter != null) ...[
@@ -61,21 +61,21 @@ class ApplicationDetailScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Text(job.description),
             const SizedBox(height: 12),
-            if (job.requirements != null && job.requirements!.isNotEmpty)
+            if (job.requirements.isNotEmpty)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('Requirements:', style: TextStyle(fontWeight: FontWeight.bold)),
-                  ...job.requirements!.map((r) => Text('- $r')).toList(),
+                  ...job.requirements.map((r) => Text('- $r')),
                   const SizedBox(height: 8),
                 ],
               ),
-            if (job.benefits != null && job.benefits!.isNotEmpty)
+            if (job.benefits.isNotEmpty)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('Benefits:', style: TextStyle(fontWeight: FontWeight.bold)),
-                  ...job.benefits!.map((b) => Text('- $b')).toList(),
+                  ...job.benefits.map((b) => Text('- $b')),
                   const SizedBox(height: 8),
                 ],
               ),

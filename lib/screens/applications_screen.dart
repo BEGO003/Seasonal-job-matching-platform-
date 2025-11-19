@@ -61,21 +61,21 @@ class ApplicationCardWidget extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  if (job.companyLogo != null && job.companyLogo!.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: Image.network(
-                        job.companyLogo!,
-                        width: 48,
-                        height: 48,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => const SizedBox(
-                          width: 48,
-                          height: 48,
-                          child: Icon(Icons.error),
-                        ),
-                      ),
-                    ),
+                  // if (job.companyLogo != null && job.companyLogo!.isNotEmpty)
+                  //   Padding(
+                  //     padding: const EdgeInsets.only(right: 12),
+                  //     child: Image.network(
+                  //       job.companyLogo!,
+                  //       width: 48,
+                  //       height: 48,
+                  //       fit: BoxFit.cover,
+                  //       errorBuilder: (context, error, stackTrace) => const SizedBox(
+                  //         width: 48,
+                  //         height: 48,
+                  //         child: Icon(Icons.error),
+                  //       ),
+                  //     ),
+                  //   ),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,18 +87,18 @@ class ApplicationCardWidget extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        if (job.company != null) ...[
-                          const SizedBox(height: 2),
-                          Text(
-                            job.company!,
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.blue[800],
-                            ),
-                          ),
-                        ],
+                        // if (job.company != null) ...[
+                        //   const SizedBox(height: 2),
+                        //   Text(
+                        //     job.company!,
+                        //     style: TextStyle(
+                        //       fontSize: 15,
+                        //       color: Colors.blue[800],
+                        //     ),
+                        //   ),
+                        // ],
                         Text(
-                          '${job.location} • ${job.type ?? ''}'.trim(),
+                          '${job.location} • ${job.type}',
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.grey,

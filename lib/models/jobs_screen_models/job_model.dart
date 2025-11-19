@@ -5,31 +5,25 @@ part 'job_model.g.dart';
 
 @freezed
 abstract class JobModel with _$JobModel {
-  const factory JobModel({
-    required String id,
+    const factory JobModel({
     required String title,
     required String description,
-    @JsonKey(name: 'type') String? type,
+    required int id,
+    required String type,
     required String location,
-    @JsonKey(name: 'startdate') required String startDate,
-    @JsonKey(name: 'enddate') required String endDate,
+    required String startDate,
+    required String endDate,
     required double salary,
     required String status,
-    @JsonKey(name: 'numofpositions') required int numOfPositions,
-    @JsonKey(name: 'workarrangement') String? workArrangement,
-    @JsonKey(name: 'jobposter') required int jobPosterId,
-    String? jobPosterName,
-    String? company,
-    String? companyLogo,
-    List<String>? requirements,
-    List<String>? benefits,
-    String? category,
-    String? experienceLevel,
-    String? postedDate,
-    @Default([])
-    @JsonKey(name: 'listofjobapplications')
-    List<int> jobApplications,
+    required int numofpositions,
+    String? workArrangement,
+    required int jobposterId,
+    required String jobposterName,
+    @Default([]) List<String> requirements,
+    @Default([]) List<String> categories,
+    @Default([]) List<String> benefits,
   }) = _JobModel;
 
-  factory JobModel.fromJson(Map<String, dynamic> json) => _$JobModelFromJson(json);
+  factory JobModel.fromJson(Map<String, dynamic> json) => 
+      _$JobModelFromJson(json);
 }

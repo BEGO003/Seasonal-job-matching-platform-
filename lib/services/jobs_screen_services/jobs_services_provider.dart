@@ -24,9 +24,9 @@ class JobsServicesProvider {
       // Map id - ensure string
       final jobs = dataList
           .map((json) {
-            final fixed = Map<String, dynamic>.from(json);
-            if (fixed['id'] != null && fixed['id'] is! String) fixed['id'] = fixed['id'].toString();
-            return JobModel.fromJson(fixed);
+            // final fixed = Map<String, dynamic>.from(json);
+            // if (fixed['id'] != null && fixed['id'] is! String) fixed['id'] = fixed['id'].toString();
+            return JobModel.fromJson(json);
           })
           .toList();
       return jobs;  
