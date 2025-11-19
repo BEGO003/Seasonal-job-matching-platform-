@@ -14,46 +14,93 @@ class JobView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isOpen = job.status.toLowerCase() == "open" || job.status == "OPEN";
-
+    final isOpen = job.status.toLowerCase() == "open";
     final personal = ref.watch(personalInformationProvider);
     final isFav = personal.maybeWhen(
-      data: (u) =>
-          u.favoriteJobs.contains(int.tryParse(job.id.toString()) ?? -1),
+      data: (u) => u.favoriteJobs.contains(job.id),
       orElse: () => false,
     );
+
     return Scaffold(
+      backgroundColor: Colors.grey.shade50,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text(
-          "Job Details",
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: Container(
+          margin: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Color(0xFF1F2937)),
+            onPressed: () => Navigator.of(context).pop(),
           ),
         ),
         actions: [
-          IconButton(
-            onPressed: () {
-              ref
-                  .read(favoritesControllerProvider.notifier)
-                  .toggle(job.id.toString());
-            },
-            icon: Icon(isFav ? Icons.bookmark : Icons.bookmark_border),
+          Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: Icon(
+                isFav ? Icons.favorite : Icons.favorite_border,
+                color: isFav
+                    ? const Color(0xFFEF4444)
+                    : const Color(0xFF1F2937),
+              ),
+              onPressed: () {
+                ref
+                    .read(favoritesControllerProvider.notifier)
+                    .toggle(job.id.toString());
+              },
+            ),
           ),
         ],
       ),
       body: Stack(
         children: [
+          // Hero Header
+          Container(
+            height: 280,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [const Color(0xFF3B82F6), const Color(0xFF2563EB)],
+              ),
+            ),
+          ),
+
+          // Content
           SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header Card
+                const SizedBox(height: 120),
+
+                // Main Info Card
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: AppCard(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(24),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -65,34 +112,33 @@ class JobView extends ConsumerWidget {
                           ),
                           decoration: BoxDecoration(
                             color: isOpen
-                                ? Colors.green.shade50
-                                : Colors.red.shade50,
+                                ? const Color(0xFF10B981).withOpacity(0.1)
+                                : const Color(0xFFEF4444).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: isOpen
-                                  ? Colors.green.shade200
-                                  : Colors.red.shade200,
-                            ),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
-                                isOpen ? Icons.check_circle : Icons.cancel,
-                                size: 16,
-                                color: isOpen
-                                    ? Colors.green.shade700
-                                    : Colors.red.shade700,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                job.status,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
+                              Container(
+                                width: 6,
+                                height: 6,
+                                decoration: BoxDecoration(
                                   color: isOpen
-                                      ? Colors.green.shade700
-                                      : Colors.red.shade700,
+                                      ? const Color(0xFF10B981)
+                                      : const Color(0xFFEF4444),
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                job.status.toUpperCase(),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: isOpen
+                                      ? const Color(0xFF10B981)
+                                      : const Color(0xFFEF4444),
+                                  letterSpacing: 0.5,
                                 ),
                               ),
                             ],
@@ -104,143 +150,30 @@ class JobView extends ConsumerWidget {
                         Text(
                           job.title,
                           style: const TextStyle(
-                            fontSize: 26,
-                            fontWeight: FontWeight.bold,
-                            height: 1.3,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-
-                        // Location & Type
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.location_on,
-                              size: 18,
-                              color: Colors.grey[600],
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              job.location,
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.grey[700],
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              width: 4,
-                              height: 4,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[400],
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            if (job.type != '')
-                              Text(
-                                job.type,
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.grey[700],
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Salary Highlight
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    "Monthly Salary",
-                                    style: TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    "\$${job.salary.toStringAsFixed(2)}",
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const Icon(
-                                Icons.monetization_on,
-                                color: Colors.white,
-                                size: 32,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Job Details Section
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: AppCard(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Job Information",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                            fontSize: 28,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF1F2937),
+                            height: 1.2,
+                            letterSpacing: -0.5,
                           ),
                         ),
                         const SizedBox(height: 16),
-                        // _DetailRow(
-                        //   icon: Icons.person_outline,
-                        //   label: "Posted by",
-                        //   value: job.company ?? '',
-                        // ),
-                        // const Divider(height: 24),
-                        const SizedBox(height: 22),
-                        _DetailRow(
-                          icon: Icons.calendar_today_outlined,
-                          label: "Duration",
-                          value: "${job.startDate} - ${job.endDate}",
-                        ),
-                        // const Divider(height: 24),
-                        const SizedBox(height: 22),
-                        if (job.workArrangement != null)
-                          _DetailRow(
-                            icon: Icons.work_outline,
-                            label: "Work Arrangement",
-                            value: job.workArrangement!,
-                          ),
-                        // const Divider(height: 24),
-                        const SizedBox(height: 22),
-                        _DetailRow(
-                          icon: Icons.people_outline,
-                          label: "Positions Available",
-                          value: "${job.numofpositions}",
+
+                        // Quick Info
+                        Row(
+                          children: [
+                            _QuickInfo(
+                              icon: Icons.location_on_outlined,
+                              text: job.location,
+                              color: const Color(0xFF3B82F6),
+                            ),
+                            const SizedBox(width: 16),
+                            _QuickInfo(
+                              icon: Icons.work_outline,
+                              text: job.type,
+                              color: const Color(0xFF8B5CF6),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -249,29 +182,140 @@ class JobView extends ConsumerWidget {
 
                 const SizedBox(height: 16),
 
-                // Description Section
+                // Salary Card
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: AppCard(
-                    padding: const EdgeInsets.all(20),
+                    padding: EdgeInsets.zero,
+                    child: Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            const Color(0xFF10B981),
+                            const Color(0xFF059669),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Monthly Salary',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.9),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  '\$${job.salary.toStringAsFixed(2)}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: -1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: const Icon(
+                              Icons.attach_money,
+                              color: Colors.white,
+                              size: 32,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Job Details
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: AppCard(
+                    padding: const EdgeInsets.all(24),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          "Job Description",
+                          'Job Information',
                           style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF1F2937),
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 20),
+                        _DetailRow(
+                          icon: Icons.calendar_today_outlined,
+                          label: 'Duration',
+                          value: '${job.startDate} - ${job.endDate}',
+                          color: const Color(0xFFEC4899),
+                        ),
+                        const SizedBox(height: 16),
+                        if (job.workArrangement != null)
+                          _DetailRow(
+                            icon: Icons.work_outline,
+                            label: 'Work Arrangement',
+                            value: job.workArrangement!,
+                            color: const Color(0xFF8B5CF6),
+                          ),
+                        if (job.workArrangement != null)
+                          const SizedBox(height: 16),
+                        _DetailRow(
+                          icon: Icons.people_outline,
+                          label: 'Positions Available',
+                          value: '${job.numofpositions} openings',
+                          color: const Color(0xFF3B82F6),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Description
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: AppCard(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'About this job',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF1F2937),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
                         Text(
                           job.description,
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 16,
                             height: 1.6,
-                            color: Colors.grey[700],
+                            color: Colors.grey.shade700,
+                            letterSpacing: 0.1,
                           ),
                         ),
                       ],
@@ -279,117 +323,19 @@ class JobView extends ConsumerWidget {
                   ),
                 ),
 
-                const SizedBox(height: 100),
+                const SizedBox(height: 120),
               ],
             ),
           ),
+
           // Apply Button
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(16, 40, 16, 16),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.grey.shade50.withOpacity(0.0),
-                    Colors.grey.shade50.withOpacity(0.8),
-                    Colors.grey.shade50,
-                  ],
-                ),
-              ),
-              child: SafeArea(
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: Consumer(
-                    builder: (context, ref, _) {
-                      final hasApplied = ref.watch(
-                        jobAppliedProvider(job.id.toString()),
-                      );
-                      final applyState = ref.watch(applyControllerProvider);
-
-                      final isLoading = applyState.isLoading;
-
-                      final isEnabled = isOpen && !isLoading && !hasApplied;
-
-                      return ElevatedButton(
-                        onPressed: isEnabled
-                            ? () async {
-                                await showJobApplyDialog(context, ref, job.id);
-                              }
-                            : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue.shade600,
-                          disabledBackgroundColor: Colors.grey.shade400,
-                          elevation: 8,
-                          shadowColor: Colors.blue.shade600.withOpacity(0.4),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (isLoading) ...[
-                              const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              const Text(
-                                "Checking...",
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ] else if (hasApplied) ...[
-                              const Icon(
-                                Icons.check_circle,
-                                size: 20,
-                                color: Colors.white,
-                              ),
-                              const SizedBox(width: 8),
-                              const Text(
-                                "Applied",
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ] else ...[
-                              const Text(
-                                "Apply Now",
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              const Icon(
-                                Icons.arrow_forward,
-                                size: 20,
-                                color: Colors.white,
-                              ),
-                            ],
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
+          Positioned(
+            left: 16,
+            right: 16,
+            bottom: 16,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: _ApplyButton(job: job, isOpen: isOpen),
             ),
           ),
         ],
@@ -398,15 +344,51 @@ class JobView extends ConsumerWidget {
   }
 }
 
+class _QuickInfo extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  final Color color;
+
+  const _QuickInfo({
+    required this.icon,
+    required this.text,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 18, color: color),
+        const SizedBox(width: 6),
+        Flexible(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade700,
+              fontWeight: FontWeight.w600,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _DetailRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
+  final Color color;
 
   const _DetailRow({
     required this.icon,
     required this.label,
     required this.value,
+    required this.color,
   });
 
   @override
@@ -414,14 +396,14 @@ class _DetailRow extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.blue.shade50,
+            color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, size: 20, color: Colors.blue.shade600),
+          child: Icon(icon, size: 20, color: color),
         ),
-        const SizedBox(width: 14),
+        const SizedBox(width: 16),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -434,12 +416,12 @@ class _DetailRow extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: 4),
               Text(
                 value,
                 style: const TextStyle(
-                  fontSize: 15,
-                  color: Colors.black87,
+                  fontSize: 16,
+                  color: Color(0xFF1F2937),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -447,6 +429,75 @@ class _DetailRow extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ApplyButton extends ConsumerWidget {
+  final JobModel job;
+  final bool isOpen;
+
+  const _ApplyButton({required this.job, required this.isOpen});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final hasApplied = ref.watch(jobAppliedProvider(job.id.toString()));
+    final applyState = ref.watch(applyControllerProvider);
+    final isLoading = applyState.isLoading;
+    final isEnabled = isOpen && !isLoading && !hasApplied;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      height: 56,
+      child: ElevatedButton(
+        onPressed: isEnabled
+            ? () async {
+                await showJobApplyDialog(context, ref, job.id);
+              }
+            : null,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isEnabled
+              ? const Color(0xFF3B82F6)
+              : Colors.grey.shade300,
+          foregroundColor: Colors.white,
+          disabledBackgroundColor: Colors.grey.shade300,
+          elevation: 0,
+          shadowColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: isLoading
+              ? const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      hasApplied ? Icons.check_circle : Icons.send,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      hasApplied ? 'Already Applied' : 'Apply for this job',
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ],
+                ),
+        ),
+      ),
     );
   }
 }

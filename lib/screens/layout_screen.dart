@@ -62,7 +62,7 @@ class _LayoutScreenState extends State<LayoutScreen> {
         scrolledUnderElevation: 0.0,
         title: Text(
           titles[currentIndex],
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.black),
         ),
         centerTitle: false,
       ),
