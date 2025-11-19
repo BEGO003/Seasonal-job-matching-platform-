@@ -13,14 +13,34 @@ class JobCardSection extends ConsumerWidget {
     return jobs.when(
       data: (data) {
         if (data.isEmpty) {
-          return _EmptyState();
+          // Wrap empty state in RefreshIndicator too
+          return RefreshIndicator(
+            onRefresh: () async {
+              ref.invalidate(jobsNotifierProvider);
+              await ref.read(jobsNotifierProvider.future);
+            },
+            color: Theme.of(context).colorScheme.primary,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height - 200,
+                child: _EmptyState(),
+              ),
+            ),
+          );
         }
         
         return RefreshIndicator(
           onRefresh: () async {
+            // Invalidate and wait for the future to complete
             ref.invalidate(jobsNotifierProvider);
+            await ref.read(jobsNotifierProvider.future);
           },
-          color: const Color(0xFF3B82F6),
+          // Use theme color for consistency
+          color: Theme.of(context).colorScheme.primary,
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          strokeWidth: 3.0,
+          displacement: 40.0, // Pull distance before refresh
           child: ListView.builder(
             physics: const BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
@@ -48,9 +68,23 @@ class JobCardSection extends ConsumerWidget {
         );
       },
       error: (error, stackTrace) {
-        return _ErrorState(
-          error: error.toString(),
-          onRetry: () => ref.invalidate(jobsNotifierProvider),
+        // Wrap error state in RefreshIndicator for easy retry
+        return RefreshIndicator(
+          onRefresh: () async {
+            ref.invalidate(jobsNotifierProvider);
+            await ref.read(jobsNotifierProvider.future);
+          },
+          color: Theme.of(context).colorScheme.primary,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height - 200,
+              child: _ErrorState(
+                error: error.toString(),
+                onRetry: () => ref.invalidate(jobsNotifierProvider),
+              ),
+            ),
+          ),
         );
       },
       loading: () => _LoadingState(),
@@ -63,6 +97,7 @@ class _LoadingState extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       padding: const EdgeInsets.only(top: 8, bottom: 24),
+      physics: const NeverScrollableScrollPhysics(), // Disable scroll during loading
       itemCount: 5,
       itemBuilder: (context, index) {
         return Padding(
@@ -104,17 +139,21 @@ class _ShimmerCardState extends State<_ShimmerCard>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: Colors.grey.shade200),
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: theme.colorScheme.outlineVariant.withOpacity(0.3),
+            ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: theme.colorScheme.shadow.withOpacity(0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -165,11 +204,14 @@ class _ShimmerCardState extends State<_ShimmerCard>
                 height: 80,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Colors.grey.shade200, Colors.grey.shade300],
+                    colors: [
+                      theme.colorScheme.surfaceContainerHighest,
+                      theme.colorScheme.surfaceContainerHigh,
+                    ],
                   ),
                   borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(18),
-                    bottomRight: Radius.circular(18),
+                    bottomLeft: Radius.circular(16),
+                    bottomRight: Radius.circular(16),
                   ),
                 ),
               ),
@@ -196,6 +238,8 @@ class _ShimmerBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Container(
       width: width,
       height: height,
@@ -209,9 +253,9 @@ class _ShimmerBox extends StatelessWidget {
             (animation.value + 1).clamp(0.0, 1.0),
           ],
           colors: [
-            Colors.grey.shade200,
-            Colors.grey.shade100,
-            Colors.grey.shade200,
+            theme.colorScheme.surfaceContainerHighest,
+            theme.colorScheme.surfaceContainerHigh,
+            theme.colorScheme.surfaceContainerHighest,
           ],
         ),
         borderRadius: isCircle ? null : BorderRadius.circular(8),
@@ -224,42 +268,79 @@ class _ShimmerBox extends StatelessWidget {
 class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: const Color(0xFF3B82F6).withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.work_outline,
-                size: 64,
-                color: const Color(0xFF3B82F6),
+            TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0.0, end: 1.0),
+              duration: const Duration(milliseconds: 600),
+              curve: Curves.easeOutBack,
+              builder: (context, value, child) {
+                return Transform.scale(
+                  scale: value,
+                  child: child,
+                );
+              },
+              child: Container(
+                width: 140,
+                height: 140,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      theme.colorScheme.primaryContainer,
+                      theme.colorScheme.secondaryContainer,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.work_outline_rounded,
+                  size: 72,
+                  color: theme.colorScheme.primary,
+                ),
               ),
             ),
-            const SizedBox(height: 24),
-            const Text(
+            const SizedBox(height: 32),
+            Text(
               'No Jobs Available',
-              style: TextStyle(
-                fontSize: 24,
+              style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF1F2937),
               ),
             ),
             const SizedBox(height: 12),
             Text(
-              'There are currently no job postings.\nCheck back later for new opportunities!',
+              'There are currently no job postings.\nPull down to refresh and check for new opportunities!',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey.shade600,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
                 height: 1.5,
               ),
+            ),
+            const SizedBox(height: 32),
+            // Visual hint for pull-to-refresh
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.arrow_downward_rounded,
+                  size: 20,
+                  color: theme.colorScheme.primary.withOpacity(0.5),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Pull down to refresh',
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: theme.colorScheme.primary.withOpacity(0.7),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -279,60 +360,85 @@ class _ErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: const Color(0xFFEF4444).withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.error_outline,
-                size: 64,
-                color: const Color(0xFFEF4444),
+            TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0.0, end: 1.0),
+              duration: const Duration(milliseconds: 600),
+              curve: Curves.easeOutBack,
+              builder: (context, value, child) {
+                return Transform.scale(
+                  scale: value,
+                  child: child,
+                );
+              },
+              child: Container(
+                width: 140,
+                height: 140,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.errorContainer,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.error_outline_rounded,
+                  size: 72,
+                  color: theme.colorScheme.error,
+                ),
               ),
             ),
-            const SizedBox(height: 24),
-            const Text(
+            const SizedBox(height: 32),
+            Text(
               'Oops! Something went wrong',
-              style: TextStyle(
-                fontSize: 24,
+              style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF1F2937),
               ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             Text(
-              'We couldn\'t load the jobs.\nPlease try again.',
+              'We couldn\'t load the jobs.\nPull down to refresh or tap the button below.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey.shade600,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
                 height: 1.5,
               ),
             ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
+            const SizedBox(height: 32),
+            FilledButton.icon(
               onPressed: onRetry,
-              icon: const Icon(Icons.refresh),
+              icon: const Icon(Icons.refresh_rounded),
               label: const Text('Try Again'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF3B82F6),
-                foregroundColor: Colors.white,
+              style: FilledButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
+                  horizontal: 32,
                   vertical: 16,
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 0,
               ),
+            ),
+            const SizedBox(height: 16),
+            // Visual hint for pull-to-refresh alternative
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.arrow_downward_rounded,
+                  size: 20,
+                  color: theme.colorScheme.primary.withOpacity(0.5),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Or pull down to refresh',
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: theme.colorScheme.primary.withOpacity(0.7),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

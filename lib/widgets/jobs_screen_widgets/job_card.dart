@@ -233,6 +233,41 @@ class _JobCardState extends ConsumerState<JobCard>
                     ),
                   ),
 
+                  const SizedBox(height: 12),
+
+                  if (widget.job.categories.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: widget.job.categories.map((category) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF8B5CF6).withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: const Color(0xFF8B5CF6).withOpacity(0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: Text(
+                              category,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF8B5CF6),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+
                   const SizedBox(height: 16),
 
                   // Salary Section

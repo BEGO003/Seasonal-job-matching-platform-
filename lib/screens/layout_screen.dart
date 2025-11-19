@@ -12,12 +12,14 @@ class LayoutScreen extends StatefulWidget {
   State<LayoutScreen> createState() => _LayoutScreenState();
 }
 
-class _LayoutScreenState extends State<LayoutScreen> {
+class _LayoutScreenState extends State<LayoutScreen> with TickerProviderStateMixin {
   int currentIndex = 0;
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
 
   final List<String> titles = const <String>[
-    'Home',
-    'Jobs',
+    'Favorites',
+    'Explore Jobs',
     'My Applications',
     'Profile',
   ];
@@ -29,75 +31,157 @@ class _LayoutScreenState extends State<LayoutScreen> {
     ProfileScreen(),
   ];
 
-  final List<NavigationDestination> destinations =
-      const <NavigationDestination>[
-        NavigationDestination(
-          icon: Icon(Icons.home_outlined),
-          selectedIcon: Icon(Icons.home),
-          label: "Home",
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.work_outline),
-          selectedIcon: Icon(Icons.work),
-          label: "Jobs",
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.article_outlined),
-          selectedIcon: Icon(Icons.article),
-          label: "Applied",
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.settings_outlined),
-          selectedIcon: Icon(Icons.settings),
-          label: "Profile",
-        ),
-      ];
+  final List<NavigationDestination> destinations = const <NavigationDestination>[
+    NavigationDestination(
+      icon: Icon(Icons.favorite_border_rounded),
+      selectedIcon: Icon(Icons.favorite_rounded),
+      label: "Favorites",
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.work_outline_rounded),
+      selectedIcon: Icon(Icons.work_rounded),
+      label: "Jobs",
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.article_outlined),
+      selectedIcon: Icon(Icons.article_rounded),
+      label: "Applied",
+    ),
+    NavigationDestination(
+      icon: Icon(Icons.person_outline_rounded),
+      selectedIcon: Icon(Icons.person_rounded),
+      label: "Profile",
+    ),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _onDestinationSelected(int index) {
+    if (index != currentIndex) {
+      _animationController.reset();
+      setState(() {
+        currentIndex = index;
+      });
+      _animationController.forward();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        // backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0.0,
-        title: Text(
-          titles[currentIndex],
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.black),
+        backgroundColor: theme.colorScheme.surface,
+        title: Row(
+          children: [
+            // Animated title with icon transition
+            TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0.0, end: 1.0),
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+              builder: (context, value, child) {
+                return Opacity(
+                  opacity: value,
+                  child: Transform.translate(
+                    offset: Offset(-10 * (1 - value), 0),
+                    child: child,
+                  ),
+                );
+              },
+              child: Text(
+                titles[currentIndex],
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: theme.colorScheme.onSurface,
+                  letterSpacing: -0.5,
+                ),
+              ),
+            ),
+          ],
         ),
         centerTitle: false,
+        actions: [
+          // Notification badge with animation
+          Stack(
+            children: [
+              IconButton(
+                icon: Icon(
+                  Icons.notifications_outlined,
+                  color: theme.colorScheme.onSurface,
+                ),
+                onPressed: () {
+                  // Handle notifications
+                },
+                tooltip: 'Notifications',
+              ),
+              Positioned(
+                right: 10,
+                top: 10,
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.error,
+                    shape: BoxShape.circle,
+                  ),
+                  constraints: const BoxConstraints(
+                    minWidth: 8,
+                    minHeight: 8,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
-      // body: currentIndex == 3
-      //     ? Column(children: [screens[currentIndex], _buildFloatingButton()])
-      //     : screens[currentIndex],
-      body: screens[currentIndex],
-
-      bottomNavigationBar: NavigationBar(
-        backgroundColor: Colors.transparent,
-        indicatorColor: Theme.of(context).colorScheme.secondaryContainer,
-        elevation: 0,
-        height: 70,
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-        destinations: destinations,
-        selectedIndex: currentIndex,
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentIndex = index;
-          });
-        },
+      body: FadeTransition(
+        opacity: _fadeAnimation,
+        child: screens[currentIndex],
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: theme.colorScheme.shadow.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: NavigationBar(
+          backgroundColor: theme.colorScheme.surface,
+          indicatorColor: theme.colorScheme.primaryContainer,
+          elevation: 0,
+          height: 70,
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          destinations: destinations,
+          selectedIndex: currentIndex,
+          onDestinationSelected: _onDestinationSelected,
+          animationDuration: const Duration(milliseconds: 400),
+        ),
       ),
     );
   }
-
-  // Widget _buildFloatingButton() {
-  //   return FloatingActionButton(
-  //     onPressed: () {
-  //       // Add your button's onPressed logic here
-  //     },
-  //     backgroundColor: Theme.of(context).colorScheme.secondary,
-  //     elevation: 0,
-  //     splashColor: Colors.transparent,
-  //     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-  //     child: Icon(Icons.add),
-  //   );
-  // }
 }

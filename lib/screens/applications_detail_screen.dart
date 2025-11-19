@@ -156,7 +156,7 @@ class ApplicationDetailScreen extends StatelessWidget {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Applied on ${app.appliedDate ?? "N/A"}',
+                                'Applied on ${app.createdAt ?? "N/A"}',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey.shade700,
