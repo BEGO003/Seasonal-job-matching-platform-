@@ -20,7 +20,14 @@ class PersonalInformationAsyncNotifier
 
   @override
   Future<PersonalInformationModel> build() async {
-    return await _service.fetchUserData();
+    // Fetch user data
+    final userData = await _service.fetchUserData();
+    
+    // Fetch applied job IDs from the dedicated API endpoint
+    final appliedJobIds = await _service.fetchAppliedJobIds();
+    
+    // Update user data with applied job IDs
+    return userData.copyWith(ownedapplications: appliedJobIds);
   }
 
   Future<void> updateName(String value) async {
@@ -87,48 +94,21 @@ class PersonalInformationAsyncNotifier
     return current.ownedapplications.contains(jobId);
   }
 
-  /// Add a job application (job ID) to the user's applied jobs list
-  /// This is called after successfully applying to a job
-  void addApplication(int jobId) {
+  /// Refresh applied job IDs by fetching from the API
+  /// Call this after applying to a new job or after application status changes
+  Future<void> refreshAppliedJobs() async {
     final current = state.value;
     if (current == null) return;
-
-    // Don't add if already exists
-    if (current.ownedapplications.contains(jobId)) return;
-
-    final updatedApplications = List<int>.from(current.ownedapplications)
-      ..add(jobId);
-
-    // Update state immediately (optimistic)
-    state = AsyncValue.data(
-      current.copyWith(ownedapplications: updatedApplications),
-    );
-
-    // Persist to service asynchronously (fire and forget)
-    _service.updateOwnedApplications(updatedApplications).catchError((e) {
-      // Log error but don't rollback since the API call succeeded
-      // The next fetch will sync the correct state
-      debugPrint('Failed to persist application update: $e');
-    });
-  }
-
-  /// Remove a job application (job ID) from the user's applied jobs list
-  /// This can be used if an application is cancelled or withdrawn
-  void removeApplication(int jobId) {
-    final current = state.value;
-    if (current == null) return;
-
-    final updatedApplications = List<int>.from(current.ownedapplications)
-      ..remove(jobId);
-
-    state = AsyncValue.data(
-      current.copyWith(ownedapplications: updatedApplications),
-    );
-
-    // Persist to service
-    _service.updateOwnedApplications(updatedApplications).catchError((e) {
-      debugPrint('Failed to persist application removal: $e');
-    });
+    
+    try {
+      final appliedJobIds = await _service.fetchAppliedJobIds();
+      state = AsyncValue.data(
+        current.copyWith(ownedapplications: appliedJobIds),
+      );
+    } catch (e) {
+      debugPrint('Failed to refresh applied jobs: $e');
+      // Don't update state on error, keep current data
+    }
   }
 
   /// Update user data (used after login/signup)

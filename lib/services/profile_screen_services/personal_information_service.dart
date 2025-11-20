@@ -15,7 +15,7 @@ final personalInformationServiceProvider = Provider<PersonalInformationService>(
 class PersonalInformationService {
   final Dio _dio;
   final AuthStorage _authStorage = AuthStorage();
-  
+
   PersonalInformationService(this._dio);
 
   /// Get the current user ID from storage, or throw an error if not found
@@ -91,11 +91,17 @@ class PersonalInformationService {
     }
   }
 
-  Future<void> updateOwnedApplications(List<int> applicationIds) async {
+  /// Fetch the list of job IDs that the user has applied for
+  Future<List<int>> fetchAppliedJobIds() async {
     final userId = await _getUserId();
-    final editPath = editUserById(userId);
+    final appliedJobsPath = getUserAppliedJobs(userId);
     try {
-      await _dio.patch(editPath, data: {'ownedapplications': applicationIds});
+      final response = await _dio.get(appliedJobsPath);
+      // The API returns a response with 'jobIds' field
+      final jobIds = (response.data['jobIds'] as List)
+          .map((id) => id is int ? id : int.parse(id.toString()))
+          .toList();
+      return jobIds;
     } on DioException catch (e) {
       throw _handleError(e);
     }

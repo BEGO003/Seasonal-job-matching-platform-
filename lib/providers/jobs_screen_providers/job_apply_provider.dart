@@ -95,8 +95,8 @@ class ApplyController extends AsyncNotifier<void> {
         description: description.trim(),
       );
       
-      // Update personal information with the job ID
-      ref.read(personalInformationProvider.notifier).addApplication(jobIdInt);
+      // Refresh personal information with updated applied job IDs
+      await ref.read(personalInformationProvider.notifier).refreshAppliedJobs();
       
       // Refresh applications list to show the new application
       ref.invalidate(applicationsProvider);

@@ -7,8 +7,10 @@ const String AUTH = "auth";
 // Example user routes
 String userById(String id) => "$USERS/$id";
 String editUserById(String id) => "$USERS/$id";
-String applyForJob(String userId, String jobId) => "$APPLICATIONS/user/$userId/job/$jobId";
+String applyForJob(String userId, String jobId) =>
+    "$APPLICATIONS/user/$userId/job/$jobId";
 String getUserApplications(String userId) => "$APPLICATIONS/user/$userId";
+String getUserAppliedJobs(String userId) => "$APPLICATIONS/userjobs/$userId";
 // Auth routes
 const String SIGNUP = USERS;
 const String LOGIN = "$USERS/login";
