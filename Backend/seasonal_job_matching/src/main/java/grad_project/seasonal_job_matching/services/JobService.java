@@ -66,73 +66,73 @@ public class JobService {
 
     public JobResponseDTO editJob(JobEditDTO dto, long id){ 
         
-        Job existingjJob = jobRepository.findById(id).orElseThrow(()-> new RuntimeException("Job not found with ID: " + id));
+        Job existingJob  = jobRepository.findById(id).orElseThrow(()-> new RuntimeException("Job not found with ID: " + id));
         //has new fields that are changed
         Job updatedJob = jobMapper.maptoEditJob(dto);
 
         //if field thats updated is title and new title isn't empty
         if(dto.getTitle() != null){
-            existingjJob.setTitle(updatedJob.getTitle());
+            existingJob .setTitle(updatedJob.getTitle());
         }
 
         //update description
         if (updatedJob.getDescription() != null) {
-            existingjJob.setDescription(updatedJob.getDescription());
+            existingJob .setDescription(updatedJob.getDescription());
         }
 
         //update work arrangement
         if (updatedJob.getWorkArrangement() != null) {
-            existingjJob.setWorkArrangement(updatedJob.getWorkArrangement());
+            existingJob .setWorkArrangement(updatedJob.getWorkArrangement());
         }
-
-        //add salary, checks if salary is updated
-        if (updatedJob.getSalary() > 0) {
-            existingjJob.setSalary(updatedJob.getSalary());
-        }
-
 
         //update start date
         if (updatedJob.getStartDate() != null) {
-            existingjJob.setStartDate(updatedJob.getStartDate());
+            existingJob .setStartDate(updatedJob.getStartDate());
         }
 
-        //update end date
-        if (updatedJob.getEndDate() != null) {
-            existingjJob.setEndDate(updatedJob.getEndDate());
-        }
 
         //update status
         if (updatedJob.getStatus() != null) {
-            existingjJob.setStatus(updatedJob.getStatus());
+            existingJob .setStatus(updatedJob.getStatus());
         }
 
-        //update salary
-        if (updatedJob.getSalary() > 0) {
-            existingjJob.setSalary(updatedJob.getSalary());
+        //update duration
+        if (updatedJob.getDuration() != null) {
+            existingJob .setDuration(updatedJob.getDuration());
+        }
+
+        //update amount
+        if (updatedJob.getAmount() > 0) {
+            existingJob.setAmount(updatedJob.getAmount());
+        }
+
+        //update salary type
+        if (updatedJob.getSalary() != null) {
+            existingJob.setSalary(updatedJob.getSalary());
         }
 
         //update location
         if (updatedJob.getLocation() != null ) {
-            existingjJob.setLocation(updatedJob.getLocation());
+            existingJob .setLocation(updatedJob.getLocation());
         }
 
         //update number of positions available
         if (updatedJob.getNumOfPositions() > 0 ) {
-            existingjJob.setNumOfPositions(updatedJob.getNumOfPositions());
+            existingJob .setNumOfPositions(updatedJob.getNumOfPositions());
         }
 
         //update job type
         if (updatedJob.getType() != null) {
-            existingjJob.setType(updatedJob.getType());
+            existingJob .setType(updatedJob.getType());
         }
 
         if (dto.getWorkArrangement() != null) {
-            existingjJob.setWorkArrangement(dto.getWorkArrangement());
+            existingJob .setWorkArrangement(dto.getWorkArrangement());
         }
         // Handle requirements - add/remove with deduplication
     if (dto.getRequirementsToAdd() != null || dto.getRequirementsToRemove() != null) {
-        List<String> currentRequirements = existingjJob.getRequirements() != null 
-            ? new ArrayList<>(existingjJob.getRequirements()) 
+        List<String> currentRequirements = existingJob .getRequirements() != null 
+            ? new ArrayList<>(existingJob .getRequirements()) 
             : new ArrayList<>();
         
         // Remove items
@@ -151,13 +151,13 @@ public class JobService {
             }
         }
         
-        existingjJob.setRequirements(currentRequirements);
+        existingJob .setRequirements(currentRequirements);
     }
 
     // Handle categories - add/remove with deduplication
     if (dto.getCategoriesToAdd() != null || dto.getCategoriesToRemove() != null) {
-        List<String> currentCategories = existingjJob.getCategories() != null 
-            ? new ArrayList<>(existingjJob.getCategories()) 
+        List<String> currentCategories = existingJob .getCategories() != null 
+            ? new ArrayList<>(existingJob .getCategories()) 
             : new ArrayList<>();
         
         // Remove items
@@ -176,13 +176,13 @@ public class JobService {
             }
         }
         
-        existingjJob.setCategories(currentCategories);
+        existingJob .setCategories(currentCategories);
     }
 
     // Handle benefits - add/remove with deduplication
     if (dto.getBenefitsToAdd() != null || dto.getBenefitsToRemove() != null) {
-        List<String> currentBenefits = existingjJob.getBenefits() != null 
-            ? new ArrayList<>(existingjJob.getBenefits()) 
+        List<String> currentBenefits = existingJob .getBenefits() != null 
+            ? new ArrayList<>(existingJob .getBenefits()) 
             : new ArrayList<>();
         
         // Remove items
@@ -201,11 +201,11 @@ public class JobService {
             }
         }
         
-        existingjJob.setBenefits(currentBenefits);
+        existingJob .setBenefits(currentBenefits);
     }
 
         //cant edit userID, id of job
-        Job savedjob = jobRepository.save(existingjJob);
+        Job savedjob = jobRepository.save(existingJob );
         return jobMapper.maptoreturnJob(savedjob);
 
     }

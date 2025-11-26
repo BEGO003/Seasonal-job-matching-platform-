@@ -1,13 +1,13 @@
 package grad_project.seasonal_job_matching.dto.responses;
 
 import java.sql.Date;
-import java.sql.Time;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import grad_project.seasonal_job_matching.model.enums.JobStatus;
 import grad_project.seasonal_job_matching.model.enums.JobType;
+import grad_project.seasonal_job_matching.model.enums.Salary;
 import grad_project.seasonal_job_matching.model.enums.WorkArrangement;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,13 +25,13 @@ public class JobResponseDTO {
     private JobType type;
     private String location;
     @JsonFormat(pattern = "dd-MM-yyyy")
-    private Date startDate; 
-    @JsonFormat(pattern = "dd-MM-yyyy")
-    private Date endDate;   
+    private Date startDate;   
     @PositiveOrZero
-    private float salary;
+    private float amount;
+    private Salary salary;
+    private Integer duration;
     private JobStatus status;
-    private int numofpositions;
+    private int numOfPositions;
     private WorkArrangement workArrangement;
     private Date createdAt;
 

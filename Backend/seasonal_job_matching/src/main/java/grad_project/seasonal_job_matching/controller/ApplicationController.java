@@ -3,6 +3,7 @@ package grad_project.seasonal_job_matching.controller;
 import grad_project.seasonal_job_matching.dto.requests.ApplicationCreateDTO;
 import grad_project.seasonal_job_matching.dto.requests.ApplicationStatusUpdateDTO;
 import grad_project.seasonal_job_matching.dto.responses.ApplicationResponseDTO;
+import grad_project.seasonal_job_matching.dto.responses.ApplicationWebResponseDTO;
 import grad_project.seasonal_job_matching.dto.responses.JobIdsFromApplicationsResponseDTO;
 import grad_project.seasonal_job_matching.services.ApplicationService;
 import jakarta.validation.Valid;
@@ -101,7 +102,7 @@ public class ApplicationController {
     @GetMapping("/job/{jobId}")
     public ResponseEntity<?> getApplicationsForJob(@PathVariable long jobId) {
         try {
-            List<ApplicationResponseDTO> applications = applicationService.getApplicationsForJob(jobId);
+            List<ApplicationWebResponseDTO> applications = applicationService.getApplicationsForJob(jobId);
             if (applications.isEmpty()) {
                  // Return 200 OK with an empty list
                 return ResponseEntity.ok(applications);

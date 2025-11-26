@@ -3,6 +3,7 @@ package grad_project.seasonal_job_matching.services;
 import grad_project.seasonal_job_matching.dto.requests.ApplicationCreateDTO;
 import grad_project.seasonal_job_matching.dto.requests.ApplicationStatusUpdateDTO;
 import grad_project.seasonal_job_matching.dto.responses.ApplicationResponseDTO;
+import grad_project.seasonal_job_matching.dto.responses.ApplicationWebResponseDTO;
 import grad_project.seasonal_job_matching.dto.responses.JobIdsFromApplicationsResponseDTO;
 import grad_project.seasonal_job_matching.mapper.ApplicationMapper;
 import grad_project.seasonal_job_matching.model.Application;
@@ -115,7 +116,7 @@ public class ApplicationService {
      * Gets all applications that have been submitted for a specific job.
      */
     @Transactional(readOnly = true)
-    public List<ApplicationResponseDTO> getApplicationsForJob(long jobId) {
+    public List<ApplicationWebResponseDTO> getApplicationsForJob(long jobId) {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job not found with ID: " + jobId));
 
@@ -124,7 +125,7 @@ public class ApplicationService {
 
         // Map the list of entities to a list of DTOs
         return applications.stream()
-                .map(applicationMapper::maptoreturnApplication)
+                .map(application -> applicationMapper.mapToReturnWebApplication(application))
                 .collect(Collectors.toList());
     }
 

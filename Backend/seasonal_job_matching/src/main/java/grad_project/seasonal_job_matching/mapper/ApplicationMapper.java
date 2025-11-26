@@ -5,6 +5,7 @@ import org.mapstruct.Mapping;
 
 import grad_project.seasonal_job_matching.dto.requests.ApplicationCreateDTO;
 import grad_project.seasonal_job_matching.dto.responses.ApplicationResponseDTO;
+import grad_project.seasonal_job_matching.dto.responses.ApplicationWebResponseDTO;
 import grad_project.seasonal_job_matching.model.Application;
 
 //uses tells the mapper to convert job into jobresponsedto
@@ -23,4 +24,8 @@ public interface ApplicationMapper {
     @Mapping(source = "user.id", target = "userId")//gets user id, basically like application.getUser().getId()
     @Mapping(source = "job", target = "job") //so this now uses jobmapper
     ApplicationResponseDTO maptoreturnApplication(Application application);
+
+    @Mapping(source="user", target = "user")
+    @Mapping(source = "job.id", target = "jobId")
+    ApplicationWebResponseDTO mapToReturnWebApplication(Application application);
 }

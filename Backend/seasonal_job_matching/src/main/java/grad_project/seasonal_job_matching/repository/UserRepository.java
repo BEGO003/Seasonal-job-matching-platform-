@@ -3,6 +3,8 @@ package grad_project.seasonal_job_matching.repository;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import grad_project.seasonal_job_matching.model.User;
 
@@ -12,4 +14,7 @@ public interface UserRepository extends JpaRepository<User, Long>{
     public boolean existsByEmail(String email);
 
     Optional<User> findByEmail(String email);
+
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.resume WHERE u.id = :id")
+    Optional<User> findByIdWithResume(@Param("id") Long id);
 }

@@ -1,6 +1,6 @@
 package grad_project.seasonal_job_matching.dto.requests;
 
-import java.util.List;
+import java.util.List; //idk but a previous error said I needed to add this and error was resolved so idk
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;

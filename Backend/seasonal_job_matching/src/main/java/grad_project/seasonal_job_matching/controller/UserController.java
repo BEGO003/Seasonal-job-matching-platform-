@@ -20,6 +20,7 @@ import grad_project.seasonal_job_matching.dto.requests.UserCreateDTO;
 import grad_project.seasonal_job_matching.dto.requests.UserEditDTO;
 import grad_project.seasonal_job_matching.dto.requests.UserLoginDTO;
 import grad_project.seasonal_job_matching.dto.responses.JobResponseDTO;
+import grad_project.seasonal_job_matching.dto.responses.UserFieldsOfInterestResponseDTO;
 import grad_project.seasonal_job_matching.dto.responses.UserResponseDTO;
 import grad_project.seasonal_job_matching.services.ApplicationService;
 import grad_project.seasonal_job_matching.services.UserService;
@@ -82,6 +83,21 @@ public class UserController {
         try {
             boolean hasApplied = application_service.hasUserAppliedToJob(userId, jobId);
             return ResponseEntity.ok(Map.of("hasApplied", hasApplied));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+
+    @GetMapping("/FOI/{userId}")
+    public ResponseEntity<?> getFieldsOfInterest(@PathVariable long userId) {
+        try {
+            UserFieldsOfInterestResponseDTO foi = users_service.getFieldsOfInterest(userId);
+            if (foi.getFieldsOfInterest() == null || foi.getFieldsOfInterest().isEmpty()) {
+                // Return 200 OK with an empty list rather than an error
+                return ResponseEntity.ok(foi);
+            }
+            return ResponseEntity.ok(foi);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
