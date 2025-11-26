@@ -16,6 +16,8 @@ public interface UserMapper {
     @Mapping(target = "password", ignore = true)//ignore password, will hash in service layer
     @Mapping(target = "ownedJobs", ignore = true)
     @Mapping(target = "ownedApplications", ignore = true)
+    @Mapping(target = "fieldsOfInterest", ignore = true)  
+    @Mapping(target = "resume", ignore = true)
     //@Mapping(target = "favoritedjobs", ignore = true)
     User maptoAddUser(UserCreateDTO dto);
 
@@ -23,6 +25,7 @@ public interface UserMapper {
     @Mapping(target = "ownedJobs", ignore = true)
     @Mapping(target = "ownedApplications", ignore = true)
     @Mapping(target = "fieldsOfInterest", ignore = true)
+    @Mapping(target = "resume", ignore = true)
     //@Mapping(target = "favoritedjobs", ignore = true)
     User maptoEditUser(UserEditDTO dto);
     

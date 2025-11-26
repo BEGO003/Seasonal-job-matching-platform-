@@ -1,11 +1,11 @@
 package grad_project.seasonal_job_matching.model;
 
 import java.sql.Date;
-import java.sql.Time;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import grad_project.seasonal_job_matching.model.enums.Salary;
 import grad_project.seasonal_job_matching.model.enums.JobStatus;
 import grad_project.seasonal_job_matching.model.enums.JobType;
 import grad_project.seasonal_job_matching.model.enums.WorkArrangement;
@@ -55,8 +55,8 @@ public class Job {
     @Column
     private Date startDate;
 
-    @Column
-    private Date endDate;
+    // @Column
+    // private Date endDate; //check if you can remove this without breaking everything
 
     @ManyToOne
     @JoinColumn(name = "jobposterID", nullable = false, referencedColumnName = "id")// foreign key from user table
@@ -64,8 +64,16 @@ public class Job {
     @JsonIgnoreProperties({"ownedJobs", "password","ownedApplications"}) //to prevent infinite loop of getting user and all his info and then getting all of users jobs which is this one and so on
     private User jobPoster;
 
+    //Both Need to add alter to table first before running this
+    // @Column
+    // private Salary salary;
+
     @Column
-    private float salary;
+    private float amount;
+
+    @Column(columnDefinition = "salary") //because the enum in db is called salary
+    @Enumerated(EnumType.STRING)
+    private Salary salary;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -73,6 +81,9 @@ public class Job {
 
     @Column
     private Integer numOfPositions; 
+
+    @Column //Need to add alter to table first before running this
+    private Integer duration;
 
     @Column
     private Date createdAt;
@@ -95,16 +106,18 @@ public class Job {
     @Column
     private List<String> benefits;
 
-    public Job(int id, String title, String description, JobType type, String location, Date startDate, Date endDate, User jobposter, float salary, int numofpositions, JobStatus status, WorkArrangement workarrangement){
+    public Job(int id, String title, String description, JobType type, String location, Date startDate, User jobposter, float amount, Salary salary, Integer duration, int numofpositions, JobStatus status, WorkArrangement workarrangement){
         this.id = id;
         this.title = title;
         this.description = description;
         this.type = type;
         this.location = location;
         this.startDate = startDate;
-        this.endDate = endDate;
+        //this.endDate = endDate;
         this.jobPoster = jobposter;
-        this.salary = salary;
+        this.salary = salary; //when changing this, change argument to Salary instead of float
+        this.amount = amount;
+        this.duration = duration;
         this.numOfPositions = numofpositions;
         this.status = status;
         this.workArrangement = workarrangement;

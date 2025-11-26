@@ -105,6 +105,63 @@ curl -X DELETE http://localhost:8080/api/users/1
 
 ---
 
+### POST /api/users/login
+- Description: Authenticate a user with email and password.
+- Request body: `UserLoginDTO` (JSON)
+- Responses:
+  - 200 OK: `{ "message": "Login successful", "user": <UserResponseDTO> }`
+  - 401 Unauthorized: `{ "error": "..." }`
+
+Example request body:
+```json
+{
+  "email": "alice@example.com",
+  "password": "secret"
+}
+```
+
+---
+
+### GET /api/users/{id}/jobs
+- Description: Get all jobs posted by a specific user (employer view).
+- Response: 200 OK, array of `JobResponseDTO` objects
+
+Example:
+```bash
+curl -s http://localhost:8080/api/users/1/jobs | jq
+```
+
+---
+
+### GET /api/users/{userId}/applied/{jobId}
+- Description: Check if a user has applied to a specific job.
+- Responses:
+  - 200 OK: `{ "hasApplied": true }` or `{ "hasApplied": false }`
+  - 400 Bad Request: `{ "error": "..." }`
+
+Example:
+```bash
+curl -s http://localhost:8080/api/users/1/applied/5 | jq
+```
+
+---
+
+### GET /api/users/FOI/{userId}
+- Description: Get fields of interest for a user.
+- Response: 200 OK, `UserFieldsOfInterestResponseDTO`
+  ```json
+  {
+    "fieldsOfInterest": ["Agriculture", "Tourism", "Retail"]
+  }
+  ```
+
+Example:
+```bash
+curl -s http://localhost:8080/api/users/FOI/1 | jq
+```
+
+---
+
 ## Jobs
 
 Base path: `/api/jobs`
@@ -122,13 +179,18 @@ JobResponseDTO (common fields):
   "type": "FULL_TIME | PART_TIME | TEMP",
   "location": "string",
   "startDate": "dd-MM-yyyy",
-  "endDate": "dd-MM-yyyy",
-  "salary": 0.0,
+  "duration": 0,
+  "salary": "HOURLY | MONTHLY | YEARLY",
+  "amount": 0.0,
   "status": "OPEN | CLOSED",
-  "numofpositions": 1,
-  "workarrangement": "ON_SITE | REMOTE | HYBRID",
+  "numOfPositions": 1,
+  "workArrangement": "ON_SITE | REMOTE | HYBRID",
+  "createdAt": "dd-MM-yyyy",
   "jobposterId": 0,
-  "jobposterName": "string"
+  "jobposterName": "string",
+  "requirements": ["string"],
+  "categories": ["string"],
+  "benefits": ["string"]
 }
 ```
 
@@ -167,12 +229,16 @@ Example request body (job create):
   "type": "TEMP",
   "location": "Farmville",
   "startDate": "01-06-2025",
-  "endDate": "30-09-2025",
-  "salary": 1500.0,
+  "duration": 120,
+  "salary": "HOURLY",
+  "amount": 15.50,
   "status": "OPEN",
-  "numofpositions": 5,
-  "workarrangment": "ON_SITE",
-  "jobposterId": 1
+  "numOfPositions": 5,
+  "workArrangement": "ON_SITE",
+  "jobposterId": 1,
+  "requirements": ["Physical fitness", "Experience with farm work"],
+  "categories": ["Agriculture", "Seasonal"],
+  "benefits": ["Free accommodation", "Meals provided"]
 }
 ```
 
@@ -180,17 +246,26 @@ Example request body (job create):
 
 ### PATCH /api/jobs/{id}
 - Description: Partially update a job. Only provided fields are updated.
+- Request body: `JobEditDTO` (JSON)
 - Responses:
   - 200 OK: `{ "message": "Job edited successfully", "job": <JobResponseDTO> }`
   - 400 Bad Request: `{ "error": "..." }`
   - 404 Not Found: if job not found
  
- Example request body (update salary and type):
- ```json
- {
-   "salary": 2000.0,
- }
- ```
+Example request body (update salary, amount, and add requirements):
+```json
+{
+  "salary": "MONTHLY",
+  "amount": 2000.0,
+  "requirementsToAdd": ["Driver's license"],
+  "requirementsToRemove": ["Previous experience"]
+}
+```
+
+Note: For array fields (requirements, categories, benefits), use the add/remove pattern:
+- `requirementsToAdd`: List of strings to add to existing requirements
+- `requirementsToRemove`: List of strings to remove from existing requirements
+- Same pattern applies to `categoriesToAdd`/`categoriesToRemove` and `benefitsToAdd`/`benefitsToRemove`
 
 
 ### DELETE /api/jobs/{id}
@@ -202,6 +277,203 @@ Example request body (job create):
 Example:
 ```bash
 curl -X DELETE http://localhost:8080/api/jobs/1
+```
+
+---
+
+## Resumes
+
+Base path: `/api/resumes`
+
+### GET /api/resumes/{id}
+- Description: Get a resume by user ID (not resume ID).
+- Path parameters:
+  - `id` (long) - user database id
+- Responses:
+  - 200 OK: `ResumeResponseDTO` or `"Resume not found!"`
+  - 500 Internal Server Error: if database error occurs
+
+ResumeResponseDTO shape:
+```json
+{
+  "education": ["string"],
+  "experience": ["string"],
+  "certificates": ["string"],
+  "skills": ["string"],
+  "languages": ["string"]
+}
+```
+
+Example:
+```bash
+curl -s http://localhost:8080/api/resumes/1 | jq
+```
+
+---
+
+### POST /api/resumes/{userId}
+- Description: Create a new resume for a user.
+- Path parameters:
+  - `userId` (long) - user database id
+- Request body: `ResumeCreateDTO` (JSON)
+- Responses:
+  - 200 OK: `{ "message": "Resume created successfully", "resume": <ResumeResponseDTO> }`
+  - 400 Bad Request: `{ "error": "..." }`
+
+Example request body:
+```json
+{
+  "education": ["Bachelor's in Agriculture", "High School Diploma"],
+  "experience": ["2 years farm work", "Seasonal harvest assistant"],
+  "certificates": ["Food Safety Certificate"],
+  "skills": ["Tractor operation", "Crop management"],
+  "languages": ["English", "Arabic"]
+}
+```
+
+---
+
+### PATCH /api/resumes/{userId}
+- Description: Partially update a resume. Uses add/remove pattern for array fields.
+- Path parameters:
+  - `userId` (long) - user database id
+- Request body: `ResumeEditDTO` (JSON)
+- Responses:
+  - 200 OK: `{ "message": "Job edited successfully", "resume": <ResumeResponseDTO> }`
+  - 400 Bad Request: `{ "error": "..." }`
+
+Example request body:
+```json
+{
+  "skillsToAdd": ["First Aid Certified"],
+  "skillsToRemove": ["Tractor operation"],
+  "educationToAdd": ["Master's in Agriculture"],
+  "languagesToAdd": ["French"]
+}
+```
+
+Note: All array fields use the add/remove pattern:
+- `educationToAdd`/`educationToRemove`
+- `experienceToAdd`/`experienceToRemove`
+- `certificatesToAdd`/`certificatesToRemove`
+- `skillsToAdd`/`skillsToRemove`
+- `languagesToAdd`/`languagesToRemove`
+
+---
+
+### DELETE /api/resumes/{userId}
+- Description: Delete a resume by user ID.
+- Path parameters:
+  - `userId` (long) - user database id
+- Responses:
+  - 200 OK: `Resume deleted successfully!` or `Resume not found!`
+
+Example:
+```bash
+curl -X DELETE http://localhost:8080/api/resumes/1
+```
+
+---
+
+## Applications
+
+Base path: `/api/applications`
+
+### POST /api/applications/user/{userId}/job/{jobId}
+- Description: Create a new application (user applies to a job).
+- Path parameters:
+  - `userId` (long) - user database id
+  - `jobId` (long) - job database id
+- Request body: `ApplicationCreateDTO` (JSON)
+- Responses:
+  - 200 OK: `{ "message": "Application submitted successfully", "application": <ApplicationResponseDTO> }`
+  - 400 Bad Request: `{ "error": "..." }`
+
+Example request body:
+```json
+{
+  "coverLetter": "I am interested in this position..."
+}
+```
+
+---
+
+### GET /api/applications/user/{userId}
+- Description: Get all applications submitted by a specific user (Job Seeker view).
+- Path parameters:
+  - `userId` (long) - user database id
+- Response: 200 OK, array of `ApplicationResponseDTO` objects
+
+Example:
+```bash
+curl -s http://localhost:8080/api/applications/user/1 | jq
+```
+
+---
+
+### GET /api/applications/userjobs/{userId}
+- Description: Get list of job IDs that a user has applied to.
+- Path parameters:
+  - `userId` (long) - user database id
+- Response: 200 OK, `JobIdsFromApplicationsResponseDTO`
+  ```json
+  {
+    "jobIds": [1, 5, 10]
+  }
+  ```
+
+Example:
+```bash
+curl -s http://localhost:8080/api/applications/userjobs/1 | jq
+```
+
+---
+
+### GET /api/applications/job/{jobId}
+- Description: Get all applications for a specific job (Employer view).
+- Path parameters:
+  - `jobId` (long) - job database id
+- Response: 200 OK, array of `ApplicationWebResponseDTO` objects
+
+Example:
+```bash
+curl -s http://localhost:8080/api/applications/job/1 | jq
+```
+
+---
+
+### PATCH /api/applications/{applicationId}/status/employer/{employerId}
+- Description: Update application status (e.g., ACCEPTED, REJECTED, PENDING). Only the job poster (employer) can update status.
+- Path parameters:
+  - `applicationId` (long) - application database id
+  - `employerId` (long) - employer/user database id
+- Request body: `ApplicationStatusUpdateDTO` (JSON)
+- Responses:
+  - 200 OK: `{ "message": "Application status updated successfully", "application": <ApplicationResponseDTO> }`
+  - 400 Bad Request: `{ "error": "..." }` (includes authorization failures)
+
+Example request body:
+```json
+{
+  "status": "ACCEPTED"
+}
+```
+
+Status values: `PENDING`, `ACCEPTED`, `REJECTED`
+
+---
+
+### DELETE /api/applications/{applicationId}
+- Description: Delete (withdraw) an application by its ID.
+- Path parameters:
+  - `applicationId` (long) - application database id
+- Responses:
+  - 200 OK: `{ "message": "Application deleted successfully." }`
+  - 400 Bad Request: `{ "error": "..." }`
+
+Example:
+```bash
+curl -X DELETE http://localhost:8080/api/applications/1
 ```
 
 ---

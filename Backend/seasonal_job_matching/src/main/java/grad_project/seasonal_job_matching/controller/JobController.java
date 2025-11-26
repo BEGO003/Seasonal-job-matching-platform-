@@ -68,7 +68,7 @@ public class JobController {
              
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> editUser(@PathVariable long id,@Valid @RequestBody JobEditDTO dto){
+    public ResponseEntity<?> editJob(@PathVariable long id,@Valid @RequestBody JobEditDTO dto){
         try {
             JobResponseDTO job = job_service.editJob(dto, id);
             return ResponseEntity.ok()
@@ -85,13 +85,19 @@ public class JobController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteJob(@PathVariable Long id){
-        if ("Job found!".equals(findByID(id).getBody())) {
+        // if ("Job found!".equals(findByID(id).getBody())) { //this returns job.get not "Job found so always not found"
+        //     job_service.deleteJob(id);
+        //     return ResponseEntity.ok("Job deleted successfully!");
+        // }else{
+        //     return ResponseEntity.ok("Job not found!");
+        // }
+        Optional<JobResponseDTO> job = job_service.findByID(id);
+        if (job.isPresent()) {
             job_service.deleteJob(id);
             return ResponseEntity.ok("Job deleted successfully!");
         }else{
             return ResponseEntity.ok("Job not found!");
-        }
-        
+        }           
     }
  
 }

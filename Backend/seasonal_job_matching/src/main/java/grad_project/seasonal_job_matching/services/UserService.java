@@ -8,11 +8,13 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import grad_project.seasonal_job_matching.dto.requests.UserCreateDTO;
 import grad_project.seasonal_job_matching.dto.requests.UserEditDTO;
 import grad_project.seasonal_job_matching.dto.requests.UserLoginDTO;
 import grad_project.seasonal_job_matching.dto.responses.JobResponseDTO;
+import grad_project.seasonal_job_matching.dto.responses.UserFieldsOfInterestResponseDTO;
 import grad_project.seasonal_job_matching.dto.responses.UserResponseDTO;
 import grad_project.seasonal_job_matching.mapper.JobMapper;
 import grad_project.seasonal_job_matching.mapper.UserMapper;
@@ -78,6 +80,23 @@ public class UserService {
         userRepository.save(seeker);
     }
 */    
+    @Transactional(readOnly = true)
+    public UserFieldsOfInterestResponseDTO getFieldsOfInterest(long userId) {
+        //User user = userRepository.findById(userId)
+        //    .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+        
+        //    List<Application> apps = user.getOwnedApplications();
+        Optional<User> user = userRepository.findById(userId);
+
+        List<String> foi = user.map(User::getFieldsOfInterest)
+            .orElse(new ArrayList<>());
+
+        UserFieldsOfInterestResponseDTO dto = new UserFieldsOfInterestResponseDTO();
+        dto.setFieldsOfInterest(foi);
+        return dto;
+
+    }
+
     public UserResponseDTO createUser(UserCreateDTO dto) {
         //if email is NOT present, save new user
         if (!userRepository.existsByEmail(dto.getEmail())) {
@@ -129,6 +148,18 @@ public class UserService {
         
         if (dto.getPassword() != null && !dto.getPassword().trim().isEmpty()) {
             existingUser.setPassword(passwordEncoder.encode(updatedUser.getNumber()));
+        }
+
+        if (dto.getFieldsOfInterestToAdd() != null) {
+            for (String field : dto.getFieldsOfInterestToAdd()) {
+                if (!existingUser.getFieldsOfInterest().contains(field)) {
+                    existingUser.getFieldsOfInterest().add(field);
+                }
+            }
+        }
+
+        if (dto.getFieldsOfInterestToRemove() != null) {
+            existingUser.getFieldsOfInterest().removeAll(dto.getFieldsOfInterestToRemove());
         }
 
         User saveduser = userRepository.save(existingUser);

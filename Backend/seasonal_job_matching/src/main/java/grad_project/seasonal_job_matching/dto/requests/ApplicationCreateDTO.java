@@ -1,10 +1,6 @@
 package grad_project.seasonal_job_matching.dto.requests;
 
-import java.sql.Date;
 
-import grad_project.seasonal_job_matching.model.Job;
-import grad_project.seasonal_job_matching.model.User;
-import grad_project.seasonal_job_matching.model.enums.ApplicationStatus;
 import lombok.Data;
 
 @Data
