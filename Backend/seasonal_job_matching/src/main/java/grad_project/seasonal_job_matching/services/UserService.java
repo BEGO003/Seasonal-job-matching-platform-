@@ -117,6 +117,10 @@ public class UserService {
     public UserResponseDTO editUser(UserEditDTO dto, long id){
         User existingUser = userRepository.findById(id).orElseThrow(()-> new RuntimeException("User not found with ID: " + id));
 
+        if (existingUser.getFieldsOfInterest() == null) {
+            existingUser.setFieldsOfInterest(new ArrayList<>());
+        }
+
         //checks to see if we are editing email
         //in case we're editing a different field than email, check new email isn't empty, checks new email isnt same as OLD email
         if (dto.getEmail()!=null && !dto.getEmail().trim().isEmpty() && !dto.getEmail().equals(existingUser.getEmail())) {
