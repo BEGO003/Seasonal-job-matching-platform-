@@ -74,7 +74,6 @@ class _JobCardState extends ConsumerState<JobCard>
   @override
   Widget build(BuildContext context) {
     final formattedStart = _formatDate(widget.job.startDate);
-    final formattedEnd = _formatDate(widget.job.endDate);
     final isOpen = widget.job.status.toLowerCase() == 'open';
 
     return Padding(
@@ -225,7 +224,7 @@ class _JobCardState extends ConsumerState<JobCard>
                         Expanded(
                           child: _InfoChip(
                             icon: Icons.calendar_today_outlined,
-                            label: '$formattedStart - $formattedEnd',
+                            label: '$formattedStart',
                             color: const Color(0xFFEC4899),
                           ),
                         ),
@@ -293,7 +292,7 @@ class _JobCardState extends ConsumerState<JobCard>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Monthly Salary',
+                              '${widget.job.salary}',
                               style: TextStyle(
                                 color: Colors.white.withOpacity(0.8),
                                 fontSize: 12,
@@ -302,7 +301,7 @@ class _JobCardState extends ConsumerState<JobCard>
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '\$${NumberFormat('#,##0.00').format(widget.job.salary)}',
+                              '\$${NumberFormat('#,##0.00').format(widget.job.amount)}',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,

@@ -107,6 +107,46 @@ class PersonalInformationService {
     }
   }
 
+  /// Fetch only the fields of interest for the current user.
+  /// Expected response shape:
+  /// {
+  ///   "fieldsOfInterest": ["Hospitality", "Ski Instruction"]
+  /// }
+  Future<List<String>> fetchFieldsOfInterest() async {
+    final userId = await _getUserId();
+    // Endpoint provided by backend: /users/FOI/:id
+    final path = '/users/FOI/$userId';
+    try {
+      final response = await _dio.get(path);
+      final raw = response.data;
+      final list = (raw['fieldsOfInterest'] as List?)
+              ?.map((e) => e == null ? '' : e.toString())
+              .where((s) => s.isNotEmpty)
+              .toList() ??
+          <String>[];
+      return list;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  /// Update fields of interest by adding and removing interests
+  Future<void> updateFieldsOfInterest({
+    required List<String> fieldsOfInterestToAdd,
+    required List<String> fieldsOfInterestToRemove,
+  }) async {
+    final userId = await _getUserId();
+    final editPath = editUserById(userId);
+    try {
+      await _dio.patch(editPath, data: {
+        'fieldsOfInterestToAdd': fieldsOfInterestToAdd,
+        'fieldsOfInterestToRemove': fieldsOfInterestToRemove,
+      });
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   String _handleError(DioException error) {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$JobModel {
 
- String get title; String get description; int get id; String get type; String get location; String get startDate; String get endDate; double get salary; String get status; int get numofpositions; String? get workArrangement; int get jobposterId; String get jobposterName; List<String> get requirements; List<String> get categories; List<String> get benefits;
+ String get title; String get description; int get id; String get type; String get location; String get startDate; double get amount; String get salary; String? get duration; String get status; int get numOfPositions; String? get workArrangement; int get jobposterId; String get jobposterName; String? get createdAt; List<String> get requirements; List<String> get categories; List<String> get benefits;
 /// Create a copy of JobModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $JobModelCopyWith<JobModel> get copyWith => _$JobModelCopyWithImpl<JobModel>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is JobModel&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.location, location) || other.location == location)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.salary, salary) || other.salary == salary)&&(identical(other.status, status) || other.status == status)&&(identical(other.numofpositions, numofpositions) || other.numofpositions == numofpositions)&&(identical(other.workArrangement, workArrangement) || other.workArrangement == workArrangement)&&(identical(other.jobposterId, jobposterId) || other.jobposterId == jobposterId)&&(identical(other.jobposterName, jobposterName) || other.jobposterName == jobposterName)&&const DeepCollectionEquality().equals(other.requirements, requirements)&&const DeepCollectionEquality().equals(other.categories, categories)&&const DeepCollectionEquality().equals(other.benefits, benefits));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is JobModel&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.location, location) || other.location == location)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.salary, salary) || other.salary == salary)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.status, status) || other.status == status)&&(identical(other.numOfPositions, numOfPositions) || other.numOfPositions == numOfPositions)&&(identical(other.workArrangement, workArrangement) || other.workArrangement == workArrangement)&&(identical(other.jobposterId, jobposterId) || other.jobposterId == jobposterId)&&(identical(other.jobposterName, jobposterName) || other.jobposterName == jobposterName)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other.requirements, requirements)&&const DeepCollectionEquality().equals(other.categories, categories)&&const DeepCollectionEquality().equals(other.benefits, benefits));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,description,id,type,location,startDate,endDate,salary,status,numofpositions,workArrangement,jobposterId,jobposterName,const DeepCollectionEquality().hash(requirements),const DeepCollectionEquality().hash(categories),const DeepCollectionEquality().hash(benefits));
+int get hashCode => Object.hash(runtimeType,title,description,id,type,location,startDate,amount,salary,duration,status,numOfPositions,workArrangement,jobposterId,jobposterName,createdAt,const DeepCollectionEquality().hash(requirements),const DeepCollectionEquality().hash(categories),const DeepCollectionEquality().hash(benefits));
 
 @override
 String toString() {
-  return 'JobModel(title: $title, description: $description, id: $id, type: $type, location: $location, startDate: $startDate, endDate: $endDate, salary: $salary, status: $status, numofpositions: $numofpositions, workArrangement: $workArrangement, jobposterId: $jobposterId, jobposterName: $jobposterName, requirements: $requirements, categories: $categories, benefits: $benefits)';
+  return 'JobModel(title: $title, description: $description, id: $id, type: $type, location: $location, startDate: $startDate, amount: $amount, salary: $salary, duration: $duration, status: $status, numOfPositions: $numOfPositions, workArrangement: $workArrangement, jobposterId: $jobposterId, jobposterName: $jobposterName, createdAt: $createdAt, requirements: $requirements, categories: $categories, benefits: $benefits)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $JobModelCopyWith<$Res>  {
   factory $JobModelCopyWith(JobModel value, $Res Function(JobModel) _then) = _$JobModelCopyWithImpl;
 @useResult
 $Res call({
- String title, String description, int id, String type, String location, String startDate, String endDate, double salary, String status, int numofpositions, String? workArrangement, int jobposterId, String jobposterName, List<String> requirements, List<String> categories, List<String> benefits
+ String title, String description, int id, String type, String location, String startDate, double amount, String salary, String? duration, String status, int numOfPositions, String? workArrangement, int jobposterId, String jobposterName, String? createdAt, List<String> requirements, List<String> categories, List<String> benefits
 });
 
 
@@ -65,7 +65,7 @@ class _$JobModelCopyWithImpl<$Res>
 
 /// Create a copy of JobModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? description = null,Object? id = null,Object? type = null,Object? location = null,Object? startDate = null,Object? endDate = null,Object? salary = null,Object? status = null,Object? numofpositions = null,Object? workArrangement = freezed,Object? jobposterId = null,Object? jobposterName = null,Object? requirements = null,Object? categories = null,Object? benefits = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? description = null,Object? id = null,Object? type = null,Object? location = null,Object? startDate = null,Object? amount = null,Object? salary = null,Object? duration = freezed,Object? status = null,Object? numOfPositions = null,Object? workArrangement = freezed,Object? jobposterId = null,Object? jobposterName = null,Object? createdAt = freezed,Object? requirements = null,Object? categories = null,Object? benefits = null,}) {
   return _then(_self.copyWith(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
@@ -73,14 +73,16 @@ as String,id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullabl
 as int,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String,startDate: null == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
-as String,endDate: null == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
-as String,salary: null == salary ? _self.salary : salary // ignore: cast_nullable_to_non_nullable
-as double,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as String,numofpositions: null == numofpositions ? _self.numofpositions : numofpositions // ignore: cast_nullable_to_non_nullable
+as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
+as double,salary: null == salary ? _self.salary : salary // ignore: cast_nullable_to_non_nullable
+as String,duration: freezed == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
+as String?,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,numOfPositions: null == numOfPositions ? _self.numOfPositions : numOfPositions // ignore: cast_nullable_to_non_nullable
 as int,workArrangement: freezed == workArrangement ? _self.workArrangement : workArrangement // ignore: cast_nullable_to_non_nullable
 as String?,jobposterId: null == jobposterId ? _self.jobposterId : jobposterId // ignore: cast_nullable_to_non_nullable
 as int,jobposterName: null == jobposterName ? _self.jobposterName : jobposterName // ignore: cast_nullable_to_non_nullable
-as String,requirements: null == requirements ? _self.requirements : requirements // ignore: cast_nullable_to_non_nullable
+as String,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String?,requirements: null == requirements ? _self.requirements : requirements // ignore: cast_nullable_to_non_nullable
 as List<String>,categories: null == categories ? _self.categories : categories // ignore: cast_nullable_to_non_nullable
 as List<String>,benefits: null == benefits ? _self.benefits : benefits // ignore: cast_nullable_to_non_nullable
 as List<String>,
@@ -168,10 +170,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String description,  int id,  String type,  String location,  String startDate,  String endDate,  double salary,  String status,  int numofpositions,  String? workArrangement,  int jobposterId,  String jobposterName,  List<String> requirements,  List<String> categories,  List<String> benefits)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String description,  int id,  String type,  String location,  String startDate,  double amount,  String salary,  String? duration,  String status,  int numOfPositions,  String? workArrangement,  int jobposterId,  String jobposterName,  String? createdAt,  List<String> requirements,  List<String> categories,  List<String> benefits)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _JobModel() when $default != null:
-return $default(_that.title,_that.description,_that.id,_that.type,_that.location,_that.startDate,_that.endDate,_that.salary,_that.status,_that.numofpositions,_that.workArrangement,_that.jobposterId,_that.jobposterName,_that.requirements,_that.categories,_that.benefits);case _:
+return $default(_that.title,_that.description,_that.id,_that.type,_that.location,_that.startDate,_that.amount,_that.salary,_that.duration,_that.status,_that.numOfPositions,_that.workArrangement,_that.jobposterId,_that.jobposterName,_that.createdAt,_that.requirements,_that.categories,_that.benefits);case _:
   return orElse();
 
 }
@@ -189,10 +191,10 @@ return $default(_that.title,_that.description,_that.id,_that.type,_that.location
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String description,  int id,  String type,  String location,  String startDate,  String endDate,  double salary,  String status,  int numofpositions,  String? workArrangement,  int jobposterId,  String jobposterName,  List<String> requirements,  List<String> categories,  List<String> benefits)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String description,  int id,  String type,  String location,  String startDate,  double amount,  String salary,  String? duration,  String status,  int numOfPositions,  String? workArrangement,  int jobposterId,  String jobposterName,  String? createdAt,  List<String> requirements,  List<String> categories,  List<String> benefits)  $default,) {final _that = this;
 switch (_that) {
 case _JobModel():
-return $default(_that.title,_that.description,_that.id,_that.type,_that.location,_that.startDate,_that.endDate,_that.salary,_that.status,_that.numofpositions,_that.workArrangement,_that.jobposterId,_that.jobposterName,_that.requirements,_that.categories,_that.benefits);case _:
+return $default(_that.title,_that.description,_that.id,_that.type,_that.location,_that.startDate,_that.amount,_that.salary,_that.duration,_that.status,_that.numOfPositions,_that.workArrangement,_that.jobposterId,_that.jobposterName,_that.createdAt,_that.requirements,_that.categories,_that.benefits);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -209,10 +211,10 @@ return $default(_that.title,_that.description,_that.id,_that.type,_that.location
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String description,  int id,  String type,  String location,  String startDate,  String endDate,  double salary,  String status,  int numofpositions,  String? workArrangement,  int jobposterId,  String jobposterName,  List<String> requirements,  List<String> categories,  List<String> benefits)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String description,  int id,  String type,  String location,  String startDate,  double amount,  String salary,  String? duration,  String status,  int numOfPositions,  String? workArrangement,  int jobposterId,  String jobposterName,  String? createdAt,  List<String> requirements,  List<String> categories,  List<String> benefits)?  $default,) {final _that = this;
 switch (_that) {
 case _JobModel() when $default != null:
-return $default(_that.title,_that.description,_that.id,_that.type,_that.location,_that.startDate,_that.endDate,_that.salary,_that.status,_that.numofpositions,_that.workArrangement,_that.jobposterId,_that.jobposterName,_that.requirements,_that.categories,_that.benefits);case _:
+return $default(_that.title,_that.description,_that.id,_that.type,_that.location,_that.startDate,_that.amount,_that.salary,_that.duration,_that.status,_that.numOfPositions,_that.workArrangement,_that.jobposterId,_that.jobposterName,_that.createdAt,_that.requirements,_that.categories,_that.benefits);case _:
   return null;
 
 }
@@ -224,7 +226,7 @@ return $default(_that.title,_that.description,_that.id,_that.type,_that.location
 @JsonSerializable()
 
 class _JobModel implements JobModel {
-  const _JobModel({required this.title, required this.description, required this.id, required this.type, required this.location, required this.startDate, required this.endDate, required this.salary, required this.status, required this.numofpositions, this.workArrangement, required this.jobposterId, required this.jobposterName, final  List<String> requirements = const [], final  List<String> categories = const [], final  List<String> benefits = const []}): _requirements = requirements,_categories = categories,_benefits = benefits;
+  const _JobModel({required this.title, required this.description, required this.id, required this.type, required this.location, required this.startDate, required this.amount, required this.salary, this.duration, required this.status, required this.numOfPositions, this.workArrangement, required this.jobposterId, required this.jobposterName, this.createdAt, final  List<String> requirements = const [], final  List<String> categories = const [], final  List<String> benefits = const []}): _requirements = requirements,_categories = categories,_benefits = benefits;
   factory _JobModel.fromJson(Map<String, dynamic> json) => _$JobModelFromJson(json);
 
 @override final  String title;
@@ -233,13 +235,15 @@ class _JobModel implements JobModel {
 @override final  String type;
 @override final  String location;
 @override final  String startDate;
-@override final  String endDate;
-@override final  double salary;
+@override final  double amount;
+@override final  String salary;
+@override final  String? duration;
 @override final  String status;
-@override final  int numofpositions;
+@override final  int numOfPositions;
 @override final  String? workArrangement;
 @override final  int jobposterId;
 @override final  String jobposterName;
+@override final  String? createdAt;
  final  List<String> _requirements;
 @override@JsonKey() List<String> get requirements {
   if (_requirements is EqualUnmodifiableListView) return _requirements;
@@ -275,16 +279,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _JobModel&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.location, location) || other.location == location)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.salary, salary) || other.salary == salary)&&(identical(other.status, status) || other.status == status)&&(identical(other.numofpositions, numofpositions) || other.numofpositions == numofpositions)&&(identical(other.workArrangement, workArrangement) || other.workArrangement == workArrangement)&&(identical(other.jobposterId, jobposterId) || other.jobposterId == jobposterId)&&(identical(other.jobposterName, jobposterName) || other.jobposterName == jobposterName)&&const DeepCollectionEquality().equals(other._requirements, _requirements)&&const DeepCollectionEquality().equals(other._categories, _categories)&&const DeepCollectionEquality().equals(other._benefits, _benefits));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _JobModel&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.location, location) || other.location == location)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.salary, salary) || other.salary == salary)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.status, status) || other.status == status)&&(identical(other.numOfPositions, numOfPositions) || other.numOfPositions == numOfPositions)&&(identical(other.workArrangement, workArrangement) || other.workArrangement == workArrangement)&&(identical(other.jobposterId, jobposterId) || other.jobposterId == jobposterId)&&(identical(other.jobposterName, jobposterName) || other.jobposterName == jobposterName)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other._requirements, _requirements)&&const DeepCollectionEquality().equals(other._categories, _categories)&&const DeepCollectionEquality().equals(other._benefits, _benefits));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,description,id,type,location,startDate,endDate,salary,status,numofpositions,workArrangement,jobposterId,jobposterName,const DeepCollectionEquality().hash(_requirements),const DeepCollectionEquality().hash(_categories),const DeepCollectionEquality().hash(_benefits));
+int get hashCode => Object.hash(runtimeType,title,description,id,type,location,startDate,amount,salary,duration,status,numOfPositions,workArrangement,jobposterId,jobposterName,createdAt,const DeepCollectionEquality().hash(_requirements),const DeepCollectionEquality().hash(_categories),const DeepCollectionEquality().hash(_benefits));
 
 @override
 String toString() {
-  return 'JobModel(title: $title, description: $description, id: $id, type: $type, location: $location, startDate: $startDate, endDate: $endDate, salary: $salary, status: $status, numofpositions: $numofpositions, workArrangement: $workArrangement, jobposterId: $jobposterId, jobposterName: $jobposterName, requirements: $requirements, categories: $categories, benefits: $benefits)';
+  return 'JobModel(title: $title, description: $description, id: $id, type: $type, location: $location, startDate: $startDate, amount: $amount, salary: $salary, duration: $duration, status: $status, numOfPositions: $numOfPositions, workArrangement: $workArrangement, jobposterId: $jobposterId, jobposterName: $jobposterName, createdAt: $createdAt, requirements: $requirements, categories: $categories, benefits: $benefits)';
 }
 
 
@@ -295,7 +299,7 @@ abstract mixin class _$JobModelCopyWith<$Res> implements $JobModelCopyWith<$Res>
   factory _$JobModelCopyWith(_JobModel value, $Res Function(_JobModel) _then) = __$JobModelCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String description, int id, String type, String location, String startDate, String endDate, double salary, String status, int numofpositions, String? workArrangement, int jobposterId, String jobposterName, List<String> requirements, List<String> categories, List<String> benefits
+ String title, String description, int id, String type, String location, String startDate, double amount, String salary, String? duration, String status, int numOfPositions, String? workArrangement, int jobposterId, String jobposterName, String? createdAt, List<String> requirements, List<String> categories, List<String> benefits
 });
 
 
@@ -312,7 +316,7 @@ class __$JobModelCopyWithImpl<$Res>
 
 /// Create a copy of JobModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = null,Object? id = null,Object? type = null,Object? location = null,Object? startDate = null,Object? endDate = null,Object? salary = null,Object? status = null,Object? numofpositions = null,Object? workArrangement = freezed,Object? jobposterId = null,Object? jobposterName = null,Object? requirements = null,Object? categories = null,Object? benefits = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = null,Object? id = null,Object? type = null,Object? location = null,Object? startDate = null,Object? amount = null,Object? salary = null,Object? duration = freezed,Object? status = null,Object? numOfPositions = null,Object? workArrangement = freezed,Object? jobposterId = null,Object? jobposterName = null,Object? createdAt = freezed,Object? requirements = null,Object? categories = null,Object? benefits = null,}) {
   return _then(_JobModel(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
@@ -320,14 +324,16 @@ as String,id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullabl
 as int,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String,startDate: null == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
-as String,endDate: null == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
-as String,salary: null == salary ? _self.salary : salary // ignore: cast_nullable_to_non_nullable
-as double,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as String,numofpositions: null == numofpositions ? _self.numofpositions : numofpositions // ignore: cast_nullable_to_non_nullable
+as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
+as double,salary: null == salary ? _self.salary : salary // ignore: cast_nullable_to_non_nullable
+as String,duration: freezed == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
+as String?,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,numOfPositions: null == numOfPositions ? _self.numOfPositions : numOfPositions // ignore: cast_nullable_to_non_nullable
 as int,workArrangement: freezed == workArrangement ? _self.workArrangement : workArrangement // ignore: cast_nullable_to_non_nullable
 as String?,jobposterId: null == jobposterId ? _self.jobposterId : jobposterId // ignore: cast_nullable_to_non_nullable
 as int,jobposterName: null == jobposterName ? _self.jobposterName : jobposterName // ignore: cast_nullable_to_non_nullable
-as String,requirements: null == requirements ? _self._requirements : requirements // ignore: cast_nullable_to_non_nullable
+as String,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as String?,requirements: null == requirements ? _self._requirements : requirements // ignore: cast_nullable_to_non_nullable
 as List<String>,categories: null == categories ? _self._categories : categories // ignore: cast_nullable_to_non_nullable
 as List<String>,benefits: null == benefits ? _self._benefits : benefits // ignore: cast_nullable_to_non_nullable
 as List<String>,

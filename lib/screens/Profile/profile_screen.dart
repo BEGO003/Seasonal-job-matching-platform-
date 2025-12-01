@@ -5,6 +5,7 @@ import 'package:job_seeker/screens/Profile/resume_screen.dart';
 import 'package:job_seeker/providers/profile_screen_providers/personal_information_notifier.dart';
 import '../../widgets/profile_screen_widgets/profile_info_section.dart';
 import '../../widgets/profile_screen_widgets/account_settings_section.dart';
+import '../../widgets/profile_screen_widgets/fields_of_interest_section.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -351,6 +352,51 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                           color: const Color(0xFF8B5CF6),
                           onTap: _onCoverLetterPressed,
                         ),
+                        // Divider
+                        Container(
+                          height: 1,
+                          color: Colors.grey.shade200,
+                          margin: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
+                        const SizedBox(height: 28),
+
+                        // Fields of Interest Section
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      const Color(0xFF10B981),
+                                      const Color(0xFF059669),
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(
+                                  Icons.star_outline,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              const Text(
+                                'Fields of Interest',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF1F2937),
+                                  letterSpacing: -0.3,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const FieldsOfInterestSection(),
                         const SizedBox(height: 28),
                         
                         // Divider
@@ -360,8 +406,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                           margin: const EdgeInsets.symmetric(horizontal: 8),
                         ),
                         const SizedBox(height: 28),
-                        
-                        // Account Settings Section
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                           child: Row(

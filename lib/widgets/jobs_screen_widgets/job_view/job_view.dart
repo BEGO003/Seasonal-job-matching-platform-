@@ -238,7 +238,7 @@ class JobView extends ConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Monthly Salary',
+                                  '${job.salary} Rate',
                                   style: TextStyle(
                                     color: Colors.white.withOpacity(0.9),
                                     fontSize: 14,
@@ -247,7 +247,7 @@ class JobView extends ConsumerWidget {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  '\$${job.salary.toStringAsFixed(2)}',
+                                  '\$${job.amount.toStringAsFixed(2)}',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 32,
@@ -297,8 +297,10 @@ class JobView extends ConsumerWidget {
                         const SizedBox(height: 20),
                         _DetailRow(
                           icon: Icons.calendar_today_outlined,
-                          label: 'Duration',
-                          value: '${job.startDate} - ${job.endDate}',
+                          label: 'Start Date',
+                          value: job.duration != null
+                              ? '${job.startDate} - ${job.duration}'
+                              : job.startDate,
                           color: const Color(0xFFEC4899),
                         ),
                         const SizedBox(height: 16),
@@ -314,7 +316,7 @@ class JobView extends ConsumerWidget {
                         _DetailRow(
                           icon: Icons.people_outline,
                           label: 'Positions Available',
-                          value: '${job.numofpositions} openings',
+                          value: '${job.numOfPositions} openings',
                           color: const Color(0xFF3B82F6),
                         ),
                         const SizedBox(height: 24),

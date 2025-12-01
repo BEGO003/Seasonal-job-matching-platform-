@@ -26,8 +26,14 @@ class PersonalInformationAsyncNotifier
     // Fetch applied job IDs from the dedicated API endpoint
     final appliedJobIds = await _service.fetchAppliedJobIds();
     
-    // Update user data with applied job IDs
-    return userData.copyWith(ownedapplications: appliedJobIds);
+    // Fetch fields of interest from the dedicated API endpoint
+    final fieldsOfInterest = await _service.fetchFieldsOfInterest();
+    
+    // Update user data with applied job IDs and fields of interest
+    return userData.copyWith(
+      ownedapplications: appliedJobIds,
+      fieldsOfInterest: fieldsOfInterest,
+    );
   }
 
   Future<void> updateName(String value) async {
@@ -108,6 +114,31 @@ class PersonalInformationAsyncNotifier
     } catch (e) {
       debugPrint('Failed to refresh applied jobs: $e');
       // Don't update state on error, keep current data
+    }
+  }
+
+  /// Refresh fields of interest by fetching updated user data
+  Future<void> refreshFieldsOfInterest() async {
+    try {
+      final updatedUser = await _service.fetchUserData();
+      state = AsyncValue.data(updatedUser);
+    } catch (e) {
+      debugPrint('Failed to refresh fields of interest: $e');
+      // Don't update state on error, keep current data
+    }
+  }
+
+  /// Refresh only the list of fields of interest using the dedicated endpoint.
+  Future<void> refreshOnlyFieldsOfInterest() async {
+    final current = state.value;
+    if (current == null) return;
+
+    try {
+      final fields = await _service.fetchFieldsOfInterest();
+      state = AsyncValue.data(current.copyWith(fieldsOfInterest: fields));
+    } catch (e) {
+      debugPrint('Failed to refresh only fields of interest: $e');
+      // keep current state on error
     }
   }
 
