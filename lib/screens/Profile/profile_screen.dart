@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:job_seeker/screens/Profile/cover_letter_screen.dart';
 import 'package:job_seeker/screens/Profile/resume_screen.dart';
 import 'package:job_seeker/providers/profile_screen_providers/personal_information_notifier.dart';
 import '../../widgets/profile_screen_widgets/profile_info_section.dart';
@@ -17,7 +16,6 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late Animation<double> _animation;
   bool _isExpanded = false;
 
   @override
@@ -26,10 +24,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
-    );
-    _animation = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
     );
   }
 
@@ -63,35 +57,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           const begin = Offset(1.0, 0.0);
           const end = Offset.zero;
           const curve = Curves.easeInOutCubic;
-          var tween = Tween(begin: begin, end: end).chain(
-            CurveTween(curve: curve),
-          );
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        },
-        transitionDuration: const Duration(milliseconds: 350),
-      ),
-    );
-  }
-
-  void _onCoverLetterPressed() {
-    setState(() {
-      _isExpanded = false;
-      _animationController.reverse();
-    });
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const CoverLetterScreen(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset.zero;
-          const curve = Curves.easeInOutCubic;
-          var tween = Tween(begin: begin, end: end).chain(
-            CurveTween(curve: curve),
-          );
+          var tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: curve));
           return SlideTransition(
             position: animation.drive(tween),
             child: child,
@@ -118,10 +87,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [
-                      const Color(0xFFEC4899),
-                      const Color(0xFFDB2777),
-                    ],
+                    colors: [const Color(0xFFEC4899), const Color(0xFFDB2777)],
                   ),
                 ),
                 child: Stack(
@@ -221,7 +187,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                           ),
                           loading: () => const Center(
                             child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
                             ),
                           ),
                           error: (_, __) => const Icon(
@@ -292,7 +260,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                         const SizedBox(height: 16),
                         const ProfileInfoSection(),
                         const SizedBox(height: 28),
-                        
+
                         // Divider
                         Container(
                           height: 1,
@@ -300,7 +268,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                           margin: const EdgeInsets.symmetric(horizontal: 8),
                         ),
                         const SizedBox(height: 28),
-                        
+
                         // Documents Section
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -344,14 +312,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                           color: const Color(0xFF3B82F6),
                           onTap: _onResumePressed,
                         ),
-                        const SizedBox(height: 12),
-                        _DocumentCard(
-                          icon: Icons.article_outlined,
-                          title: 'Cover Letter',
-                          subtitle: 'Manage your cover letter',
-                          color: const Color(0xFF8B5CF6),
-                          onTap: _onCoverLetterPressed,
-                        ),
+                        const SizedBox(height: 28),
+
                         // Divider
                         Container(
                           height: 1,
@@ -398,7 +360,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                         const SizedBox(height: 16),
                         const FieldsOfInterestSection(),
                         const SizedBox(height: 28),
-                        
+
                         // Divider
                         Container(
                           height: 1,
@@ -456,9 +418,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
           Positioned.fill(
             child: GestureDetector(
               onTap: _toggleExpanded,
-              child: Container(
-                color: Colors.black.withOpacity(0.5),
-              ),
+              child: Container(color: Colors.black.withOpacity(0.5)),
             ),
           ),
       ],
@@ -497,9 +457,10 @@ class _DocumentCardState extends State<_DocumentCard>
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.97).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.97,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -524,10 +485,7 @@ class _DocumentCardState extends State<_DocumentCard>
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: Colors.grey.shade100,
-              width: 1,
-            ),
+            border: Border.all(color: Colors.grey.shade100, width: 1),
             boxShadow: [
               BoxShadow(
                 color: widget.color.withOpacity(0.08),
@@ -550,10 +508,7 @@ class _DocumentCardState extends State<_DocumentCard>
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [
-                      widget.color,
-                      widget.color.withOpacity(0.7),
-                    ],
+                    colors: [widget.color, widget.color.withOpacity(0.7)],
                   ),
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: [
@@ -564,11 +519,7 @@ class _DocumentCardState extends State<_DocumentCard>
                     ),
                   ],
                 ),
-                child: Icon(
-                  widget.icon,
-                  color: Colors.white,
-                  size: 24,
-                ),
+                child: Icon(widget.icon, color: Colors.white, size: 24),
               ),
               const SizedBox(width: 16),
               Expanded(

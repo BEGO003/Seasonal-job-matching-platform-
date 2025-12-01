@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:job_seeker/constants/constants.dart';
 import 'package:job_seeker/providers/auth_provider.dart';
+import 'package:job_seeker/screens/auth/login_screen.dart';
 import 'package:job_seeker/screens/layout_screen.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
@@ -124,24 +126,36 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   ),
                   const SizedBox(height: 16),
                   // Country field
-                  TextFormField(
-                    controller: _countryController,
-                    keyboardType: TextInputType.text,
-                    enabled: !isLoading,
+                  DropdownButtonFormField<String>(
+                    value: _countryController.text.isEmpty ? null : _countryController.text,
+                    onChanged: isLoading
+                        ? null
+                        : (String? newValue) {
+                            if (newValue != null) {
+                              _countryController.text = newValue;
+                            }
+                          },
                     decoration: InputDecoration(
                       labelText: 'Country',
-                      hintText: 'Enter your country',
+                      hintText: 'Select your country',
                       prefixIcon: const Icon(Icons.location_on_outlined),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                     ),
+                    items: countryList
+                        .map((country) => DropdownMenuItem(
+                              value: country,
+                              child: Text(country),
+                            ))
+                        .toList(),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Please enter your country';
+                        return 'Please select your country';
                       }
                       return null;
                     },
+                    isExpanded: true,
                   ),
                   const SizedBox(height: 16),
                   // Number field
@@ -293,7 +307,11 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                         onPressed: isLoading
                             ? null
                             : () {
-                                Navigator.of(context).pop();
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (context) => const LoginScreen(),
+                                  ),
+                                );
                               },
                         child: const Text('Login'),
                       ),

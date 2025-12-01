@@ -14,3 +14,7 @@ String getUserAppliedJobs(String userId) => "$APPLICATIONS/userjobs/$userId";
 // Auth routes
 const String SIGNUP = USERS;
 const String LOGIN = "$USERS/login";
+
+// Resume routes
+const String RESUMES = "resumes";
+String resumeById(String id) => "$RESUMES/$id";
