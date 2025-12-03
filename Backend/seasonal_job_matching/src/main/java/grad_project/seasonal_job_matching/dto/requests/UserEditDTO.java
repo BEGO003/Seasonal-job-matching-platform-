@@ -23,8 +23,10 @@ public class UserEditDTO {
     @Size(min = 8, max = 100)
     private String password;
 
-     // Fields of Interest - add/remove pattern
-     private List<String> fieldsOfInterestToAdd;
-     private List<String> fieldsOfInterestToRemove;
+    // Fields of Interest - add/remove pattern
+    private List<String> fieldsOfInterestToAdd;
+    private List<String> fieldsOfInterestToRemove;
  
+     private List<Long> favoriteJobIds;
+
 }

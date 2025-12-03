@@ -2,7 +2,9 @@ package grad_project.seasonal_job_matching.model;
 
 
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -14,6 +16,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -68,10 +72,14 @@ public class User {
     @JoinColumn(name = "resume_id", referencedColumnName = "id")// foreign key from user table
     private Resume resume;
 
-    /*
-    private List<Job> favoriteJobs;
-    
-     */
+    @JsonIgnoreProperties({"jobPoster", "listOfJobApplications"})
+    @ManyToMany
+    @JoinTable( //creates a new table that stores this because cant have a onetomany relationship between user and job without creating an inverse side in the job class
+        name= "user_favorite_jobs",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "job_id")
+    )
+    private Set<Job> favoriteJobs = new HashSet<>(); //faster operations on hashlist
 
     // Default constructor required for JPA
     public User(String name, String country, String number, String email, String password){
