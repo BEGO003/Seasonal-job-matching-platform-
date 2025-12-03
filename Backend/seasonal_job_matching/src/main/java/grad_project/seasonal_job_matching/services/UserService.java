@@ -177,8 +177,8 @@ public class UserService {
             existingUser.getFieldsOfInterest().removeAll(dto.getFieldsOfInterestToRemove());
         }
 
-        if (dto.getJobIds() != null) {
-            List<Job> jobs = jobRepository.findAllById(dto.getJobIds());
+        if (dto.getFavoriteJobIds() != null) {
+            List<Job> jobs = jobRepository.findAllById(dto.getFavoriteJobIds());
 
             existingUser.getFavoriteJobs().clear();
             existingUser.getFavoriteJobs().addAll(jobs);
