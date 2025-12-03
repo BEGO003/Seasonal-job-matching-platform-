@@ -14,17 +14,17 @@ const statusConfig = {
   active: { 
     label: "Active", 
     className: "bg-gradient-to-r from-green-600 to-green-700 text-white",
-    bgColor: "bg-gradient-to-r from-green-100 to-green-200/100"
+    bgColor: "bg-gradient-to-r from-green-100 to-green-400/100"
   },
   draft: { 
     label: "Draft", 
-    className: "bg-gradient-to-r from-primary to-primary/90 text-white",
-    bgColor: "bg-gradient-to-r from-secondary to-secondary/70"
+    className: "bg-gradient-to-r from-gray-600 to-gray-700 text-white",
+    bgColor: "bg-gradient-to-r from-gray-200 to-gray-400/100"
   },
   closed: { 
     label: "Closed", 
-    className: "bg-gradient-to-r from-gray-500 to-gray-600 text-white",
-    bgColor: "bg-gradient-to-r from-gray-50 to-gray-100/50"
+    className: "bg-gradient-to-r from-red-600 to-red-700 text-white",
+    bgColor: "bg-gradient-to-r from-red-100 to-red-400/100"
   },
 };
 

@@ -1,5 +1,12 @@
 export type WorkArrangement = "remote" | "hybrid" | "onsite";
-export type JobType = "full-time" | "part-time" | "contract" | "temporary" | "freelance" | "volunteer" | "internship";
+export type JobType =
+  | "full-time"
+  | "part-time"
+  | "contract"
+  | "temporary"
+  | "freelance"
+  | "volunteer"
+  | "internship";
 export type JobStatus = "active" | "draft" | "closed";
 
 export interface Job {
@@ -18,6 +25,9 @@ export interface Job {
   workArrangement: WorkArrangement;
   createdAt: string;
   updatedAt: string;
+  categories?: string[];
+  requirements?: string[];
+  benefits?: string[];
 }
 
 export interface JobFormData {
@@ -30,7 +40,10 @@ export interface JobFormData {
   salary: number;
   positions: number;
   workArrangement: WorkArrangement;
-  status: "active" | "draft";
+  status: "active" | "draft" | "closed";
+  categories?: string[];
+  requirements?: string[];
+  benefits?: string[];
 }
 
 export interface JobStats {
