@@ -102,6 +102,12 @@ public class UserController {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
+
+    @GetMapping("/{userId}/favorite-jobs")
+    public ResponseEntity<List<Long>> getFavoriteJobIds(@PathVariable long userId) {
+        List<Long> jobIds = users_service.getFavoriteJobIds(userId);
+        return ResponseEntity.ok(jobIds);
+    }
     
     
     @PostMapping

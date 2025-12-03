@@ -18,7 +18,9 @@ import grad_project.seasonal_job_matching.dto.responses.UserFieldsOfInterestResp
 import grad_project.seasonal_job_matching.dto.responses.UserResponseDTO;
 import grad_project.seasonal_job_matching.mapper.JobMapper;
 import grad_project.seasonal_job_matching.mapper.UserMapper;
+import grad_project.seasonal_job_matching.model.Job;
 import grad_project.seasonal_job_matching.model.User;
+import grad_project.seasonal_job_matching.repository.JobRepository;
 import grad_project.seasonal_job_matching.repository.UserRepository;
 
 @Service
@@ -26,15 +28,18 @@ public class UserService {
 
     public final List<User> users = new ArrayList<>();
     private final UserRepository userRepository;
+    private final JobRepository jobRepository;
+
     private final PasswordEncoder passwordEncoder;
     //like singleton, only one instantiation of code which is in mapper so it gets that one instead of creating a new one in this class
     @Autowired
     private UserMapper userMapper;
     @Autowired
     private JobMapper jobMapper;
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JobRepository jobRepository){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jobRepository = jobRepository;
 
     }
     public List<UserResponseDTO> findAllUsers(){
@@ -114,6 +119,16 @@ public class UserService {
         }
     }
 
+
+    public List<Long> getFavoriteJobIds(long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+    
+        return user.getFavoriteJobs().stream()
+            .map(Job::getId)
+            .toList();
+    }
+
     public UserResponseDTO editUser(UserEditDTO dto, long id){
         User existingUser = userRepository.findById(id).orElseThrow(()-> new RuntimeException("User not found with ID: " + id));
 
@@ -160,6 +175,13 @@ public class UserService {
 
         if (dto.getFieldsOfInterestToRemove() != null) {
             existingUser.getFieldsOfInterest().removeAll(dto.getFieldsOfInterestToRemove());
+        }
+
+        if (dto.getJobIds() != null) {
+            List<Job> jobs = jobRepository.findAllById(dto.getJobIds());
+
+            existingUser.getFavoriteJobs().clear();
+            existingUser.getFavoriteJobs().addAll(jobs);
         }
 
         User saveduser = userRepository.save(existingUser);
