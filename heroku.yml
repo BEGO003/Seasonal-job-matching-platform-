@@ -1,0 +1,6 @@
+build:
+  config:
+    MAVEN_CUSTOM_GOALS: "clean package"
+  languages:
+    java:
+      root: Backend/seasonal_job_matching
