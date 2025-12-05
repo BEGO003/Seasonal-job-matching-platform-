@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { JobCard } from "./JobCard";
 import { jobApi } from "@/api";
@@ -8,6 +9,7 @@ export const JobList = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const location = useLocation();
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -23,7 +25,7 @@ export const JobList = () => {
     };
 
     fetchJobs();
-  }, []);
+  }, [location.pathname]);
 
   if (loading) {
     return (
@@ -81,19 +83,19 @@ export const JobList = () => {
             </TabsTrigger>
             <TabsTrigger
               value="active"
-              className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg"
+              className="data-[state=active]:bg-gradient-to-r from-green-100 to-green-200/100 data-[state=active]:text-black rounded-lg"
             >
               Active
             </TabsTrigger>
             <TabsTrigger
               value="drafts"
-              className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg"
+              className="data-[state=active]:bg-gradient-to-r from-gray-200 to-gray-200/100 data-[state=active]:text-black rounded-lg"
             >
               Drafts
             </TabsTrigger>
             <TabsTrigger
               value="closed"
-              className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg"
+              className="data-[state=active]:bg-gradient-to-r from-red-100 to-red-200/100 data-[state=active]:text-black rounded-lg"
             >
               Closed
             </TabsTrigger>
