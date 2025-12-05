@@ -109,6 +109,19 @@ public class UserController {
         return ResponseEntity.ok(jobIds);
     }
     
+    @GetMapping("/{userId}/recommended-jobs")
+    public ResponseEntity<?> getRecommendedJobs(@PathVariable long userId) {
+        try {
+            List<JobResponseDTO> recommendedJobs = users_service.getRecommendedJobs(userId);
+            return ResponseEntity.ok(Map.of(
+                "jobs", recommendedJobs,
+                "count", recommendedJobs.size()
+            ));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(Map.of("error", e.getMessage()));
+        }
+    }
     
     @PostMapping
     public ResponseEntity<?> createUser(@Valid @RequestBody UserCreateDTO userdto){//if user is from mobile than type is jobseeker, else it is employer  
