@@ -8,6 +8,7 @@ export type JobType =
   | "volunteer"
   | "internship";
 export type JobStatus = "active" | "draft" | "closed";
+export type SalaryType = "YEARLY" | "MONTHLY" | "HOURLY";
 
 export interface Job {
   id: number;
@@ -16,8 +17,9 @@ export interface Job {
   location: string;
   jobType: JobType;
   startDate: string;
-  endDate: string;
-  salary: number;
+  duration: number;
+  amount: number;
+  salary: SalaryType;
   positions: number;
   status: JobStatus;
   applications: number;
@@ -36,8 +38,9 @@ export interface JobFormData {
   location: string;
   jobType: JobType;
   startDate: string;
-  endDate: string;
-  salary: number;
+  duration: number;
+  amount: number;
+  salary: SalaryType;
   positions: number;
   workArrangement: WorkArrangement;
   status: "active" | "draft" | "closed";

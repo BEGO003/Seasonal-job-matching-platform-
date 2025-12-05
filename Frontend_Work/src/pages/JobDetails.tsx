@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { jobApi } from "@/api";
+import { applicationApi } from "@/api";
 import { Job } from "@/types/job";
 import { formatDateRange, formatDateDDMMYYYY } from "@/lib/date";
 
@@ -27,6 +28,7 @@ export default function JobDetails() {
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [applicantCount, setApplicantCount] = useState<number>(0);
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -35,6 +37,13 @@ export default function JobDetails() {
         setLoading(true);
         const jobData = await jobApi.getJobById(Number(id));
         setJob(jobData);
+        // Fetch applications count dynamically
+        try {
+          const apps = await applicationApi.getApplicationsByJobId(Number(id));
+          setApplicantCount(apps.length);
+        } catch {
+          setApplicantCount(0);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch job");
       } finally {
@@ -143,9 +152,19 @@ export default function JobDetails() {
   }
 
   const statusInfo = statusConfig[job.status] || statusConfig.draft;
+
+  const formatSalaryType = (salaryType: string) => {
+    const typeMap: Record<string, string> = {
+      YEARLY: "Yearly",
+      MONTHLY: "Monthly",
+      HOURLY: "Hourly",
+    };
+    return typeMap[salaryType] || salaryType;
+  };
+
   const formatSalary = () => {
-    if (typeof job.salary === "number" && !Number.isNaN(job.salary)) {
-      return `$${job.salary.toFixed(2)}`;
+    if (typeof job.amount === "number" && !Number.isNaN(job.amount)) {
+      return `$${job.amount.toFixed(2)}/${formatSalaryType(job.salary)}`;
     }
     return "Not specified";
   };
@@ -294,10 +313,16 @@ export default function JobDetails() {
                   value={<span>{job.positions}</span>}
                 />
                 <MetaRow
-                  label="Period"
-                  value={
-                    <span>{formatDateRange(job.startDate, job.endDate)}</span>
-                  }
+                  label="Start Date"
+                  value={<span>{job.startDate}</span>}
+                />
+                <MetaRow
+                  label="Duration"
+                  value={<span>{job.duration} days</span>}
+                />
+                <MetaRow
+                  label="Applications"
+                  value={<span>{applicantCount}</span>}
                 />
               </div>
 
@@ -358,25 +383,14 @@ export default function JobDetails() {
 
             <Card className="p-4">
               <h4 className="text-sm font-semibold text-foreground mb-3">
-                Metrics
+                Salary
               </h4>
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 bg-secondary/40 rounded-lg text-center">
-                  <div className="text-xs text-muted-foreground">
-                    Applications
-                  </div>
-                  <div className="font-bold text-foreground">
-                    {job.applications}
-                  </div>
-                </div>
+                
 
-                <div className="p-3 bg-secondary/40 rounded-lg text-center">
-                  <div className="text-xs text-muted-foreground">Views</div>
-                  <div className="font-bold text-foreground">{job.views}</div>
-                </div>
+    
 
                 <div className="p-3 bg-secondary/40 rounded-lg text-center col-span-2">
-                  <div className="text-xs text-muted-foreground">Salary</div>
                   <div className="font-bold text-foreground">
                     {formatSalary()}
                   </div>

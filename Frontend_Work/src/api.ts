@@ -1,5 +1,6 @@
 import { Job, JobFormData, JobStats } from "@/types/job";
 import { User, LoginCredentials, SignupData, AuthResponse } from "@/types/user";
+import { Application, ApplicationStatus } from "@/types/application";
 import { USERS, JOBS, getUserJobs } from "../endpoints";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -157,6 +158,14 @@ const mapApiJobToJob = (j: any): Job => {
     return s;
   };
 
+  const mapSalaryType = (val: any): string => {
+    const s = (val || "").toString().toUpperCase();
+    if (s === "YEARLY" || s === "ANNUAL") return "YEARLY";
+    if (s === "MONTHLY") return "MONTHLY";
+    if (s === "HOURLY") return "HOURLY";
+    return "YEARLY"; // Default
+  };
+
   return {
     id: j.id ?? 0,
     title: j.title ?? "",
@@ -164,9 +173,11 @@ const mapApiJobToJob = (j: any): Job => {
     location: j.location ?? "",
     jobType: mapBackendJobTypeToUi(j.jobType ?? j.type ?? ""),
     startDate: normalizeDate(j.startDate ?? j.StartDate ?? j.start_date),
-    endDate: normalizeDate(j.endDate ?? j.EndDate ?? j.end_date),
-    salary: typeof j.salary === "number" ? j.salary : Number(j.salary ?? 0),
-    positions: j.positions ?? j.numofpositions ?? 0,
+    duration:
+      typeof j.duration === "number" ? j.duration : Number(j.duration ?? 0),
+    amount: typeof j.amount === "number" ? j.amount : Number(j.amount ?? 0),
+    salary: mapSalaryType(j.salary ?? "YEARLY") as any,
+    positions: j.positions ?? j.numofpositions ?? j.numOfPositions ?? 0,
     status: mapApiStatusToUi(j.status),
     applications: j.applications ?? 0,
     views: j.views ?? 0,
@@ -241,10 +252,11 @@ export const jobApi = {
         ? mapUiJobTypeToBackend(jobData.jobType)
         : undefined,
       status: jobData.status ? mapUiStatusToBackend(jobData.status) : undefined,
+      amount: jobData.amount,
       salary: jobData.salary,
       location: jobData.location,
       startDate: formatDateForBackend(jobData.startDate || ""),
-      endDate: formatDateForBackend(jobData.endDate || ""),
+      duration: jobData.duration,
       numofpositions: jobData.positions,
       workarrangement: jobData.workArrangement?.toUpperCase?.(),
       // Always send arrays, even if empty - backend expects arrays
@@ -297,13 +309,13 @@ export const jobApi = {
     if (jobData.description !== undefined)
       body.description = jobData.description;
     if (jobData.location !== undefined) body.location = jobData.location;
+    if (jobData.amount !== undefined) body.amount = jobData.amount;
     if (jobData.salary !== undefined) body.salary = jobData.salary;
+    if (jobData.duration !== undefined) body.duration = jobData.duration;
     if (jobData.positions !== undefined)
       body.numofpositions = jobData.positions;
     if (jobData.startDate !== undefined)
       body.startDate = formatDateForBackend(jobData.startDate);
-    if (jobData.endDate !== undefined)
-      body.endDate = formatDateForBackend(jobData.endDate);
     // Always send arrays, even if empty - backend expects arrays
     if (jobData.categories !== undefined) {
       body.categories = Array.isArray(jobData.categories)
@@ -586,9 +598,6 @@ export const jobApi = {
     const todayStr = `${String(today.getDate()).padStart(2, "0")}-${String(
       today.getMonth() + 1
     ).padStart(2, "0")}-${today.getFullYear()}`;
-    const futureDateStr = `${String(today.getDate()).padStart(2, "0")}-${String(
-      today.getMonth() + 1
-    ).padStart(2, "0")}-${today.getFullYear() + 1}`;
 
     // Build body with placeholders for null/empty fields, user data when provided
     const body: any = {
@@ -602,15 +611,16 @@ export const jobApi = {
       type: jobData.jobType
         ? mapUiJobTypeToBackend(jobData.jobType)
         : "FULL_TIME", // Default placeholder
-      status: jobData.status ? mapUiStatusToBackend(jobData.status) : "DRAFT", // Always DRAFT for saveDraft
-      salary: getValueOrPlaceholder(jobData.salary, 0, "number"),
+      status: "DRAFT", // Always DRAFT for saveDraft
+      amount: getValueOrPlaceholder(jobData.amount, 0, "number"),
+      salary: getValueOrPlaceholder(jobData.salary, "YEARLY", "string"),
       location: getValueOrPlaceholder(
         jobData.location,
         "Location TBD",
         "string"
       ),
       startDate: formatDateForBackend(jobData.startDate || "") || todayStr, // Use today if empty
-      endDate: formatDateForBackend(jobData.endDate || "") || futureDateStr, // Use 1 year from today if empty
+      duration: getValueOrPlaceholder(jobData.duration, 0, "number"),
       numofpositions: getValueOrPlaceholder(jobData.positions, 1, "number"),
       workarrangement: jobData.workArrangement
         ? jobData.workArrangement.toUpperCase()
@@ -633,7 +643,7 @@ export const jobApi = {
       hasUserTitle: !!jobData.title,
       hasUserDescription: !!jobData.description,
       hasUserLocation: !!jobData.location,
-      hasUserSalary: jobData.salary !== undefined && jobData.salary !== null,
+      hasUserAmount: jobData.amount !== undefined && jobData.amount !== null,
       body: { ...body, jobposterId: currentUserId }, // Log without exposing full userId
     });
 
@@ -655,16 +665,34 @@ export const jobApi = {
         headers: commonHeaders,
       });
       const payload = await handleResponse<any>(response);
-      return payload?.data ?? payload;
+      const raw = payload?.data ?? payload;
+      // If backend sends static totals, accept them; otherwise fallback below
+      if (
+        raw &&
+        typeof raw.totalJobs === "number" &&
+        typeof raw.totalApplications === "number" &&
+        typeof raw.totalViews === "number" &&
+        typeof raw.activeJobs === "number"
+      ) {
+        return raw as JobStats;
+      }
+      throw new Error("Incomplete jobStats payload");
     } catch {
       try {
         const jobs = await jobApi.getJobs();
+        // Dynamically compute applications by querying applications per job
+        let totalApplications = 0;
+        for (const j of jobs) {
+          try {
+            const list = await applicationApi.getApplicationsByJobId(j.id);
+            totalApplications += Array.isArray(list) ? list.length : 0;
+          } catch {
+            // ignore per-job errors
+          }
+        }
         return {
           totalJobs: jobs.length,
-          totalApplications: jobs.reduce(
-            (sum, j) => sum + (j.applications || 0),
-            0
-          ),
+          totalApplications,
           totalViews: jobs.reduce((sum, j) => sum + (j.views || 0), 0),
           activeJobs: jobs.filter((j) => j.status === "active").length,
         };
@@ -979,3 +1007,83 @@ export const authApi = {
 };
 
 export { ApiError };
+
+// -------------------- Application API --------------------
+export const applicationApi = {
+  // Get all applications for a specific job
+  getApplicationsByJobId: async (jobId: number): Promise<Application[]> => {
+    const token = localStorage.getItem("authToken");
+    const headers: HeadersInit = {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
+    const response = await fetch(`${API_BASE_URL}/applications/job/${jobId}`, {
+      headers,
+    });
+
+    const payload = await handleResponse<any>(response);
+    const list = Array.isArray(payload) ? payload : payload?.data ?? [];
+    return list;
+  },
+
+  // Update application status
+  updateApplicationStatus: async (
+    applicationId: number,
+    status: ApplicationStatus
+  ): Promise<Application> => {
+    const token = localStorage.getItem("authToken");
+    const headers: HeadersInit = {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
+    const response = await fetch(
+      `${API_BASE_URL}/applications/${applicationId}`,
+      {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify({ applicationStatus: status }),
+      }
+    );
+
+    const payload = await handleResponse<any>(response);
+    const updated = payload?.data ?? payload;
+    return updated;
+  },
+
+  // Delete application
+  deleteApplication: async (applicationId: number): Promise<void> => {
+    const token = localStorage.getItem("authToken");
+    const headers: HeadersInit = {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
+    await fetch(`${API_BASE_URL}/applications/${applicationId}`, {
+      method: "DELETE",
+      headers,
+    });
+  },
+};
+
+// -------------------- Resume API --------------------
+export const resumeApi = {
+  getResumeByUserId: async (userId: number): Promise<import("@/types/resume").Resume> => {
+    const token = localStorage.getItem("authToken");
+    const headers: HeadersInit = {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
+    const response = await fetch(`${API_BASE_URL}/resumes/${userId}`, {
+      headers,
+    });
+    const payload = await handleResponse<any>(response);
+    return (payload?.data ?? payload) as import("@/types/resume").Resume;
+  },
+};

@@ -25,7 +25,13 @@ import {
 } from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
 import { jobApi, ApiError } from "@/api";
-import { JobFormData, WorkArrangement, JobType, Job } from "@/types/job";
+import {
+  JobFormData,
+  WorkArrangement,
+  JobType,
+  Job,
+  SalaryType,
+} from "@/types/job";
 import { Textarea } from "@/components/ui/textarea";
 
 const PostJob = () => {
@@ -47,12 +53,13 @@ const PostJob = () => {
   const [newRequirement, setNewRequirement] = useState("");
   const [newBenefit, setNewBenefit] = useState("");
   const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [duration, setDuration] = useState("");
   const [currentJob, setCurrentJob] = useState<Job | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
-  const [salary, setSalary] = useState("");
+  const [amount, setAmount] = useState("");
+  const [salaryType, setSalaryType] = useState<SalaryType | "">("YEARLY");
   const [positions, setPositions] = useState("");
 
   // Load job data if editing
@@ -69,21 +76,19 @@ const PostJob = () => {
           setTitle(job.title || "");
           setDescription(job.description || "");
           setLocation(job.location || "");
-          setSalary(String(job.salary || 0));
+          setAmount(String(job.amount || 0));
+          setSalaryType(job.salary || "YEARLY");
+          setDuration(String(job.duration || 0));
           setPositions(String(job.positions || 1));
           setJobType(job.jobType || "");
           setWorkArrangement(job.workArrangement || "");
 
-          // Set dates
+          // Set start date
           if (job.startDate) {
             const [year, month, day] = job.startDate.split("-");
             setStartDate(
               new Date(Number(year), Number(month) - 1, Number(day))
             );
-          }
-          if (job.endDate) {
-            const [year, month, day] = job.endDate.split("-");
-            setEndDate(new Date(Number(year), Number(month) - 1, Number(day)));
           }
 
           // Set arrays
@@ -151,15 +156,13 @@ const PostJob = () => {
     if (!data.jobType) return "Please select a job type.";
     if (!data.workArrangement) return "Please select a work arrangement.";
     if (!data.startDate) return "Start date is required.";
-    if (!data.endDate) return "End date is required.";
-    if (isNaN(data.salary) || data.salary <= 0)
-      return "Salary must be a valid positive number.";
-    if (isNaN(data.positions) || data.positions <= 0)
+    if (!data.duration || data.duration <= 0)
+      return "Duration must be a valid positive number.";
+    if (!data.amount || data.amount <= 0)
+      return "Amount must be a valid positive number.";
+    if (!data.salary) return "Please select a salary type.";
+    if (!data.positions || data.positions <= 0)
       return "Number of positions must be a valid positive number.";
-
-    const start = new Date(data.startDate);
-    const end = new Date(data.endDate);
-    if (start >= end) return "Start date must be earlier than end date.";
 
     // Require at least one category
     if (!data.categories || data.categories.length === 0) {
@@ -198,8 +201,9 @@ const PostJob = () => {
       jobType: jobType as "full-time" | "part-time" | "contract" | "temporary",
       workArrangement: workArrangement as WorkArrangement,
       startDate: toYmd(startDate),
-      endDate: toYmd(endDate),
-      salary: Number(salary),
+      duration: Number(duration),
+      amount: Number(amount),
+      salary: salaryType as SalaryType,
       positions: Number(positions),
       // If editing a draft and all fields are filled, make it active
       status:
@@ -274,8 +278,9 @@ const PostJob = () => {
       jobType: jobType as "full-time" | "part-time" | "contract" | "temporary",
       workArrangement: workArrangement as WorkArrangement,
       startDate: toYmd(startDate),
-      endDate: toYmd(endDate),
-      salary: Number(salary),
+      duration: Number(duration),
+      amount: Number(amount),
+      salary: salaryType as SalaryType,
       positions: Number(positions),
       status: "draft",
       // Always send arrays, even if empty
@@ -406,17 +411,17 @@ const PostJob = () => {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="salary" className="flex items-center gap-2">
-                  <DollarSign className="w-4 h-4" /> Salary *
+                <Label htmlFor="amount" className="flex items-center gap-2">
+                  <DollarSign className="w-4 h-4" /> Amount *
                 </Label>
                 <Input
-                  id="salary"
-                  name="salary"
+                  id="amount"
+                  name="amount"
                   type="number"
-                  value={salary}
-                  onChange={(e) => setSalary(e.target.value)}
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
                   placeholder="e.g., 5000"
                   min="0"
                   step="0.01"
@@ -425,16 +430,34 @@ const PostJob = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="positions" className="flex items-center gap-2">
-                  <Users className="w-4 h-4" /> Number of Positions *
+                <Label htmlFor="salaryType">Salary Type *</Label>
+                <Select
+                  value={salaryType}
+                  onValueChange={(value) => setSalaryType(value as SalaryType)}
+                  disabled={loadingJob}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select salary type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="YEARLY">Yearly</SelectItem>
+                    <SelectItem value="MONTHLY">Monthly</SelectItem>
+                    <SelectItem value="HOURLY">Hourly</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="duration" className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4" /> Duration (days) *
                 </Label>
                 <Input
-                  id="positions"
-                  name="positions"
+                  id="duration"
+                  name="duration"
                   type="number"
-                  value={positions}
-                  onChange={(e) => setPositions(e.target.value)}
-                  placeholder="e.g., 3"
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
+                  placeholder="e.g., 120"
                   min="1"
                   disabled={loadingJob}
                 />
@@ -501,15 +524,17 @@ const PostJob = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="endDate" className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4" /> End Date *
+                <Label htmlFor="positions" className="flex items-center gap-2">
+                  <Users className="w-4 h-4" /> Number of Positions *
                 </Label>
-                <DatePickerAny
-                  selected={endDate}
-                  onChange={(date: Date | null) => setEndDate(date)}
-                  dateFormat="dd/MM/yyyy"
-                  customInput={<Input disabled={loadingJob} />}
-                  placeholderText="dd/mm/yyyy"
+                <Input
+                  id="positions"
+                  name="positions"
+                  type="number"
+                  value={positions}
+                  onChange={(e) => setPositions(e.target.value)}
+                  placeholder="e.g., 3"
+                  min="1"
                   disabled={loadingJob}
                 />
               </div>
