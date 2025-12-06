@@ -58,6 +58,7 @@ public class SecurityConfig {
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
 
+        System.out.println("CORS allowedOrigins (startup) = " + config.getAllowedOrigins());
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
