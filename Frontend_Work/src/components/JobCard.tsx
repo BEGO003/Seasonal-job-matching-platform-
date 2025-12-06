@@ -91,7 +91,7 @@ export const JobCard = ({ job }: JobCardProps) => {
 
   const formatDurationInfo = () => {
     if (duration) {
-      return `${duration} days`;
+      return `${duration} Weeks`;
     }
     return "Duration not specified";
   };
@@ -130,7 +130,7 @@ export const JobCard = ({ job }: JobCardProps) => {
                 {applicantCount} apps
               </span>
             </div>
-            
+
             <div className="flex items-center gap-2 p-3 bg-white/60 rounded-lg">
               <Users className="w-4 h-4 text-orange-500" />
               <span className="text-sm font-medium text-foreground">
@@ -145,7 +145,7 @@ export const JobCard = ({ job }: JobCardProps) => {
               className="text-xs border-secondary text-foreground bg-secondary"
             >
               <Calendar className="w-3 h-3 mr-1" />
-              {startDate} - {formatDurationInfo()}
+              {startDate} / {formatDurationInfo()}
             </Badge>
           </div>
         </div>

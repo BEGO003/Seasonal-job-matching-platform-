@@ -24,8 +24,8 @@ interface ApplicationCardProps {
 const statusConfig = {
   PENDING: {
     label: "Pending",
-    className: "bg-gradient-to-r from-yellow-600 to-yellow-700 text-white",
-    bgColor: "bg-gradient-to-r from-yellow-100 to-yellow-400/100",
+    className: "bg-gradient-to-r from-rose-500 to-orange-500 text-white",
+    bgColor: "bg-gradient-to-r from-rose-100 to-orange-200",
     icon: Clock,
   },
   ACCEPTED: {
@@ -42,8 +42,8 @@ const statusConfig = {
   },
   INTERVIEW_SCHEDULED: {
     label: "Interview Scheduled",
-    className: "bg-gradient-to-r from-blue-600 to-blue-700 text-white",
-    bgColor: "bg-gradient-to-r from-blue-100 to-blue-400/100",
+    className: "bg-gradient-to-r from-cyan-600 to-cyan-700 text-white",
+    bgColor: "bg-gradient-to-r from-cyan-100 to-cyan-300",
     icon: Briefcase,
   },
 };
@@ -59,7 +59,12 @@ export const ApplicationCard = ({
 
   const handleStatusChange = async (newStatus: ApplicationStatus) => {
     try {
-      await applicationApi.updateApplicationStatus(application.id, newStatus);
+      const employerId = Number(localStorage.getItem("userId"));
+      await applicationApi.updateApplicationStatus(
+        application.id,
+        newStatus,
+        employerId
+      );
       onStatusChange?.(application.id, newStatus);
     } catch (err) {
       console.error("Failed to update application status:", err);
@@ -79,7 +84,7 @@ export const ApplicationCard = ({
 
   return (
     <Card
-      className={`p-6 hover:shadow-xl transition-all duration-300 border-l-4 border-l-yellow-500 ${statusInfo.bgColor} group`}
+      className={`p-6 hover:shadow-xl transition-all duration-300 border-l-4 border-l-purple-500 ${statusInfo.bgColor} group`}
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">

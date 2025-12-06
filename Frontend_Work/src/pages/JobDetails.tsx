@@ -318,7 +318,7 @@ export default function JobDetails() {
                 />
                 <MetaRow
                   label="Duration"
-                  value={<span>{job.duration} days</span>}
+                  value={<span>{job.duration} Weeks</span>}
                 />
                 <MetaRow
                   label="Applications"
@@ -386,10 +386,6 @@ export default function JobDetails() {
                 Salary
               </h4>
               <div className="grid grid-cols-2 gap-3">
-                
-
-    
-
                 <div className="p-3 bg-secondary/40 rounded-lg text-center col-span-2">
                   <div className="font-bold text-foreground">
                     {formatSalary()}

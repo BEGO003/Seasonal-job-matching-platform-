@@ -72,10 +72,10 @@ export default function Applications() {
 
   // centralised colour mapping for statuses (reuse in stats, badges, cards)
   const statusColors: Record<string, string> = {
-    PENDING: "#e1581dff", // rich amber
-    INTERVIEW_SCHEDULED: "#0891B2", // vivid blue
-    ACCEPTED: "#16A34A", // green-600 equivalent
-    REJECTED: "#DC2626", // red-600 equivalent
+    PENDING: "#070200ff", // rich amber
+    INTERVIEW_SCHEDULED: "#00040aff", // vivid blue
+    ACCEPTED: "#000201ff", // green-600 equivalent
+    REJECTED: "#0a0000ff", // red-600 equivalent
   };
 
   if (loading) {
@@ -157,33 +157,27 @@ export default function Applications() {
               {stats.total}
             </div>
           </Card>
-          <Card className="p-4">
+          <Card className="p-4 bg-gradient-to-r from-rose-100 to-orange-200">
             <div className="text-sm text-muted-foreground">Pending</div>
-            <div
-              className="text-3xl font-bold"
-              style={{ color: statusColors.PENDING }}
-            >
+            <div className="text-3xl font-bold text-foreground">
               {stats.pending}
             </div>
           </Card>
-          <Card className="p-4">
+          <Card className="p-4 bg-gradient-to-r from-cyan-100 to-cyan-300">
             <div className="text-sm text-muted-foreground">Interview</div>
-            <div
-              className="text-3xl font-bold"
-              style={{ color: statusColors.INTERVIEW_SCHEDULED }}
-            >
+            <div className="text-3xl font-bold text-foreground">
               {stats.interview_scheduled}
             </div>
           </Card>
-          <Card className="p-4">
+          <Card className="p-4 bg-gradient-to-r from-green-100 to-green-400/100">
             <div className="text-sm text-muted-foreground">Accepted</div>
-            <div className="text-3xl font-bold text-green-600">
+            <div className="text-3xl font-bold text-foreground">
               {stats.accepted}
             </div>
           </Card>
-          <Card className="p-4">
+          <Card className="p-4 bg-gradient-to-r from-red-100 to-red-400/100">
             <div className="text-sm text-muted-foreground">Rejected</div>
-            <div className="text-3xl font-bold text-red-600">
+            <div className="text-3xl font-bold text-foreground">
               {stats.rejected}
             </div>
           </Card>
@@ -204,7 +198,6 @@ export default function Applications() {
                 application={application}
                 onStatusChange={handleStatusChange}
                 onDelete={handleDelete}
-                
               />
             ))}
           </div>

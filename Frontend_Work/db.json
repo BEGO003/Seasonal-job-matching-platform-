@@ -7,7 +7,7 @@
       "number": "55512345678",
       "email": "jane.doe@corp.com",
       "password": "Password123",
-      "fieldsOfInterest": ["Software Engineering", "Product Management"],
+
       "createdAt": "2025-01-01T08:00:00.000Z",
       "updatedAt": "2025-01-01T08:00:00.000Z"
     },
@@ -18,7 +18,7 @@
       "number": "201234567890",
       "email": "mohamed@example.com",
       "password": "Mohamed123",
-      "fieldsOfInterest": ["Software Engineering"],
+
       "createdAt": "2025-01-02T08:00:00.000Z",
       "updatedAt": "2025-01-02T08:00:00.000Z"
     }

@@ -74,7 +74,7 @@ export const JobList = () => {
 
       <Tabs defaultValue="all" className="w-full">
         <div className="flex items-center justify-center mb-8">
-          <TabsList className="grid w-full max-w-xl grid-cols-4 bg-gradient-to-r from-secondary to-secondary/70 p-1 rounded-xl">
+          <TabsList className="grid w-full max-w-xl grid-cols-3 bg-gradient-to-r from-secondary to-secondary/70 p-1 rounded-xl">
             <TabsTrigger
               value="all"
               className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg"
@@ -87,12 +87,12 @@ export const JobList = () => {
             >
               Active
             </TabsTrigger>
-            <TabsTrigger
+            {/* <TabsTrigger
               value="drafts"
               className="data-[state=active]:bg-gradient-to-r from-gray-200 to-gray-200/100 data-[state=active]:text-black rounded-lg"
             >
               Drafts
-            </TabsTrigger>
+            </TabsTrigger> */}
             <TabsTrigger
               value="closed"
               className="data-[state=active]:bg-gradient-to-r from-red-100 to-red-200/100 data-[state=active]:text-black rounded-lg"

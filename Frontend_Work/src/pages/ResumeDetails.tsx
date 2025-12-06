@@ -42,7 +42,9 @@ export default function ResumeDetails() {
       <div className="min-h-screen flex items-center justify-center">
         <Card className="p-6 max-w-xl w-full text-center">
           <p className="text-red-500 mb-4">{error || "Resume not found"}</p>
-          <Button variant="ghost" onClick={() => navigate(-1)}>Back</Button>
+          <Button variant="ghost" onClick={() => navigate(-1)}>
+            Back
+          </Button>
         </Card>
       </div>
     );
@@ -56,7 +58,9 @@ export default function ResumeDetails() {
       </div>
       <ul className="list-disc ml-6 space-y-2">
         {items.map((item, idx) => (
-          <li key={idx} className="text-sm text-foreground">{item}</li>
+          <li key={idx} className="text-sm text-foreground">
+            {item}
+          </li>
         ))}
       </ul>
     </Card>

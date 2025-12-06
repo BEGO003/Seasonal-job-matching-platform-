@@ -3,7 +3,14 @@ import { User, LoginCredentials, SignupData, AuthResponse } from "@/types/user";
 import { Application, ApplicationStatus } from "@/types/application";
 import { USERS, JOBS, getUserJobs } from "../endpoints";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+// Use proxy base in dev to avoid CORS; fallback to '/api' if env missing
+const isLocalhost =
+  typeof window !== "undefined" &&
+  /^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname);
+const API_BASE_URL = (
+  (isLocalhost ? "/api" : import.meta.env.VITE_API_BASE_URL) || "/api"
+).replace(/\/$/, "");
+console.log("[api] Base URL:", API_BASE_URL);
 
 // Read the logged-in user's id from localStorage
 const getLoggedInUserId = (): number | null => {
@@ -289,6 +296,14 @@ export const jobApi = {
     const token = localStorage.getItem("authToken");
     const currentUserId = getLoggedInUserId();
 
+    if (!currentUserId) {
+      throw new ApiError(401, "Not authenticated: missing user id");
+    }
+    if (!token) {
+      // Allow request to proceed without token; backend handles auth
+      console.warn("[jobApi.updateJob] No auth token found, proceeding anyway.");
+    }
+
     const headers: HeadersInit = {
       ...commonHeaders,
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -348,7 +363,7 @@ export const jobApi = {
       }
     });
 
-    console.log("[jobApi.updateJob] → PATCH body", body);
+    console.log("[jobApi.updateJob] → PATCH body", { body, id, currentUserId });
     const response = await fetch(`${API_BASE_URL}${JOBS}/${id}`, {
       method: "PATCH",
       headers,
@@ -888,8 +903,7 @@ export const authApi = {
         ...signupData,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        // Normalize possible typo from backend/UI
-        fieldsOfInterest: signupData.fieldsOfInterest ?? [],
+        // Removed fieldsOfInterest
       };
 
       const createResponse = await fetch(`${API_BASE_URL}${USERS}`, {
@@ -952,10 +966,6 @@ export const authApi = {
       const existing = authApi.getCurrentUser();
       const normalized = {
         ...(actual || {}),
-        fieldsOfInterest:
-          actual?.fieldsOfInterest ??
-          (existing as any)?.fieldsOfInterest ??
-          undefined,
       } as Omit<User, "password">;
       console.log("[authApi.fetchCurrentUser] normalized user", normalized);
       localStorage.setItem("user", JSON.stringify(normalized));
@@ -994,10 +1004,6 @@ export const authApi = {
     const existing = authApi.getCurrentUser();
     const normalized = {
       ...(actual || {}),
-      fieldsOfInterest:
-        actual?.fieldsOfInterest ||
-        (existing as any)?.fieldsOfInterest ||
-        undefined,
     };
     console.log("[authApi.updateUser] normalized user", normalized);
 
@@ -1031,7 +1037,8 @@ export const applicationApi = {
   // Update application status
   updateApplicationStatus: async (
     applicationId: number,
-    status: ApplicationStatus
+    status: ApplicationStatus,
+    employerId?: number
   ): Promise<Application> => {
     const token = localStorage.getItem("authToken");
     const headers: HeadersInit = {
@@ -1040,18 +1047,52 @@ export const applicationApi = {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
 
-    const response = await fetch(
-      `${API_BASE_URL}/applications/${applicationId}`,
-      {
-        method: "PATCH",
-        headers,
-        body: JSON.stringify({ applicationStatus: status }),
-      }
-    );
+    const resolvedEmployerIdRaw = employerId ?? localStorage.getItem("userId");
+    const resolvedEmployerId = Number(resolvedEmployerIdRaw);
+    if (!Number.isFinite(resolvedEmployerId)) {
+      throw new ApiError(
+        401,
+        "Not authenticated: missing employer id to update application status"
+      );
+    }
 
+    // Map UI status to backend expected enum casing
+    const toBackendStatus = (s: ApplicationStatus): string => {
+      const map: Record<ApplicationStatus, string> = {
+        PENDING: "PENDING",
+        ACCEPTED: "ACCEPTED",
+        REJECTED: "REJECTED",
+        INTERVIEW_SCHEDULED: "INTERVIEW_SCHEDULED",
+      } as any;
+      return map[s] || String(s).toUpperCase();
+    };
+    const backendStatus = toBackendStatus(status);
+
+    const url = `${API_BASE_URL}/applications/${applicationId}/status/employer/${resolvedEmployerId}`;
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers,
+      // Some backends require redundant fields; include them defensively
+      body: JSON.stringify({
+        status: backendStatus,
+        applicationId,
+        employerId: resolvedEmployerId,
+      }),
+    });
+    console.log("[applicationApi.updateApplicationStatus]", {
+      applicationId,
+      employerId: resolvedEmployerId,
+      statusSent: backendStatus,
+      url,
+      hasToken: !!token,
+    });
     const payload = await handleResponse<any>(response);
-    const updated = payload?.data ?? payload;
-    return updated;
+    console.log("[applicationApi.updateApplicationStatus] response", {
+      status: response.status,
+      ok: response.ok,
+      keys: Object.keys(payload || {}),
+    });
+    return (payload?.data ?? payload) as Application;
   },
 
   // Delete application
@@ -1072,7 +1113,9 @@ export const applicationApi = {
 
 // -------------------- Resume API --------------------
 export const resumeApi = {
-  getResumeByUserId: async (userId: number): Promise<import("@/types/resume").Resume> => {
+  getResumeByUserId: async (
+    userId: number
+  ): Promise<import("@/types/resume").Resume> => {
     const token = localStorage.getItem("authToken");
     const headers: HeadersInit = {
       Accept: "application/json",
@@ -1087,3 +1130,4 @@ export const resumeApi = {
     return (payload?.data ?? payload) as import("@/types/resume").Resume;
   },
 };
+

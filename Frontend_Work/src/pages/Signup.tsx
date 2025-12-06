@@ -143,7 +143,7 @@ export default function SignupPage() {
           <p className="text-sm mb-4 md:mb-6 text-muted-foreground">
             Already have an account?{" "}
             <Link to="/profile" className="text-primary hover:underline">
-              View Profile
+              Login
             </Link>
           </p>
 
