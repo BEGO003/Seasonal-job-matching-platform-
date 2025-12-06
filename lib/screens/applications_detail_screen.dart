@@ -4,7 +4,7 @@ import 'package:job_seeker/widgets/common/app_card.dart';
 
 class ApplicationDetailScreen extends StatelessWidget {
   final ApplicationWithJob item;
-  
+
   const ApplicationDetailScreen({super.key, required this.item});
 
   Color _getStatusColor(String status) {
@@ -76,10 +76,7 @@ class ApplicationDetailScreen extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  statusColor,
-                  statusColor.withOpacity(0.8),
-                ],
+                colors: [statusColor, statusColor.withOpacity(0.8)],
               ),
             ),
           ),
@@ -248,6 +245,46 @@ class ApplicationDetailScreen extends StatelessWidget {
                           text: job.type,
                           color: const Color(0xFF8B5CF6),
                         ),
+                        if (job.categories.isNotEmpty) ...[
+                          const SizedBox(height: 12),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: job.categories
+                                .map(
+                                  (c) => Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFEEF2FF),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          Icons.category_outlined,
+                                          size: 14,
+                                          color: Color(0xFF6366F1),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          c,
+                                          style: const TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: Color(0xFF4F46E5),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -269,7 +306,9 @@ class ApplicationDetailScreen extends StatelessWidget {
                               Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF8B5CF6).withOpacity(0.1),
+                                  color: const Color(
+                                    0xFF8B5CF6,
+                                  ).withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: const Icon(
@@ -482,11 +521,7 @@ class _InfoRow extends StatelessWidget {
   final String text;
   final Color color;
 
-  const _InfoRow({
-    required this.icon,
-    required this.text,
-    required this.color,
-  });
+  const _InfoRow({required this.icon, required this.text, required this.color});
 
   @override
   Widget build(BuildContext context) {

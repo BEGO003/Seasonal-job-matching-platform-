@@ -46,21 +46,10 @@ class JobCardSection extends ConsumerWidget {
             physics: const BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
             ),
-            padding: const EdgeInsets.only(top: 8, bottom: 24),
+            padding: const EdgeInsets.only(top: 8, bottom: 120),
             itemCount: data.length,
             itemBuilder: (context, index) {
-              return TweenAnimationBuilder<double>(
-                duration: Duration(milliseconds: 300 + (index * 50)),
-                tween: Tween(begin: 0.0, end: 1.0),
-                curve: Curves.easeOutCubic,
-                builder: (context, value, child) {
-                  return Transform.translate(
-                    offset: Offset(0, 20 * (1 - value)),
-                    child: Opacity(opacity: value, child: child),
-                  );
-                },
-                child: JobCard(job: data[index]),
-              );
+              return JobCard(job: data[index]);
             },
           ),
         );

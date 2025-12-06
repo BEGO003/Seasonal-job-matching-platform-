@@ -22,13 +22,13 @@ class PersonalInformationAsyncNotifier
   Future<PersonalInformationModel> build() async {
     // Fetch user data
     final userData = await _service.fetchUserData();
-    
+
     // Fetch applied job IDs from the dedicated API endpoint
     final appliedJobIds = await _service.fetchAppliedJobIds();
-    
+
     // Fetch fields of interest from the dedicated API endpoint
     final fieldsOfInterest = await _service.fetchFieldsOfInterest();
-    
+
     // Update user data with applied job IDs and fields of interest
     return userData.copyWith(
       ownedapplications: appliedJobIds,
@@ -105,7 +105,7 @@ class PersonalInformationAsyncNotifier
   Future<void> refreshAppliedJobs() async {
     final current = state.value;
     if (current == null) return;
-    
+
     try {
       final appliedJobIds = await _service.fetchAppliedJobIds();
       state = AsyncValue.data(
@@ -142,8 +142,27 @@ class PersonalInformationAsyncNotifier
     }
   }
 
-  /// Update user data (used after login/signup)
   void updateUserData(PersonalInformationModel userData) {
     state = AsyncValue.data(userData);
+  }
+
+  Future<void> updateFieldsOfInterest({
+    required List<String> added,
+    required List<String> removed,
+  }) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      await _service.updateFieldsOfInterest(
+        fieldsOfInterestToAdd: added,
+        fieldsOfInterestToRemove: removed,
+      );
+
+      final current = state.value!;
+      final newInterests = List<String>.from(current.fieldsOfInterest ?? []);
+      newInterests.removeWhere((i) => removed.contains(i));
+      newInterests.addAll(added);
+
+      return current.copyWith(fieldsOfInterest: newInterests);
+    });
   }
 }

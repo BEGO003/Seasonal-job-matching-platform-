@@ -17,7 +17,9 @@ class _ResumeScreenState extends ConsumerState<ResumeScreen> {
   late TextEditingController _certificatesController;
   late TextEditingController _skillsController;
   late TextEditingController _languagesController;
+
   bool _dataLoaded = false;
+  bool _isEditing = false;
 
   @override
   void initState() {
@@ -78,6 +80,9 @@ class _ResumeScreenState extends ConsumerState<ResumeScreen> {
       final currentResume = ref.read(resumeProvider).value;
       if (currentResume == null) return;
 
+      // Calculate diffs (Keep existing logic or simplify - simplified here for brevity but assuming full update is intended by Provider logic)
+
+      // NOTE: reusing specific logic from previous implementation to be safe with provider expectations
       final educationToRemove = currentResume.education
           .where((e) => !education.contains(e))
           .toList();
@@ -128,16 +133,20 @@ class _ResumeScreenState extends ConsumerState<ResumeScreen> {
               languagesToAdd: languagesToAdd,
               languagesToRemove: languagesToRemove,
             );
+
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Resume saved successfully!')),
-          );
+          setState(() {
+            _isEditing = false;
+          });
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Resume updated!')));
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text('Error saving resume: $e')));
+          ).showSnackBar(SnackBar(content: Text('Error: $e')));
         }
       }
     }
@@ -148,122 +157,55 @@ class _ResumeScreenState extends ConsumerState<ResumeScreen> {
     final resumeState = ref.watch(resumeProvider);
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF9FAFB),
       appBar: AppBar(
-        title: const Text('Resume'),
+        title: const Text(
+          'My Resume',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: _saveResume,
-            tooltip: 'Save',
-          ),
+          resumeState.hasValue && resumeState.value != null
+              ? IconButton(
+                  icon: Icon(
+                    _isEditing ? Icons.check_circle : Icons.edit_note_rounded,
+                  ),
+                  color: _isEditing ? Colors.green : Colors.black87,
+                  iconSize: 28,
+                  onPressed: () {
+                    if (_isEditing) {
+                      _saveResume();
+                    } else {
+                      // Populate before editing to be sure
+                      _populateFields(resumeState.value!);
+                      setState(() => _isEditing = true);
+                    }
+                  },
+                  tooltip: _isEditing ? 'Save Changes' : 'Edit Resume',
+                )
+              : const SizedBox(),
+          const SizedBox(width: 8),
         ],
       ),
       body: resumeState.when(
         data: (resume) {
           if (resume == null) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'No resume found.',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      ref.read(resumeProvider.notifier).createResume();
-                    },
-                    child: const Text('Create Resume'),
-                  ),
-                ],
-              ),
-            );
+            return _buildEmptyState();
           }
 
-          if (!_dataLoaded) {
+          if (!_dataLoaded && !_isEditing) {
+            // Pre-populate just in case
             _populateFields(resume);
             _dataLoaded = true;
           }
 
-          return SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildSectionTitle('Education'),
-                    const SizedBox(height: 8),
-                    _buildTextField(
-                      controller: _educationController,
-                      label: 'Education',
-                      hint: 'Enter your education details (one per line)',
-                      maxLines: 4,
-                    ),
-                    const SizedBox(height: 24),
-
-                    _buildSectionTitle('Experience'),
-                    const SizedBox(height: 8),
-                    _buildTextField(
-                      controller: _experienceController,
-                      label: 'Experience',
-                      hint: 'Enter your work experience (one per line)',
-                      maxLines: 5,
-                    ),
-                    const SizedBox(height: 24),
-
-                    _buildSectionTitle('Certificates'),
-                    const SizedBox(height: 8),
-                    _buildTextField(
-                      controller: _certificatesController,
-                      label: 'Certificates',
-                      hint: 'Enter your certificates (one per line)',
-                      maxLines: 3,
-                    ),
-                    const SizedBox(height: 24),
-
-                    _buildSectionTitle('Skills'),
-                    const SizedBox(height: 8),
-                    _buildTextField(
-                      controller: _skillsController,
-                      label: 'Skills',
-                      hint: 'Enter your skills (one per line)',
-                      maxLines: 3,
-                    ),
-                    const SizedBox(height: 24),
-
-                    _buildSectionTitle('Languages'),
-                    const SizedBox(height: 8),
-                    _buildTextField(
-                      controller: _languagesController,
-                      label: 'Languages',
-                      hint: 'Enter languages you speak (one per line)',
-                      maxLines: 2,
-                    ),
-                    const SizedBox(height: 32),
-
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _saveResume,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        child: const Text(
-                          'Save Resume',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
-              ),
-            ),
-          );
+          if (_isEditing) {
+            return _buildEditForm();
+          } else {
+            return _buildResumeView(resume);
+          }
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, s) => Center(child: Text('Error: $e')),
@@ -271,30 +213,270 @@ class _ResumeScreenState extends ConsumerState<ResumeScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.description_outlined, size: 64, color: Colors.grey),
+          const SizedBox(height: 16),
+          const Text(
+            'No resume created yet.',
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () => ref.read(resumeProvider.notifier).createResume(),
+            icon: const Icon(Icons.add),
+            label: const Text('Create Resume'),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    required int maxLines,
-  }) {
-    return TextFormField(
-      controller: controller,
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        helperText: 'Separate each item with a new line',
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-        alignLabelWithHint: true,
+  Widget _buildResumeView(ResumeModel resume) {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        children: [
+          _buildInfoCard(
+            title: 'Experience',
+            icon: Icons.work_outline,
+            items: resume.experience,
+            color: Colors.blue,
+          ),
+          const SizedBox(height: 16),
+          _buildInfoCard(
+            title: 'Education',
+            icon: Icons.school_outlined,
+            items: resume.education,
+            color: Colors.orange,
+          ),
+          const SizedBox(height: 16),
+          _buildInfoCard(
+            title: 'Skills',
+            icon: Icons.psychology_outlined,
+            items: resume.skills,
+            color: Colors.purple,
+            isTags: true,
+          ),
+          const SizedBox(height: 16),
+          _buildInfoCard(
+            title: 'Languages',
+            icon: Icons.language,
+            items: resume.languages,
+            color: Colors.green,
+            isTags: true,
+          ),
+          const SizedBox(height: 16),
+          _buildInfoCard(
+            title: 'Certificates',
+            icon: Icons.card_membership,
+            items: resume.certificates,
+            color: Colors.teal,
+          ),
+          const SizedBox(height: 40),
+        ],
       ),
-      // Validator is optional now as fields can be empty
+    );
+  }
+
+  Widget _buildInfoCard({
+    required String title,
+    required IconData icon,
+    required List<String> items,
+    required Color color,
+    bool isTags = false,
+  }) {
+    if (items.isEmpty) return const SizedBox();
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: color, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF1F2937),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (isTags)
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: items
+                  .map(
+                    (item) => Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade50,
+                        border: Border.all(color: Colors.grey.shade200),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        item,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF4B5563),
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            )
+          else
+            ...items.map(
+              (item) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Icon(
+                        Icons.circle,
+                        size: 6,
+                        color: Colors.grey.shade300,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        item,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          height: 1.5,
+                          color: Color(0xFF4B5563),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEditForm() {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.all(16),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            _buildTextField(
+              _educationController,
+              'Education',
+              'Add education details...',
+              Icons.school_outlined,
+            ),
+            const SizedBox(height: 16),
+            _buildTextField(
+              _experienceController,
+              'Experience',
+              'Add work experience...',
+              Icons.work_outline,
+            ),
+            const SizedBox(height: 16),
+            _buildTextField(
+              _skillsController,
+              'Skills',
+              'Add skills (one per line)...',
+              Icons.psychology_outlined,
+            ),
+            const SizedBox(height: 16),
+            _buildTextField(
+              _languagesController,
+              'Languages',
+              'Add languages...',
+              Icons.language,
+            ),
+            const SizedBox(height: 16),
+            _buildTextField(
+              _certificatesController,
+              'Certificates',
+              'Add certificates...',
+              Icons.card_membership,
+            ),
+            const SizedBox(height: 80),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(
+    TextEditingController controller,
+    String label,
+    String hint,
+    IconData icon,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(4),
+      child: TextFormField(
+        controller: controller,
+        maxLines: 4,
+        minLines: 1,
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: hint,
+          prefixIcon: Icon(icon, color: Colors.grey.shade400),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
+          alignLabelWithHint: true,
+        ),
+      ),
     );
   }
 }
