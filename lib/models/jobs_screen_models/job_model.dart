@@ -5,27 +5,30 @@ part 'job_model.g.dart';
 
 @freezed
 abstract class JobModel with _$JobModel {
-    const factory JobModel({
-    required String title,
-    required String description,
+  const factory JobModel({
+    @JsonKey(fromJson: _forceString) required String title,
+    @JsonKey(fromJson: _forceString) required String description,
     required int id,
-    required String type,
-    required String location,
-    required String startDate,
+    @JsonKey(fromJson: _forceString) required String type,
+    @JsonKey(fromJson: _forceString) required String location,
+    @JsonKey(fromJson: _forceString) required String startDate,
     required double amount,
-    required String salary,
-    String? duration,
-    required String status,
+    @JsonKey(fromJson: _forceString) required String salary,
+    @JsonKey(fromJson: _forceStringNullable) String? duration,
+    @JsonKey(fromJson: _forceString) required String status,
     required int numOfPositions,
-    String? workArrangement,
+    @JsonKey(fromJson: _forceStringNullable) String? workArrangement,
     required int jobposterId,
-    required String jobposterName,
-    String? createdAt,
+    @JsonKey(fromJson: _forceString) required String jobposterName,
+    @JsonKey(fromJson: _forceStringNullable) String? createdAt,
     @Default([]) List<String> requirements,
     @Default([]) List<String> categories,
     @Default([]) List<String> benefits,
   }) = _JobModel;
 
-  factory JobModel.fromJson(Map<String, dynamic> json) => 
+  factory JobModel.fromJson(Map<String, dynamic> json) =>
       _$JobModelFromJson(json);
 }
+
+String _forceString(dynamic value) => value.toString();
+String? _forceStringNullable(dynamic value) => value?.toString();

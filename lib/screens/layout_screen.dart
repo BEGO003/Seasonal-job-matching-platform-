@@ -12,13 +12,14 @@ class LayoutScreen extends StatefulWidget {
   State<LayoutScreen> createState() => _LayoutScreenState();
 }
 
-class _LayoutScreenState extends State<LayoutScreen> with TickerProviderStateMixin {
+class _LayoutScreenState extends State<LayoutScreen>
+    with TickerProviderStateMixin {
   int currentIndex = 0;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
 
   final List<String> titles = const <String>[
-    'Favorites',
+    'Home',
     'Explore Jobs',
     'My Applications',
     'Profile',
@@ -31,28 +32,29 @@ class _LayoutScreenState extends State<LayoutScreen> with TickerProviderStateMix
     ProfileScreen(),
   ];
 
-  final List<NavigationDestination> destinations = const <NavigationDestination>[
-    NavigationDestination(
-      icon: Icon(Icons.favorite_border_rounded),
-      selectedIcon: Icon(Icons.favorite_rounded),
-      label: "Favorites",
-    ),
-    NavigationDestination(
-      icon: Icon(Icons.work_outline_rounded),
-      selectedIcon: Icon(Icons.work_rounded),
-      label: "Jobs",
-    ),
-    NavigationDestination(
-      icon: Icon(Icons.article_outlined),
-      selectedIcon: Icon(Icons.article_rounded),
-      label: "Applied",
-    ),
-    NavigationDestination(
-      icon: Icon(Icons.person_outline_rounded),
-      selectedIcon: Icon(Icons.person_rounded),
-      label: "Profile",
-    ),
-  ];
+  final List<NavigationDestination> destinations =
+      const <NavigationDestination>[
+        NavigationDestination(
+          icon: Icon(Icons.home_outlined),
+          selectedIcon: Icon(Icons.home_rounded),
+          label: "Home",
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.work_outline_rounded),
+          selectedIcon: Icon(Icons.work_rounded),
+          label: "Jobs",
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.article_outlined),
+          selectedIcon: Icon(Icons.article_rounded),
+          label: "Applied",
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.person_outline_rounded),
+          selectedIcon: Icon(Icons.person_rounded),
+          label: "Profile",
+        ),
+      ];
 
   @override
   void initState() {
@@ -87,7 +89,7 @@ class _LayoutScreenState extends State<LayoutScreen> with TickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -145,10 +147,7 @@ class _LayoutScreenState extends State<LayoutScreen> with TickerProviderStateMix
                     color: theme.colorScheme.error,
                     shape: BoxShape.circle,
                   ),
-                  constraints: const BoxConstraints(
-                    minWidth: 8,
-                    minHeight: 8,
-                  ),
+                  constraints: const BoxConstraints(minWidth: 8, minHeight: 8),
                 ),
               ),
             ],

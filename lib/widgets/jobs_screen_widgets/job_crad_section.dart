@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:job_seeker/providers/jobs_screen_providers/job_notifier.dart';
+import 'package:job_seeker/providers/jobs_screen_providers/jobs_filter_provider.dart';
 import 'package:job_seeker/widgets/jobs_screen_widgets/job_card.dart';
 
 class JobCardSection extends ConsumerWidget {
@@ -8,8 +9,8 @@ class JobCardSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final jobs = ref.watch(jobsNotifierProvider);
-    
+    final jobs = ref.watch(filteredJobsProvider);
+
     return jobs.when(
       data: (data) {
         if (data.isEmpty) {
@@ -29,7 +30,7 @@ class JobCardSection extends ConsumerWidget {
             ),
           );
         }
-        
+
         return RefreshIndicator(
           onRefresh: () async {
             // Invalidate and wait for the future to complete
@@ -55,10 +56,7 @@ class JobCardSection extends ConsumerWidget {
                 builder: (context, value, child) {
                   return Transform.translate(
                     offset: Offset(0, 20 * (1 - value)),
-                    child: Opacity(
-                      opacity: value,
-                      child: child,
-                    ),
+                    child: Opacity(opacity: value, child: child),
                   );
                 },
                 child: JobCard(job: data[index]),
@@ -97,7 +95,8 @@ class _LoadingState extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       padding: const EdgeInsets.only(top: 8, bottom: 24),
-      physics: const NeverScrollableScrollPhysics(), // Disable scroll during loading
+      physics:
+          const NeverScrollableScrollPhysics(), // Disable scroll during loading
       itemCount: 5,
       itemBuilder: (context, index) {
         return Padding(
@@ -126,9 +125,10 @@ class _ShimmerCardState extends State<_ShimmerCard>
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     )..repeat();
-    _animation = Tween<double>(begin: -2, end: 2).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation = Tween<double>(
+      begin: -2,
+      end: 2,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -140,7 +140,7 @@ class _ShimmerCardState extends State<_ShimmerCard>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {
@@ -168,7 +168,12 @@ class _ShimmerCardState extends State<_ShimmerCard>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _ShimmerBox(width: 80, height: 24, animation: _animation),
-                    _ShimmerBox(width: 40, height: 40, animation: _animation, isCircle: true),
+                    _ShimmerBox(
+                      width: 40,
+                      height: 40,
+                      animation: _animation,
+                      isCircle: true,
+                    ),
                   ],
                 ),
               ),
@@ -177,7 +182,11 @@ class _ShimmerCardState extends State<_ShimmerCard>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _ShimmerBox(width: double.infinity, height: 24, animation: _animation),
+                    _ShimmerBox(
+                      width: double.infinity,
+                      height: 24,
+                      animation: _animation,
+                    ),
                     const SizedBox(height: 8),
                     _ShimmerBox(width: 200, height: 24, animation: _animation),
                   ],
@@ -189,11 +198,19 @@ class _ShimmerCardState extends State<_ShimmerCard>
                 child: Row(
                   children: [
                     Expanded(
-                      child: _ShimmerBox(width: double.infinity, height: 36, animation: _animation),
+                      child: _ShimmerBox(
+                        width: double.infinity,
+                        height: 36,
+                        animation: _animation,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: _ShimmerBox(width: double.infinity, height: 36, animation: _animation),
+                      child: _ShimmerBox(
+                        width: double.infinity,
+                        height: 36,
+                        animation: _animation,
+                      ),
                     ),
                   ],
                 ),
@@ -239,7 +256,7 @@ class _ShimmerBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       width: width,
       height: height,
@@ -269,7 +286,7 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -281,10 +298,7 @@ class _EmptyState extends StatelessWidget {
               duration: const Duration(milliseconds: 600),
               curve: Curves.easeOutBack,
               builder: (context, value, child) {
-                return Transform.scale(
-                  scale: value,
-                  child: child,
-                );
+                return Transform.scale(scale: value, child: child);
               },
               child: Container(
                 width: 140,
@@ -353,15 +367,12 @@ class _ErrorState extends StatelessWidget {
   final String error;
   final VoidCallback onRetry;
 
-  const _ErrorState({
-    required this.error,
-    required this.onRetry,
-  });
+  const _ErrorState({required this.error, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -373,10 +384,7 @@ class _ErrorState extends StatelessWidget {
               duration: const Duration(milliseconds: 600),
               curve: Curves.easeOutBack,
               builder: (context, value, child) {
-                return Transform.scale(
-                  scale: value,
-                  child: child,
-                );
+                return Transform.scale(scale: value, child: child);
               },
               child: Container(
                 width: 140,

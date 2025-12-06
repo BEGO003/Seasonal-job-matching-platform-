@@ -40,7 +40,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     }
 
     try {
-      await ref.read(authProvider.notifier).signup(
+      await ref
+          .read(authProvider.notifier)
+          .signup(
             name: _nameController.text.trim(),
             country: _countryController.text.trim(),
             number: _numberController.text.trim(),
@@ -71,9 +73,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     final isLoading = authState.isLoading;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sign Up'),
-      ),
+      appBar: AppBar(title: const Text('Sign Up')),
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -88,16 +88,18 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   Text(
                     'Create Account',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Fill in your details to get started',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                        ),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.7),
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 32),
@@ -127,7 +129,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   const SizedBox(height: 16),
                   // Country field
                   DropdownButtonFormField<String>(
-                    value: _countryController.text.isEmpty ? null : _countryController.text,
+                    value: _countryController.text.isEmpty
+                        ? null
+                        : _countryController.text,
                     onChanged: isLoading
                         ? null
                         : (String? newValue) {
@@ -144,10 +148,12 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       ),
                     ),
                     items: countryList
-                        .map((country) => DropdownMenuItem(
-                              value: country,
-                              child: Text(country),
-                            ))
+                        .map(
+                          (country) => DropdownMenuItem(
+                            value: country,
+                            child: Text(country),
+                          ),
+                        )
                         .toList(),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -199,7 +205,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       if (value == null || value.trim().isEmpty) {
                         return 'Please enter your email';
                       }
-                      if (!RegExp(r'^[\w\.-]+@[\w\.-]+\.\w{2,}$').hasMatch(value)) {
+                      if (!RegExp(
+                        r'^[\w\.-]+@[\w\.-]+\.\w{2,}$',
+                      ).hasMatch(value)) {
                         return 'Please enter a valid email';
                       }
                       return null;
@@ -217,7 +225,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       prefixIcon: const Icon(Icons.lock_outlined),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                          _obscurePassword
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
                         ),
                         onPressed: () {
                           setState(() {
@@ -251,7 +261,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       prefixIcon: const Icon(Icons.lock_outlined),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscureConfirmPassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                          _obscureConfirmPassword
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
                         ),
                         onPressed: () {
                           setState(() {
@@ -291,7 +303,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           )
                         : const Text(
                             'Sign Up',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                   ),
                   const SizedBox(height: 24),
@@ -326,4 +341,3 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     );
   }
 }
-

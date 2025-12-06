@@ -11,6 +11,7 @@ String applyForJob(String userId, String jobId) =>
     "$APPLICATIONS/user/$userId/job/$jobId";
 String getUserApplications(String userId) => "$APPLICATIONS/user/$userId";
 String getUserAppliedJobs(String userId) => "$APPLICATIONS/userjobs/$userId";
+String getRecommendedJobs(String userId) => "$USERS/$userId/recommended-jobs";
 // Auth routes
 const String SIGNUP = USERS;
 const String LOGIN = "$USERS/login";

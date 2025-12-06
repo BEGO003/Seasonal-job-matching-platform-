@@ -7,21 +7,21 @@ part of 'job_model.dart';
 // **************************************************************************
 
 _JobModel _$JobModelFromJson(Map<String, dynamic> json) => _JobModel(
-  title: json['title'] as String,
-  description: json['description'] as String,
+  title: _forceString(json['title']),
+  description: _forceString(json['description']),
   id: (json['id'] as num).toInt(),
-  type: json['type'] as String,
-  location: json['location'] as String,
-  startDate: json['startDate'] as String,
+  type: _forceString(json['type']),
+  location: _forceString(json['location']),
+  startDate: _forceString(json['startDate']),
   amount: (json['amount'] as num).toDouble(),
-  salary: json['salary'] as String,
-  duration: json['duration'] as String?,
-  status: json['status'] as String,
+  salary: _forceString(json['salary']),
+  duration: _forceStringNullable(json['duration']),
+  status: _forceString(json['status']),
   numOfPositions: (json['numOfPositions'] as num).toInt(),
-  workArrangement: json['workArrangement'] as String?,
+  workArrangement: _forceStringNullable(json['workArrangement']),
   jobposterId: (json['jobposterId'] as num).toInt(),
-  jobposterName: json['jobposterName'] as String,
-  createdAt: json['createdAt'] as String?,
+  jobposterName: _forceString(json['jobposterName']),
+  createdAt: _forceStringNullable(json['createdAt']),
   requirements:
       (json['requirements'] as List<dynamic>?)
           ?.map((e) => e as String)

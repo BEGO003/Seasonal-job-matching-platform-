@@ -16,7 +16,7 @@ class JobCard extends ConsumerStatefulWidget {
   ConsumerState<JobCard> createState() => _JobCardState();
 }
 
-class _JobCardState extends ConsumerState<JobCard> 
+class _JobCardState extends ConsumerState<JobCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
@@ -28,9 +28,10 @@ class _JobCardState extends ConsumerState<JobCard>
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.97).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.97,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -58,17 +59,10 @@ class _JobCardState extends ConsumerState<JobCard>
           return dateStr;
         }
       }
-      return DateFormat('MMMM, dd yyyy').format(date);
+      return DateFormat('MMM dd, yyyy').format(date);
     } catch (_) {
       return dateStr;
     }
-  }
-
-  Color _getStatusColor() {
-    final status = widget.job.status.toLowerCase();
-    if (status == 'open') return const Color(0xFF10B981);
-    if (status == 'closed') return const Color(0xFFEF4444);
-    return const Color(0xFFF59E0B);
   }
 
   @override
@@ -86,18 +80,20 @@ class _JobCardState extends ConsumerState<JobCard>
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) =>
                   JobView(job: widget.job),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                const begin = Offset(1.0, 0.0);
-                const end = Offset.zero;
-                const curve = Curves.easeInOutCubic;
-                var tween = Tween(begin: begin, end: end).chain(
-                  CurveTween(curve: curve),
-                );
-                return SlideTransition(
-                  position: animation.drive(tween),
-                  child: child,
-                );
-              },
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                    const begin = Offset(1.0, 0.0);
+                    const end = Offset.zero;
+                    const curve = Curves.easeInOutCubic;
+                    var tween = Tween(
+                      begin: begin,
+                      end: end,
+                    ).chain(CurveTween(curve: curve));
+                    return SlideTransition(
+                      position: animation.drive(tween),
+                      child: child,
+                    );
+                  },
               transitionDuration: const Duration(milliseconds: 350),
             ),
           );
@@ -110,217 +106,143 @@ class _JobCardState extends ConsumerState<JobCard>
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(18),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.white,
-                    Colors.grey.shade50,
-                  ],
-                ),
-                border: Border.all(
-                  color: Colors.grey.shade100,
-                  width: 1,
-                ),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header with Status and Favorite
+                  // Header with Title and Favorite
                   Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Status Badge
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _getStatusColor().withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                width: 6,
-                                height: 6,
-                                decoration: BoxDecoration(
-                                  color: _getStatusColor(),
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 6),
                               Text(
-                                widget.job.status.toUpperCase(),
-                                style: TextStyle(
-                                  fontSize: 11,
+                                widget.job.title,
+                                style: const TextStyle(
+                                  fontSize: 18,
                                   fontWeight: FontWeight.w700,
-                                  color: _getStatusColor(),
-                                  letterSpacing: 0.5,
+                                  color: Color(0xFF1F2937),
+                                  height: 1.3,
+                                  letterSpacing: -0.3,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                widget.job.jobposterName.isNotEmpty
+                                    ? widget.job.jobposterName
+                                    : 'Company Name',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey.shade500,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        // Favorite Button
+                        const SizedBox(width: 12),
                         _FavoriteButton(jobId: widget.job.id),
                       ],
                     ),
                   ),
 
-                  // Job Title
+                  // Info Chips (Simplified)
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      widget.job.title,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF1F2937),
-                        height: 1.3,
-                        letterSpacing: -0.3,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Info Grid
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
-                        Expanded(
-                          child: _InfoChip(
-                            icon: Icons.location_on_outlined,
-                            label: widget.job.location,
-                            color: const Color(0xFF3B82F6),
-                          ),
+                        _SimpleChip(
+                          icon: Icons.location_on_outlined,
+                          label: widget.job.location,
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: _InfoChip(
-                            icon: Icons.work_outline,
-                            label: widget.job.type,
-                            color: const Color(0xFF8B5CF6),
-                          ),
+                        _SimpleChip(
+                          icon: Icons.work_outline,
+                          label: widget.job.type,
                         ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _InfoChip(
-                            icon: Icons.calendar_today_outlined,
-                            label: '$formattedStart',
-                            color: const Color(0xFFEC4899),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  if (widget.job.categories.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: widget.job.categories.map((category) {
-                          return Container(
+                        if (!isOpen)
+                          Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
+                              horizontal: 8,
+                              vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF8B5CF6).withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: const Color(0xFF8B5CF6).withOpacity(0.3),
-                                width: 1,
-                              ),
+                              color: const Color(0xFFEF4444).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(6),
                             ),
-                            child: Text(
-                              category,
-                              style: const TextStyle(
-                                fontSize: 12,
+                            child: const Text(
+                              'Closed',
+                              style: TextStyle(
+                                fontSize: 11,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF8B5CF6),
+                                color: Color(0xFFEF4444),
                               ),
                             ),
-                          );
-                        }).toList(),
-                      ),
+                          ),
+                      ],
                     ),
+                  ),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
 
-                  // Salary Section
+                  // Footer with Salary and Date
                   Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          const Color(0xFF3B82F6),
-                          const Color(0xFF2563EB),
-                        ],
-                      ),
+                      color: Colors.grey.shade50,
                       borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(18),
                         bottomRight: Radius.circular(18),
+                      ),
+                      border: Border(
+                        top: BorderSide(color: Colors.grey.shade100),
                       ),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
                           children: [
                             Text(
-                              '${widget.job.salary}',
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.8),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
+                              '\$${NumberFormat('#,##0').format(widget.job.amount)}',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF1F2937),
+                                letterSpacing: -0.5,
                               ),
                             ),
-                            const SizedBox(height: 4),
                             Text(
-                              '\$${NumberFormat('#,##0.00').format(widget.job.amount)}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: -0.5,
+                              ' / ${widget.job.salary.toLowerCase().replaceAll('salary', '').trim()}',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey.shade500,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(
-                            Icons.attach_money,
-                            color: Colors.white,
-                            size: 28,
+                        Text(
+                          formattedStart,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey.shade400,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
@@ -336,37 +258,32 @@ class _JobCardState extends ConsumerState<JobCard>
   }
 }
 
-class _InfoChip extends StatelessWidget {
+class _SimpleChip extends StatelessWidget {
   final IconData icon;
   final String label;
-  final Color color;
 
-  const _InfoChip({
-    required this.icon,
-    required this.label,
-    required this.color,
-  });
+  const _SimpleChip({required this.icon, required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(10),
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: color),
+          Icon(icon, size: 14, color: Colors.grey.shade600),
           const SizedBox(width: 6),
           Flexible(
             child: Text(
               label,
               style: TextStyle(
                 fontSize: 12,
-                color: color.withOpacity(0.9),
-                fontWeight: FontWeight.w600,
+                color: Colors.grey.shade700,
+                fontWeight: FontWeight.w500,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -389,6 +306,7 @@ class _FavoriteButton extends ConsumerWidget {
     final isFav = personalInfo.maybeWhen(
       data: (u) => u.favoriteJobs.contains(jobId),
       orElse: () => false,
+      loading: () => false,
     );
 
     return GestureDetector(
@@ -406,7 +324,7 @@ class _FavoriteButton extends ConsumerWidget {
         ),
         child: Icon(
           isFav ? Icons.favorite : Icons.favorite_border,
-          color: isFav ? const Color(0xFFEF4444) : Colors.grey.shade600,
+          color: isFav ? const Color(0xFFEF4444) : Colors.grey.shade400,
           size: 20,
         ),
       ),
