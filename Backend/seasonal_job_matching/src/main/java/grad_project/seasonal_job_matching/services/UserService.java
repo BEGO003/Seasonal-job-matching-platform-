@@ -6,14 +6,26 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import grad_project.seasonal_job_matching.dto.requests.UserCreateDTO;
 import grad_project.seasonal_job_matching.dto.requests.UserEditDTO;
 import grad_project.seasonal_job_matching.dto.requests.UserLoginDTO;
 import grad_project.seasonal_job_matching.dto.responses.JobResponseDTO;
+import grad_project.seasonal_job_matching.dto.responses.RecommendedJobDTO;
+import grad_project.seasonal_job_matching.dto.responses.RecommendedJobsResponse;
 import grad_project.seasonal_job_matching.dto.responses.UserFieldsOfInterestResponseDTO;
 import grad_project.seasonal_job_matching.dto.responses.UserResponseDTO;
 import grad_project.seasonal_job_matching.mapper.JobMapper;
@@ -22,6 +34,8 @@ import grad_project.seasonal_job_matching.model.Job;
 import grad_project.seasonal_job_matching.model.User;
 import grad_project.seasonal_job_matching.repository.JobRepository;
 import grad_project.seasonal_job_matching.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class UserService {
@@ -36,10 +50,20 @@ public class UserService {
     private UserMapper userMapper;
     @Autowired
     private JobMapper jobMapper;
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JobRepository jobRepository){
+
+    private final RestTemplate restTemplate;
+
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class); //good practice for debugging, writes any calls that go through here in logs to find where things break exactly
+
+
+    @Value("${external.api.ngrok.url}") //gets it from application.properties.
+    private String ngrokBaseUrl;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JobRepository jobRepository, RestTemplate restTemplate){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jobRepository = jobRepository;
+        this.restTemplate = restTemplate;
 
     }
     public List<UserResponseDTO> findAllUsers(){
@@ -49,6 +73,97 @@ public class UserService {
         //can(user -> userMapper.maptoreturnUser(user))
         .map(userMapper::maptoreturnUser) // applies maptoreturn user from usermapper to each user in stream, turns user into a DTO
         .collect(Collectors.toList()); //gathers all transformer users back into list 
+    }
+
+    //parses data from matching engines response to dto format
+    public List<JobResponseDTO> getRecommendedJobs(Long userId) {
+        try {
+            String url = ngrokBaseUrl + "/recommend/" + userId;
+            
+            logger.info("Calling external API: {}", url);
+
+                // Create headers to bypass ngrok browser warning
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("ngrok-skip-browser-warning", "true");
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<RecommendedJobsResponse> response = restTemplate.exchange(
+                url, 
+                HttpMethod.GET,
+                entity,
+                RecommendedJobsResponse.class
+            );
+            
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                logger.info("Successfully received recommendations for user {}", userId);
+                // Map the response to your JobResponseDTO format
+                return mapToJobResponseDTOs(response.getBody());
+            } else {
+                logger.warn("Received empty or unsuccessful response from external API");
+                return new ArrayList<>();
+            } 
+
+        //error handling for 400s,500s,
+        } catch (HttpClientErrorException e) {
+            // 4xx errors (client errors)
+            logger.error("Client error calling external API: Status={}, Body={}", 
+                        e.getStatusCode(), e.getResponseBodyAsString());
+            throw new RuntimeException("Failed to fetch recommendations: " + e.getMessage());
+            
+        } catch (HttpServerErrorException e) {
+            // 5xx errors (server errors)
+            logger.error("Server error calling external API: Status={}, Body={}", 
+                        e.getStatusCode(), e.getResponseBodyAsString());
+            throw new RuntimeException("External service unavailable. Please try again later.");
+            
+        } catch (ResourceAccessException e) {
+            // Connection timeout or network issues
+            logger.error("Connection error calling external API: {}", e.getMessage());
+            throw new RuntimeException("Unable to connect to recommendation service. Please try again later.");
+            
+        } catch (RestClientException e) {
+            // Other REST client errors
+            logger.error("Unexpected error calling external API: {}", e.getMessage(), e);
+            throw new RuntimeException("An error occurred while fetching recommendations.");
+        }
+    }
+
+    // takes given data from recommendations and returns the full jobs, can tell Ahmed to just give me the full job so I can return it without having to parse ID from recommendation and fetch same jobs again.
+    private List<JobResponseDTO> mapToJobResponseDTOs(RecommendedJobsResponse response) {
+        if (response == null || response.getRecommendations() == null || response.getRecommendations().isEmpty()) {
+            logger.warn("No recommendations found in response");
+            return new ArrayList<>();
+        }
+        
+        // Extract job IDs from recommendations
+        List<Long> jobIds = response.getRecommendations().stream()
+            .map(RecommendedJobDTO::getId)
+            .filter(id -> id != null)
+            .collect(Collectors.toList());
+        
+        if (jobIds.isEmpty()) {
+            logger.warn("No valid job IDs found in recommendations");
+            return new ArrayList<>();
+        }
+        
+        logger.info("Fetching {} recommended jobs from database", jobIds.size());
+        
+        // Fetch full job details from database using the IDs
+        List<Job> jobs = jobRepository.findAllById(jobIds);
+        
+        if (jobs.isEmpty()) {
+            logger.warn("No jobs found in database for recommended IDs: {}", jobIds);
+            return new ArrayList<>();
+        }
+        
+        // Map Jobs to JobResponseDTOs using existing mapper
+        List<JobResponseDTO> jobDTOs = jobs.stream()
+            .map(jobMapper::maptoreturnJob)
+            .collect(Collectors.toList());
+        
+        logger.info("Successfully mapped {} jobs to DTOs", jobDTOs.size());
+        
+        return jobDTOs;
     }
 
     public List<JobResponseDTO> findUserJobs(long id){
@@ -76,15 +191,7 @@ public class UserService {
         return userRepository.findById(id)
             .map(userMapper::maptoreturnUser);
     }
-/* 
-    //means we do this method after dependency injection 
-     @PostConstruct
-    public void init(){
-        User seeker = new User("Baher", "Egypt", "0122234344", "test@gmail.com", "1234");
-        //return user dto
-        userRepository.save(seeker);
-    }
-*/    
+   
     @Transactional(readOnly = true)
     public UserFieldsOfInterestResponseDTO getFieldsOfInterest(long userId) {
         //User user = userRepository.findById(userId)
