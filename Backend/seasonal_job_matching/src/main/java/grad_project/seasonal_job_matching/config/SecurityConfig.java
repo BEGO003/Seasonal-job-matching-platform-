@@ -52,9 +52,10 @@ public class SecurityConfig {
             "https://44d77d37.seasonal-job-matching-platform.pages.dev"
             // add other origins (preview IDs or custom domain) here if needed
         ));
+        config.setAllowedOriginPatterns(List.of("*"));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("Content-Type", "Authorization", "Accept"));
+        config.setAllowedHeaders(List.of("*")); //allows all headers
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
 
