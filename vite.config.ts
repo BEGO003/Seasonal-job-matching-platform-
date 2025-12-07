@@ -14,6 +14,14 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
         secure: true,
         rewrite: (path) => path.replace(/^\/api/, "/api"),
+        configure: (proxy, _options) => {
+          proxy.on("proxyReq", (proxyReq, req, _res) => {
+            proxyReq.setHeader(
+              "Origin",
+              "https://seasonal-job-matctching-ff74a4d37cbc.herokuapp.com"
+            );
+          });
+        },
       },
     },
   },
