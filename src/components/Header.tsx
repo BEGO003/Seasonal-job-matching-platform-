@@ -32,11 +32,17 @@ export const Header = () => {
           {/* <Button variant="ghost" size="icon" aria-label="Notifications">
             <Bell className="w-5 h-5" />
           </Button> */}
-          <Link to="/profile">
-            <Button variant="outline" className="flex items-center gap-2">
-              <User className="w-4 h-4" />
-              Profile
-            </Button>
+          <Link to="/profile" aria-label="Profile">
+            <button
+              className="rounded-full overflow-hidden border border-border shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary"
+              style={{ width: 50, height: 50 }}
+            >
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/11753/11753993.png"
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </button>
           </Link>
         </div>
       </div>

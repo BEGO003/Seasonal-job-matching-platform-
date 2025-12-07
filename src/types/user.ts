@@ -5,7 +5,6 @@ export interface User {
   number: string;
   email: string;
   password: string;
-  fieldsOfInterest?: string[];
   createdAt?: string;
   updatedAt?: string;
 }
@@ -21,7 +20,6 @@ export interface SignupData {
   number: string;
   email: string;
   password: string;
-  fieldsOfInterest?: string[];
 }
 
 export interface AuthResponse {

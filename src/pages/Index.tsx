@@ -73,7 +73,7 @@ const Index = () => {
               Browse Candidates
             </Button> */}
           </div>
-          <h2 className="text-3xl font-bold text-foreground mb-4">
+          <h2 className="text-3xl font-bold text-foreground mb-4 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
             Dashboard Overview
           </h2>
         </div>
