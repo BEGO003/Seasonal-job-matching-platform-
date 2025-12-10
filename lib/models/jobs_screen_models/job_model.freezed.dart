@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$JobModel {
 
-@JsonKey(fromJson: _forceString) String get title;@JsonKey(fromJson: _forceString) String get description; int get id;@JsonKey(fromJson: _forceString) String get type;@JsonKey(fromJson: _forceString) String get location;@JsonKey(fromJson: _forceString) String get startDate; double get amount;@JsonKey(fromJson: _forceString) String get salary;@JsonKey(fromJson: _forceStringNullable) String? get duration;@JsonKey(fromJson: _forceString) String get status; int get numOfPositions;@JsonKey(fromJson: _forceStringNullable) String? get workArrangement; int get jobposterId;@JsonKey(fromJson: _forceString) String get jobposterName;@JsonKey(fromJson: _forceStringNullable) String? get createdAt; List<String> get requirements; List<String> get categories; List<String> get benefits;
+@JsonKey(fromJson: _forceString) String get title;@JsonKey(fromJson: _forceString) String get description;@JsonKey(fromJson: _forceInt) int get id;@JsonKey(fromJson: _forceString) String get type;@JsonKey(fromJson: _forceString) String get location;@JsonKey(fromJson: _forceString) String get startDate;@JsonKey(fromJson: _forceDouble) double get amount;@JsonKey(fromJson: _forceString) String get salary;@JsonKey(fromJson: _forceStringNullable) String? get duration;@JsonKey(fromJson: _forceString) String get status;@JsonKey(fromJson: _forceInt) int get numOfPositions;@JsonKey(fromJson: _forceStringNullable) String? get workArrangement;@JsonKey(fromJson: _forceInt) int get jobposterId;@JsonKey(fromJson: _forceString) String get jobposterName;@JsonKey(fromJson: _forceStringNullable) String? get createdAt; List<String> get requirements; List<String> get categories; List<String> get benefits;
 /// Create a copy of JobModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $JobModelCopyWith<$Res>  {
   factory $JobModelCopyWith(JobModel value, $Res Function(JobModel) _then) = _$JobModelCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(fromJson: _forceString) String title,@JsonKey(fromJson: _forceString) String description, int id,@JsonKey(fromJson: _forceString) String type,@JsonKey(fromJson: _forceString) String location,@JsonKey(fromJson: _forceString) String startDate, double amount,@JsonKey(fromJson: _forceString) String salary,@JsonKey(fromJson: _forceStringNullable) String? duration,@JsonKey(fromJson: _forceString) String status, int numOfPositions,@JsonKey(fromJson: _forceStringNullable) String? workArrangement, int jobposterId,@JsonKey(fromJson: _forceString) String jobposterName,@JsonKey(fromJson: _forceStringNullable) String? createdAt, List<String> requirements, List<String> categories, List<String> benefits
+@JsonKey(fromJson: _forceString) String title,@JsonKey(fromJson: _forceString) String description,@JsonKey(fromJson: _forceInt) int id,@JsonKey(fromJson: _forceString) String type,@JsonKey(fromJson: _forceString) String location,@JsonKey(fromJson: _forceString) String startDate,@JsonKey(fromJson: _forceDouble) double amount,@JsonKey(fromJson: _forceString) String salary,@JsonKey(fromJson: _forceStringNullable) String? duration,@JsonKey(fromJson: _forceString) String status,@JsonKey(fromJson: _forceInt) int numOfPositions,@JsonKey(fromJson: _forceStringNullable) String? workArrangement,@JsonKey(fromJson: _forceInt) int jobposterId,@JsonKey(fromJson: _forceString) String jobposterName,@JsonKey(fromJson: _forceStringNullable) String? createdAt, List<String> requirements, List<String> categories, List<String> benefits
 });
 
 
@@ -170,7 +170,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _forceString)  String title, @JsonKey(fromJson: _forceString)  String description,  int id, @JsonKey(fromJson: _forceString)  String type, @JsonKey(fromJson: _forceString)  String location, @JsonKey(fromJson: _forceString)  String startDate,  double amount, @JsonKey(fromJson: _forceString)  String salary, @JsonKey(fromJson: _forceStringNullable)  String? duration, @JsonKey(fromJson: _forceString)  String status,  int numOfPositions, @JsonKey(fromJson: _forceStringNullable)  String? workArrangement,  int jobposterId, @JsonKey(fromJson: _forceString)  String jobposterName, @JsonKey(fromJson: _forceStringNullable)  String? createdAt,  List<String> requirements,  List<String> categories,  List<String> benefits)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _forceString)  String title, @JsonKey(fromJson: _forceString)  String description, @JsonKey(fromJson: _forceInt)  int id, @JsonKey(fromJson: _forceString)  String type, @JsonKey(fromJson: _forceString)  String location, @JsonKey(fromJson: _forceString)  String startDate, @JsonKey(fromJson: _forceDouble)  double amount, @JsonKey(fromJson: _forceString)  String salary, @JsonKey(fromJson: _forceStringNullable)  String? duration, @JsonKey(fromJson: _forceString)  String status, @JsonKey(fromJson: _forceInt)  int numOfPositions, @JsonKey(fromJson: _forceStringNullable)  String? workArrangement, @JsonKey(fromJson: _forceInt)  int jobposterId, @JsonKey(fromJson: _forceString)  String jobposterName, @JsonKey(fromJson: _forceStringNullable)  String? createdAt,  List<String> requirements,  List<String> categories,  List<String> benefits)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _JobModel() when $default != null:
 return $default(_that.title,_that.description,_that.id,_that.type,_that.location,_that.startDate,_that.amount,_that.salary,_that.duration,_that.status,_that.numOfPositions,_that.workArrangement,_that.jobposterId,_that.jobposterName,_that.createdAt,_that.requirements,_that.categories,_that.benefits);case _:
@@ -191,7 +191,7 @@ return $default(_that.title,_that.description,_that.id,_that.type,_that.location
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _forceString)  String title, @JsonKey(fromJson: _forceString)  String description,  int id, @JsonKey(fromJson: _forceString)  String type, @JsonKey(fromJson: _forceString)  String location, @JsonKey(fromJson: _forceString)  String startDate,  double amount, @JsonKey(fromJson: _forceString)  String salary, @JsonKey(fromJson: _forceStringNullable)  String? duration, @JsonKey(fromJson: _forceString)  String status,  int numOfPositions, @JsonKey(fromJson: _forceStringNullable)  String? workArrangement,  int jobposterId, @JsonKey(fromJson: _forceString)  String jobposterName, @JsonKey(fromJson: _forceStringNullable)  String? createdAt,  List<String> requirements,  List<String> categories,  List<String> benefits)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(fromJson: _forceString)  String title, @JsonKey(fromJson: _forceString)  String description, @JsonKey(fromJson: _forceInt)  int id, @JsonKey(fromJson: _forceString)  String type, @JsonKey(fromJson: _forceString)  String location, @JsonKey(fromJson: _forceString)  String startDate, @JsonKey(fromJson: _forceDouble)  double amount, @JsonKey(fromJson: _forceString)  String salary, @JsonKey(fromJson: _forceStringNullable)  String? duration, @JsonKey(fromJson: _forceString)  String status, @JsonKey(fromJson: _forceInt)  int numOfPositions, @JsonKey(fromJson: _forceStringNullable)  String? workArrangement, @JsonKey(fromJson: _forceInt)  int jobposterId, @JsonKey(fromJson: _forceString)  String jobposterName, @JsonKey(fromJson: _forceStringNullable)  String? createdAt,  List<String> requirements,  List<String> categories,  List<String> benefits)  $default,) {final _that = this;
 switch (_that) {
 case _JobModel():
 return $default(_that.title,_that.description,_that.id,_that.type,_that.location,_that.startDate,_that.amount,_that.salary,_that.duration,_that.status,_that.numOfPositions,_that.workArrangement,_that.jobposterId,_that.jobposterName,_that.createdAt,_that.requirements,_that.categories,_that.benefits);case _:
@@ -211,7 +211,7 @@ return $default(_that.title,_that.description,_that.id,_that.type,_that.location
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(fromJson: _forceString)  String title, @JsonKey(fromJson: _forceString)  String description,  int id, @JsonKey(fromJson: _forceString)  String type, @JsonKey(fromJson: _forceString)  String location, @JsonKey(fromJson: _forceString)  String startDate,  double amount, @JsonKey(fromJson: _forceString)  String salary, @JsonKey(fromJson: _forceStringNullable)  String? duration, @JsonKey(fromJson: _forceString)  String status,  int numOfPositions, @JsonKey(fromJson: _forceStringNullable)  String? workArrangement,  int jobposterId, @JsonKey(fromJson: _forceString)  String jobposterName, @JsonKey(fromJson: _forceStringNullable)  String? createdAt,  List<String> requirements,  List<String> categories,  List<String> benefits)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(fromJson: _forceString)  String title, @JsonKey(fromJson: _forceString)  String description, @JsonKey(fromJson: _forceInt)  int id, @JsonKey(fromJson: _forceString)  String type, @JsonKey(fromJson: _forceString)  String location, @JsonKey(fromJson: _forceString)  String startDate, @JsonKey(fromJson: _forceDouble)  double amount, @JsonKey(fromJson: _forceString)  String salary, @JsonKey(fromJson: _forceStringNullable)  String? duration, @JsonKey(fromJson: _forceString)  String status, @JsonKey(fromJson: _forceInt)  int numOfPositions, @JsonKey(fromJson: _forceStringNullable)  String? workArrangement, @JsonKey(fromJson: _forceInt)  int jobposterId, @JsonKey(fromJson: _forceString)  String jobposterName, @JsonKey(fromJson: _forceStringNullable)  String? createdAt,  List<String> requirements,  List<String> categories,  List<String> benefits)?  $default,) {final _that = this;
 switch (_that) {
 case _JobModel() when $default != null:
 return $default(_that.title,_that.description,_that.id,_that.type,_that.location,_that.startDate,_that.amount,_that.salary,_that.duration,_that.status,_that.numOfPositions,_that.workArrangement,_that.jobposterId,_that.jobposterName,_that.createdAt,_that.requirements,_that.categories,_that.benefits);case _:
@@ -226,22 +226,22 @@ return $default(_that.title,_that.description,_that.id,_that.type,_that.location
 @JsonSerializable()
 
 class _JobModel implements JobModel {
-  const _JobModel({@JsonKey(fromJson: _forceString) required this.title, @JsonKey(fromJson: _forceString) required this.description, required this.id, @JsonKey(fromJson: _forceString) required this.type, @JsonKey(fromJson: _forceString) required this.location, @JsonKey(fromJson: _forceString) required this.startDate, required this.amount, @JsonKey(fromJson: _forceString) required this.salary, @JsonKey(fromJson: _forceStringNullable) this.duration, @JsonKey(fromJson: _forceString) required this.status, required this.numOfPositions, @JsonKey(fromJson: _forceStringNullable) this.workArrangement, required this.jobposterId, @JsonKey(fromJson: _forceString) required this.jobposterName, @JsonKey(fromJson: _forceStringNullable) this.createdAt, final  List<String> requirements = const [], final  List<String> categories = const [], final  List<String> benefits = const []}): _requirements = requirements,_categories = categories,_benefits = benefits;
+  const _JobModel({@JsonKey(fromJson: _forceString) required this.title, @JsonKey(fromJson: _forceString) required this.description, @JsonKey(fromJson: _forceInt) required this.id, @JsonKey(fromJson: _forceString) required this.type, @JsonKey(fromJson: _forceString) required this.location, @JsonKey(fromJson: _forceString) required this.startDate, @JsonKey(fromJson: _forceDouble) required this.amount, @JsonKey(fromJson: _forceString) required this.salary, @JsonKey(fromJson: _forceStringNullable) this.duration, @JsonKey(fromJson: _forceString) required this.status, @JsonKey(fromJson: _forceInt) required this.numOfPositions, @JsonKey(fromJson: _forceStringNullable) this.workArrangement, @JsonKey(fromJson: _forceInt) required this.jobposterId, @JsonKey(fromJson: _forceString) required this.jobposterName, @JsonKey(fromJson: _forceStringNullable) this.createdAt, final  List<String> requirements = const [], final  List<String> categories = const [], final  List<String> benefits = const []}): _requirements = requirements,_categories = categories,_benefits = benefits;
   factory _JobModel.fromJson(Map<String, dynamic> json) => _$JobModelFromJson(json);
 
 @override@JsonKey(fromJson: _forceString) final  String title;
 @override@JsonKey(fromJson: _forceString) final  String description;
-@override final  int id;
+@override@JsonKey(fromJson: _forceInt) final  int id;
 @override@JsonKey(fromJson: _forceString) final  String type;
 @override@JsonKey(fromJson: _forceString) final  String location;
 @override@JsonKey(fromJson: _forceString) final  String startDate;
-@override final  double amount;
+@override@JsonKey(fromJson: _forceDouble) final  double amount;
 @override@JsonKey(fromJson: _forceString) final  String salary;
 @override@JsonKey(fromJson: _forceStringNullable) final  String? duration;
 @override@JsonKey(fromJson: _forceString) final  String status;
-@override final  int numOfPositions;
+@override@JsonKey(fromJson: _forceInt) final  int numOfPositions;
 @override@JsonKey(fromJson: _forceStringNullable) final  String? workArrangement;
-@override final  int jobposterId;
+@override@JsonKey(fromJson: _forceInt) final  int jobposterId;
 @override@JsonKey(fromJson: _forceString) final  String jobposterName;
 @override@JsonKey(fromJson: _forceStringNullable) final  String? createdAt;
  final  List<String> _requirements;
@@ -299,7 +299,7 @@ abstract mixin class _$JobModelCopyWith<$Res> implements $JobModelCopyWith<$Res>
   factory _$JobModelCopyWith(_JobModel value, $Res Function(_JobModel) _then) = __$JobModelCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(fromJson: _forceString) String title,@JsonKey(fromJson: _forceString) String description, int id,@JsonKey(fromJson: _forceString) String type,@JsonKey(fromJson: _forceString) String location,@JsonKey(fromJson: _forceString) String startDate, double amount,@JsonKey(fromJson: _forceString) String salary,@JsonKey(fromJson: _forceStringNullable) String? duration,@JsonKey(fromJson: _forceString) String status, int numOfPositions,@JsonKey(fromJson: _forceStringNullable) String? workArrangement, int jobposterId,@JsonKey(fromJson: _forceString) String jobposterName,@JsonKey(fromJson: _forceStringNullable) String? createdAt, List<String> requirements, List<String> categories, List<String> benefits
+@JsonKey(fromJson: _forceString) String title,@JsonKey(fromJson: _forceString) String description,@JsonKey(fromJson: _forceInt) int id,@JsonKey(fromJson: _forceString) String type,@JsonKey(fromJson: _forceString) String location,@JsonKey(fromJson: _forceString) String startDate,@JsonKey(fromJson: _forceDouble) double amount,@JsonKey(fromJson: _forceString) String salary,@JsonKey(fromJson: _forceStringNullable) String? duration,@JsonKey(fromJson: _forceString) String status,@JsonKey(fromJson: _forceInt) int numOfPositions,@JsonKey(fromJson: _forceStringNullable) String? workArrangement,@JsonKey(fromJson: _forceInt) int jobposterId,@JsonKey(fromJson: _forceString) String jobposterName,@JsonKey(fromJson: _forceStringNullable) String? createdAt, List<String> requirements, List<String> categories, List<String> benefits
 });
 
 

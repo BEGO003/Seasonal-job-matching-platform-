@@ -8,17 +8,17 @@ abstract class JobModel with _$JobModel {
   const factory JobModel({
     @JsonKey(fromJson: _forceString) required String title,
     @JsonKey(fromJson: _forceString) required String description,
-    required int id,
+    @JsonKey(fromJson: _forceInt) required int id,
     @JsonKey(fromJson: _forceString) required String type,
     @JsonKey(fromJson: _forceString) required String location,
     @JsonKey(fromJson: _forceString) required String startDate,
-    required double amount,
+    @JsonKey(fromJson: _forceDouble) required double amount,
     @JsonKey(fromJson: _forceString) required String salary,
     @JsonKey(fromJson: _forceStringNullable) String? duration,
     @JsonKey(fromJson: _forceString) required String status,
-    required int numOfPositions,
+    @JsonKey(fromJson: _forceInt) required int numOfPositions,
     @JsonKey(fromJson: _forceStringNullable) String? workArrangement,
-    required int jobposterId,
+    @JsonKey(fromJson: _forceInt) required int jobposterId,
     @JsonKey(fromJson: _forceString) required String jobposterName,
     @JsonKey(fromJson: _forceStringNullable) String? createdAt,
     @Default([]) List<String> requirements,
@@ -32,3 +32,7 @@ abstract class JobModel with _$JobModel {
 
 String _forceString(dynamic value) => value.toString();
 String? _forceStringNullable(dynamic value) => value?.toString();
+int _forceInt(dynamic value) =>
+    value is int ? value : int.parse(value.toString());
+double _forceDouble(dynamic value) =>
+    value is double ? value : double.parse(value.toString());

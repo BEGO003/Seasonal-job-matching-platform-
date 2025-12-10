@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:job_seeker/providers/home_screen_providers/favorites_provider.dart';
 import 'package:job_seeker/providers/home_screen_providers/recommended_jobs_provider.dart';
 import 'package:job_seeker/widgets/common/shimmer_loading.dart';
+import 'package:job_seeker/widgets/home_screen_widgets/favorite_jobs_section.dart';
 import 'package:job_seeker/widgets/home_screen_widgets/recommended_jobs_carousel.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -15,8 +17,13 @@ class HomeScreen extends ConsumerWidget {
     return RefreshIndicator(
       onRefresh: () async {
         HapticFeedback.mediumImpact();
+        // Refresh both recommended and favorite jobs
         ref.invalidate(recommendedJobsProvider);
-        await ref.read(recommendedJobsProvider.future);
+        ref.invalidate(favoriteJobsProvider);
+        await Future.wait([
+          ref.read(recommendedJobsProvider.future),
+          ref.read(favoriteJobsProvider.future),
+        ]);
       },
       color: const Color(0xFF1C1C1E),
       backgroundColor: Colors.white,
@@ -61,84 +68,12 @@ class HomeScreen extends ConsumerWidget {
               child: _SectionHeader(title: "Saved Jobs"),
             ),
 
-            // 4. Saved Jobs Placeholder
-            const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                child: _ComingSoonCard(
-                  icon: Icons.bookmark_rounded,
-                  title: "Saved Jobs",
-                  subtitle: "Save jobs to view them here later.",
-                ),
-              ),
-            ),
+            // 4. Saved Jobs Section
+            const SliverToBoxAdapter(child: FavoriteJobsSection()),
 
             const SliverPadding(padding: EdgeInsets.only(bottom: 120)),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _ComingSoonCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-
-  const _ComingSoonCard({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(32),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF4F6F9),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white, width: 2),
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Icon(icon, size: 32, color: Colors.grey.shade400),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            "Coming Soon",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey.shade800,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            subtitle,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade500,
-              height: 1.5,
-            ),
-          ),
-        ],
       ),
     );
   }

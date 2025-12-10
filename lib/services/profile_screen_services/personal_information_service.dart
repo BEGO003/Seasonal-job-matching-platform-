@@ -85,7 +85,7 @@ class PersonalInformationService {
     final userId = await _getUserId();
     final editPath = editUserById(userId);
     try {
-      await _dio.patch(editPath, data: {'favoriteJobs': favoriteJobs});
+      await _dio.patch(editPath, data: {'favoriteJobIds': favoriteJobs});
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -107,6 +107,34 @@ class PersonalInformationService {
     }
   }
 
+  /// Fetch the list of favorite job IDs for the current user
+  /// Uses GET /users/:id/favorite-jobs endpoint
+  Future<List<int>> fetchFavoriteJobIds() async {
+    final userId = await _getUserId();
+    final favoritesPath = getUserFavoriteJobs(userId);
+    try {
+      final response = await _dio.get(favoritesPath);
+      // The API returns a list of job IDs
+      final data = response.data;
+      if (data is List) {
+        return data
+            .map((id) => id is int ? id : int.parse(id.toString()))
+            .toList();
+      } else if (data is Map && data['jobIds'] != null) {
+        return (data['jobIds'] as List)
+            .map((id) => id is int ? id : int.parse(id.toString()))
+            .toList();
+      } else if (data is Map && data['favoriteJobIds'] != null) {
+        return (data['favoriteJobIds'] as List)
+            .map((id) => id is int ? id : int.parse(id.toString()))
+            .toList();
+      }
+      return [];
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   /// Fetch only the fields of interest for the current user.
   /// Expected response shape:
   /// {
@@ -119,7 +147,8 @@ class PersonalInformationService {
     try {
       final response = await _dio.get(path);
       final raw = response.data;
-      final list = (raw['fieldsOfInterest'] as List?)
+      final list =
+          (raw['fieldsOfInterest'] as List?)
               ?.map((e) => e == null ? '' : e.toString())
               .where((s) => s.isNotEmpty)
               .toList() ??
@@ -138,10 +167,13 @@ class PersonalInformationService {
     final userId = await _getUserId();
     final editPath = editUserById(userId);
     try {
-      await _dio.patch(editPath, data: {
-        'fieldsOfInterestToAdd': fieldsOfInterestToAdd,
-        'fieldsOfInterestToRemove': fieldsOfInterestToRemove,
-      });
+      await _dio.patch(
+        editPath,
+        data: {
+          'fieldsOfInterestToAdd': fieldsOfInterestToAdd,
+          'fieldsOfInterestToRemove': fieldsOfInterestToRemove,
+        },
+      );
     } on DioException catch (e) {
       throw _handleError(e);
     }

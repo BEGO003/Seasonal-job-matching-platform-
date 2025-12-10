@@ -3,7 +3,8 @@ import 'package:job_seeker/providers/home_screen_providers/favorites_provider.da
 import 'package:job_seeker/providers/profile_screen_providers/personal_information_notifier.dart';
 import 'package:job_seeker/services/profile_screen_services/personal_information_service.dart';
 
-final favoritesControllerProvider = AsyncNotifierProvider<FavoritesController, void>(FavoritesController.new);
+final favoritesControllerProvider =
+    AsyncNotifierProvider<FavoritesController, void>(FavoritesController.new);
 
 class FavoritesController extends AsyncNotifier<void> {
   @override
@@ -28,11 +29,11 @@ class FavoritesController extends AsyncNotifier<void> {
       ref.invalidate(favoriteJobsProvider);
     } catch (e, st) {
       // rollback
-      ref.read(personalInformationProvider.notifier).state = AsyncValue.data(user);
+      ref.read(personalInformationProvider.notifier).state = AsyncValue.data(
+        user,
+      );
       state = AsyncValue.error(e, st);
       rethrow;
     }
   }
 }
-
-

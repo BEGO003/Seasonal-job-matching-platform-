@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:job_seeker/models/jobs_screen_models/job_model.dart';
 import 'package:job_seeker/providers/home_screen_providers/favorites_provider.dart';
 import 'package:job_seeker/widgets/common/async_value_view.dart';
 import 'package:job_seeker/widgets/jobs_screen_widgets/job_card.dart';
@@ -43,9 +42,10 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
       builder: (context, ref, _) {
         final favoritesValue = ref.watch(favoriteJobsProvider);
 
-        return AsyncValueView<List<JobModel>>(
+        return AsyncValueView<FavoriteJobsState>(
           value: favoritesValue,
-          data: (jobs) {
+          data: (state) {
+            final jobs = state.jobs;
             if (jobs.isEmpty) {
               return _EmptyFavoritesState();
             }
@@ -62,8 +62,24 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                 slivers: [
                   // Stats header
                   SliverToBoxAdapter(
-                    child: _FavoritesHeader(jobCount: jobs.length),
+                    child: _FavoritesHeader(
+                      jobCount: jobs.length,
+                      hasPartialErrors: state.isPartiallyLoaded,
+                      failedCount: state.failedIds.length,
+                    ),
                   ),
+                  // Retry banner if there are failed jobs
+                  if (state.isPartiallyLoaded)
+                    SliverToBoxAdapter(
+                      child: _RetryBanner(
+                        failedCount: state.failedIds.length,
+                        onRetry: () {
+                          ref
+                              .read(favoriteJobsProvider.notifier)
+                              .retryFailedJobs();
+                        },
+                      ),
+                    ),
                   // Job cards
                   SliverPadding(
                     padding: const EdgeInsets.symmetric(
@@ -117,10 +133,62 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
   }
 }
 
+class _RetryBanner extends StatelessWidget {
+  final int failedCount;
+  final VoidCallback onRetry;
+
+  const _RetryBanner({required this.failedCount, required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.errorContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.warning_amber_rounded,
+            color: theme.colorScheme.onErrorContainer,
+            size: 20,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              '$failedCount ${failedCount == 1 ? 'job' : 'jobs'} failed to load',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onErrorContainer,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: onRetry,
+            child: Text(
+              'Retry',
+              style: TextStyle(color: theme.colorScheme.onErrorContainer),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _FavoritesHeader extends StatelessWidget {
   final int jobCount;
+  final bool hasPartialErrors;
+  final int failedCount;
 
-  const _FavoritesHeader({required this.jobCount});
+  const _FavoritesHeader({
+    required this.jobCount,
+    this.hasPartialErrors = false,
+    this.failedCount = 0,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -26,12 +26,16 @@ class PersonalInformationAsyncNotifier
     // Fetch applied job IDs from the dedicated API endpoint
     final appliedJobIds = await _service.fetchAppliedJobIds();
 
+    // Fetch favorite job IDs from the dedicated API endpoint
+    final favoriteJobIds = await _service.fetchFavoriteJobIds();
+
     // Fetch fields of interest from the dedicated API endpoint
     final fieldsOfInterest = await _service.fetchFieldsOfInterest();
 
-    // Update user data with applied job IDs and fields of interest
+    // Update user data with applied job IDs, favorite job IDs, and fields of interest
     return userData.copyWith(
       ownedapplications: appliedJobIds,
+      favoriteJobs: favoriteJobIds,
       fieldsOfInterest: fieldsOfInterest,
     );
   }

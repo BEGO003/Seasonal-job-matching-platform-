@@ -19,3 +19,4 @@ const String LOGIN = "$USERS/login";
 // Resume routes
 const String RESUMES = "resumes";
 String resumeById(String id) => "$RESUMES/$id";
+String getUserFavoriteJobs(String userId) => "$USERS/$userId/favorite-jobs";

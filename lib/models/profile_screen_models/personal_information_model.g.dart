@@ -15,7 +15,7 @@ _PersonalInformationModel _$PersonalInformationModelFromJson(
   number: json['number'] as String,
   email: json['email'] as String,
   favoriteJobs:
-      (json['favoriteJobs'] as List<dynamic>?)
+      (json['favoriteJobIds'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
           .toList() ??
       const [],
@@ -47,7 +47,7 @@ Map<String, dynamic> _$PersonalInformationModelToJson(
   'country': instance.country,
   'number': instance.number,
   'email': instance.email,
-  'favoriteJobs': instance.favoriteJobs,
+  'favoriteJobIds': instance.favoriteJobs,
   'ownedjobs': instance.ownedjobs,
   'ownedapplications': instance.ownedapplications,
   'resume': instance.resume,

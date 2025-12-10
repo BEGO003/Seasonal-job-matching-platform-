@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 mixin _$PersonalInformationModel {
 
 @JsonKey(name: "id") int get id;@JsonKey(name: "name") String get name;@JsonKey(name: "country") String get country;@JsonKey(name: "number") String get number;@JsonKey(name: "email") String get email;//create a list of favorite jobs but not requried and make it empty by default
- List<int> get favoriteJobs; List<int> get ownedjobs; List<int> get ownedapplications; List<int> get resume;@JsonKey(name: "fieldsOfInterest") List<String>? get fieldsOfInterest;
+@JsonKey(name: "favoriteJobIds") List<int> get favoriteJobs; List<int> get ownedjobs; List<int> get ownedapplications; List<int> get resume;@JsonKey(name: "fieldsOfInterest") List<String>? get fieldsOfInterest;
 /// Create a copy of PersonalInformationModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -49,7 +49,7 @@ abstract mixin class $PersonalInformationModelCopyWith<$Res>  {
   factory $PersonalInformationModelCopyWith(PersonalInformationModel value, $Res Function(PersonalInformationModel) _then) = _$PersonalInformationModelCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: "id") int id,@JsonKey(name: "name") String name,@JsonKey(name: "country") String country,@JsonKey(name: "number") String number,@JsonKey(name: "email") String email, List<int> favoriteJobs, List<int> ownedjobs, List<int> ownedapplications, List<int> resume,@JsonKey(name: "fieldsOfInterest") List<String>? fieldsOfInterest
+@JsonKey(name: "id") int id,@JsonKey(name: "name") String name,@JsonKey(name: "country") String country,@JsonKey(name: "number") String number,@JsonKey(name: "email") String email,@JsonKey(name: "favoriteJobIds") List<int> favoriteJobs, List<int> ownedjobs, List<int> ownedapplications, List<int> resume,@JsonKey(name: "fieldsOfInterest") List<String>? fieldsOfInterest
 });
 
 
@@ -163,7 +163,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String name, @JsonKey(name: "country")  String country, @JsonKey(name: "number")  String number, @JsonKey(name: "email")  String email,  List<int> favoriteJobs,  List<int> ownedjobs,  List<int> ownedapplications,  List<int> resume, @JsonKey(name: "fieldsOfInterest")  List<String>? fieldsOfInterest)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String name, @JsonKey(name: "country")  String country, @JsonKey(name: "number")  String number, @JsonKey(name: "email")  String email, @JsonKey(name: "favoriteJobIds")  List<int> favoriteJobs,  List<int> ownedjobs,  List<int> ownedapplications,  List<int> resume, @JsonKey(name: "fieldsOfInterest")  List<String>? fieldsOfInterest)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PersonalInformationModel() when $default != null:
 return $default(_that.id,_that.name,_that.country,_that.number,_that.email,_that.favoriteJobs,_that.ownedjobs,_that.ownedapplications,_that.resume,_that.fieldsOfInterest);case _:
@@ -184,7 +184,7 @@ return $default(_that.id,_that.name,_that.country,_that.number,_that.email,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String name, @JsonKey(name: "country")  String country, @JsonKey(name: "number")  String number, @JsonKey(name: "email")  String email,  List<int> favoriteJobs,  List<int> ownedjobs,  List<int> ownedapplications,  List<int> resume, @JsonKey(name: "fieldsOfInterest")  List<String>? fieldsOfInterest)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String name, @JsonKey(name: "country")  String country, @JsonKey(name: "number")  String number, @JsonKey(name: "email")  String email, @JsonKey(name: "favoriteJobIds")  List<int> favoriteJobs,  List<int> ownedjobs,  List<int> ownedapplications,  List<int> resume, @JsonKey(name: "fieldsOfInterest")  List<String>? fieldsOfInterest)  $default,) {final _that = this;
 switch (_that) {
 case _PersonalInformationModel():
 return $default(_that.id,_that.name,_that.country,_that.number,_that.email,_that.favoriteJobs,_that.ownedjobs,_that.ownedapplications,_that.resume,_that.fieldsOfInterest);case _:
@@ -204,7 +204,7 @@ return $default(_that.id,_that.name,_that.country,_that.number,_that.email,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String name, @JsonKey(name: "country")  String country, @JsonKey(name: "number")  String number, @JsonKey(name: "email")  String email,  List<int> favoriteJobs,  List<int> ownedjobs,  List<int> ownedapplications,  List<int> resume, @JsonKey(name: "fieldsOfInterest")  List<String>? fieldsOfInterest)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String name, @JsonKey(name: "country")  String country, @JsonKey(name: "number")  String number, @JsonKey(name: "email")  String email, @JsonKey(name: "favoriteJobIds")  List<int> favoriteJobs,  List<int> ownedjobs,  List<int> ownedapplications,  List<int> resume, @JsonKey(name: "fieldsOfInterest")  List<String>? fieldsOfInterest)?  $default,) {final _that = this;
 switch (_that) {
 case _PersonalInformationModel() when $default != null:
 return $default(_that.id,_that.name,_that.country,_that.number,_that.email,_that.favoriteJobs,_that.ownedjobs,_that.ownedapplications,_that.resume,_that.fieldsOfInterest);case _:
@@ -219,7 +219,7 @@ return $default(_that.id,_that.name,_that.country,_that.number,_that.email,_that
 @JsonSerializable()
 
 class _PersonalInformationModel implements PersonalInformationModel {
-  const _PersonalInformationModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "name") required this.name, @JsonKey(name: "country") required this.country, @JsonKey(name: "number") required this.number, @JsonKey(name: "email") required this.email, final  List<int> favoriteJobs = const [], final  List<int> ownedjobs = const [], final  List<int> ownedapplications = const [], final  List<int> resume = const [], @JsonKey(name: "fieldsOfInterest") final  List<String>? fieldsOfInterest}): _favoriteJobs = favoriteJobs,_ownedjobs = ownedjobs,_ownedapplications = ownedapplications,_resume = resume,_fieldsOfInterest = fieldsOfInterest;
+  const _PersonalInformationModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "name") required this.name, @JsonKey(name: "country") required this.country, @JsonKey(name: "number") required this.number, @JsonKey(name: "email") required this.email, @JsonKey(name: "favoriteJobIds") final  List<int> favoriteJobs = const [], final  List<int> ownedjobs = const [], final  List<int> ownedapplications = const [], final  List<int> resume = const [], @JsonKey(name: "fieldsOfInterest") final  List<String>? fieldsOfInterest}): _favoriteJobs = favoriteJobs,_ownedjobs = ownedjobs,_ownedapplications = ownedapplications,_resume = resume,_fieldsOfInterest = fieldsOfInterest;
   factory _PersonalInformationModel.fromJson(Map<String, dynamic> json) => _$PersonalInformationModelFromJson(json);
 
 @override@JsonKey(name: "id") final  int id;
@@ -230,7 +230,7 @@ class _PersonalInformationModel implements PersonalInformationModel {
 //create a list of favorite jobs but not requried and make it empty by default
  final  List<int> _favoriteJobs;
 //create a list of favorite jobs but not requried and make it empty by default
-@override@JsonKey() List<int> get favoriteJobs {
+@override@JsonKey(name: "favoriteJobIds") List<int> get favoriteJobs {
   if (_favoriteJobs is EqualUnmodifiableListView) return _favoriteJobs;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_favoriteJobs);
@@ -300,7 +300,7 @@ abstract mixin class _$PersonalInformationModelCopyWith<$Res> implements $Person
   factory _$PersonalInformationModelCopyWith(_PersonalInformationModel value, $Res Function(_PersonalInformationModel) _then) = __$PersonalInformationModelCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: "id") int id,@JsonKey(name: "name") String name,@JsonKey(name: "country") String country,@JsonKey(name: "number") String number,@JsonKey(name: "email") String email, List<int> favoriteJobs, List<int> ownedjobs, List<int> ownedapplications, List<int> resume,@JsonKey(name: "fieldsOfInterest") List<String>? fieldsOfInterest
+@JsonKey(name: "id") int id,@JsonKey(name: "name") String name,@JsonKey(name: "country") String country,@JsonKey(name: "number") String number,@JsonKey(name: "email") String email,@JsonKey(name: "favoriteJobIds") List<int> favoriteJobs, List<int> ownedjobs, List<int> ownedapplications, List<int> resume,@JsonKey(name: "fieldsOfInterest") List<String>? fieldsOfInterest
 });
 
 
