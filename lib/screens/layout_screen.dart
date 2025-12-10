@@ -70,6 +70,18 @@ class _LayoutScreenState extends State<LayoutScreen> {
 
     return Scaffold(
       extendBody: true,
+      appBar: AppBar(
+        title: Text(
+          titles[currentIndex],
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+        ),
+        centerTitle: true,
+        toolbarHeight: 48,
+        backgroundColor: colorScheme.surface.withOpacity(0.8),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        forceMaterialTransparency: true,
+      ),
       body: Stack(
         children: [
           // Background - IgnorePointer to prevent blocking taps

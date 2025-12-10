@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:job_seeker/providers/profile_screen_providers/resume_provider.dart';
 import 'package:job_seeker/models/profile_screen_models/resume_model.dart';
+import 'package:job_seeker/constants/constants.dart';
 
 class ResumeScreen extends ConsumerStatefulWidget {
   const ResumeScreen({super.key});
@@ -16,7 +17,8 @@ class _ResumeScreenState extends ConsumerState<ResumeScreen> {
   late TextEditingController _experienceController;
   late TextEditingController _certificatesController;
   late TextEditingController _skillsController;
-  late TextEditingController _languagesController;
+
+  List<String> _selectedLanguages = [];
 
   bool _dataLoaded = false;
   bool _isEditing = false;
@@ -28,7 +30,6 @@ class _ResumeScreenState extends ConsumerState<ResumeScreen> {
     _experienceController = TextEditingController();
     _certificatesController = TextEditingController();
     _skillsController = TextEditingController();
-    _languagesController = TextEditingController();
   }
 
   @override
@@ -37,7 +38,6 @@ class _ResumeScreenState extends ConsumerState<ResumeScreen> {
     _experienceController.dispose();
     _certificatesController.dispose();
     _skillsController.dispose();
-    _languagesController.dispose();
     super.dispose();
   }
 
@@ -46,7 +46,7 @@ class _ResumeScreenState extends ConsumerState<ResumeScreen> {
     _experienceController.text = resume.experience.join('\n');
     _certificatesController.text = resume.certificates.join('\n');
     _skillsController.text = resume.skills.join('\n');
-    _languagesController.text = resume.languages.join('\n');
+    _selectedLanguages = List.from(resume.languages);
   }
 
   Future<void> _saveResume() async {
@@ -71,11 +71,7 @@ class _ResumeScreenState extends ConsumerState<ResumeScreen> {
           .where((s) => s.trim().isNotEmpty)
           .map((s) => s.trim())
           .toList();
-      final languages = _languagesController.text
-          .split('\n')
-          .where((s) => s.trim().isNotEmpty)
-          .map((s) => s.trim())
-          .toList();
+      final languages = _selectedLanguages;
 
       final currentResume = ref.read(resumeProvider).value;
       if (currentResume == null) return;
@@ -189,26 +185,29 @@ class _ResumeScreenState extends ConsumerState<ResumeScreen> {
           const SizedBox(width: 8),
         ],
       ),
-      body: resumeState.when(
-        data: (resume) {
-          if (resume == null) {
-            return _buildEmptyState();
-          }
+      body: SafeArea(
+        top: false,
+        child: resumeState.when(
+          data: (resume) {
+            if (resume == null) {
+              return _buildEmptyState();
+            }
 
-          if (!_dataLoaded && !_isEditing) {
-            // Pre-populate just in case
-            _populateFields(resume);
-            _dataLoaded = true;
-          }
+            if (!_dataLoaded && !_isEditing) {
+              // Pre-populate just in case
+              _populateFields(resume);
+              _dataLoaded = true;
+            }
 
-          if (_isEditing) {
-            return _buildEditForm();
-          } else {
-            return _buildResumeView(resume);
-          }
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, s) => Center(child: Text('Error: $e')),
+            if (_isEditing) {
+              return _buildEditForm();
+            } else {
+              return _buildResumeView(resume);
+            }
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, s) => Center(child: Text('Error: $e')),
+        ),
       ),
     );
   }
@@ -423,12 +422,7 @@ class _ResumeScreenState extends ConsumerState<ResumeScreen> {
               Icons.psychology_outlined,
             ),
             const SizedBox(height: 16),
-            _buildTextField(
-              _languagesController,
-              'Languages',
-              'Add languages...',
-              Icons.language,
-            ),
+            _buildLanguageSelector(),
             const SizedBox(height: 16),
             _buildTextField(
               _certificatesController,
@@ -439,6 +433,116 @@ class _ResumeScreenState extends ConsumerState<ResumeScreen> {
             const SizedBox(height: 80),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageSelector() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.language, color: Colors.grey.shade400),
+              const SizedBox(width: 12),
+              const Text(
+                'Languages',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54, // Match typical label color
+                ),
+              ),
+            ],
+          ),
+          if (_selectedLanguages.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: _selectedLanguages
+                  .map(
+                    (lang) => Chip(
+                      label: Text(lang),
+                      deleteIcon: const Icon(Icons.close, size: 18),
+                      onDeleted: () {
+                        setState(() {
+                          _selectedLanguages.remove(lang);
+                        });
+                      },
+                      backgroundColor: Colors.blue.shade50,
+                      labelStyle: TextStyle(color: Colors.blue.shade700),
+                      deleteIconColor: Colors.blue.shade400,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        side: BorderSide(color: Colors.blue.shade100),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ],
+          const SizedBox(height: 8),
+          DropdownButtonFormField<String>(
+            key: ValueKey('language_dropdown_${_selectedLanguages.length}'),
+            decoration: InputDecoration(
+              hintText: 'Add a language...',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey.shade200),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey.shade200),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 0,
+              ),
+            ),
+            isExpanded: true,
+            icon: const Icon(Icons.add_circle_outline),
+            items: languagesList.map((String lang) {
+              final isSelected = _selectedLanguages.contains(lang);
+              return DropdownMenuItem<String>(
+                value: lang,
+                enabled: !isSelected,
+                child: Text(
+                  lang,
+                  style: TextStyle(
+                    color: isSelected ? Colors.grey : Colors.black87,
+                  ),
+                ),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              if (newValue != null) {
+                if (_selectedLanguages.contains(newValue)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('$newValue is already added.')),
+                  );
+                  return;
+                }
+                setState(() {
+                  _selectedLanguages.add(newValue);
+                });
+                // The Key change will force a reset of the widget state
+              }
+            },
+            value: null,
+          ),
+        ],
       ),
     );
   }

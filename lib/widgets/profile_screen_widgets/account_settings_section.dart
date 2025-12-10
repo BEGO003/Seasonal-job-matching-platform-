@@ -79,9 +79,12 @@ class AccountSettingsSection extends ConsumerWidget {
                           children: [
                             Expanded(
                               child: OutlinedButton(
-                                onPressed: () => Navigator.of(context).pop(false),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false),
                                 style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -99,11 +102,14 @@ class AccountSettingsSection extends ConsumerWidget {
                             const SizedBox(width: 12),
                             Expanded(
                               child: ElevatedButton(
-                                onPressed: () => Navigator.of(context).pop(true),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF6B7280),
                                   foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
@@ -151,10 +157,7 @@ class AccountSettingsSection extends ConsumerWidget {
                   SizedBox(height: 16),
                   Text(
                     'Logging out...',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ],
               ),
@@ -172,12 +175,10 @@ class AccountSettingsSection extends ConsumerWidget {
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
                 const LoginScreen(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
             transitionDuration: const Duration(milliseconds: 300),
           ),
           (route) => false,
@@ -192,17 +193,7 @@ class AccountSettingsSection extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 16),
-        const SettingsOptionCard(
-          icon: Icons.lock_outline,
-          title: 'Change Password',
-          subtitle: 'Update your password to keep your account secure',
-        ),
-        const SettingsOptionCard(
-          icon: Icons.delete_outline,
-          title: 'Delete Account',
-          subtitle: 'Permanently delete your account and all data',
-          isDanger: true,
-        ),
+
         SettingsOptionCard(
           icon: Icons.logout_outlined,
           title: 'Logout',

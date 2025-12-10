@@ -25,88 +25,96 @@ class ApplicationsScreen extends ConsumerWidget {
       children: [
         // Applications List
         Expanded(
-          child: AsyncValueView<List<ApplicationWithJob>>(
-            value: applicationsValue,
-            data: (apps) {
-              if (apps.isEmpty) {
-                return _EmptyApplicationsState();
-              }
+          child: SafeArea(
+            top: false,
+            child: AsyncValueView<List<ApplicationWithJob>>(
+              value: applicationsValue,
+              data: (apps) {
+                if (apps.isEmpty) {
+                  return _EmptyApplicationsState();
+                }
 
-              return RefreshIndicator(
-                onRefresh: () async {
-                  ref.invalidate(applicationsProvider);
-                },
-                color: colorScheme.primary,
-                backgroundColor: colorScheme.surface,
-                child: ListView.builder(
-                  physics: const BouncingScrollPhysics(
-                    parent: AlwaysScrollableScrollPhysics(),
-                  ),
-                  padding: const EdgeInsets.fromLTRB(
-                    AppTheme.spaceMd,
-                    AppTheme.spaceMd,
-                    AppTheme.spaceMd,
-                    120,
-                  ),
-                  itemCount: apps.length,
-                  itemBuilder: (context, i) {
-                    final isFirst = i == 0;
-                    final isLast = i == apps.length - 1;
-
-                    return StaggeredListItem(
-                      index: i,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: AppTheme.spaceSm,
-                        ),
-                        child: _TimelineApplicationCard(
-                          item: apps[i],
-                          isFirst: isFirst,
-                          isLast: isLast,
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            Navigator.of(context).push(
-                              PageRouteBuilder(
-                                pageBuilder:
-                                    (context, animation, secondaryAnimation) =>
-                                        ApplicationDetailScreen(item: apps[i]),
-                                transitionsBuilder:
-                                    (
-                                      context,
-                                      animation,
-                                      secondaryAnimation,
-                                      child,
-                                    ) {
-                                      return FadeTransition(
-                                        opacity: animation,
-                                        child: SlideTransition(
-                                          position:
-                                              Tween<Offset>(
-                                                begin: const Offset(0.05, 0),
-                                                end: Offset.zero,
-                                              ).animate(
-                                                CurvedAnimation(
-                                                  parent: animation,
-                                                  curve:
-                                                      AppTheme.curveEmphasized,
-                                                ),
-                                              ),
-                                          child: child,
-                                        ),
-                                      );
-                                    },
-                                transitionDuration: AppTheme.animNormal,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    );
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    ref.invalidate(applicationsProvider);
                   },
-                ),
-              );
-            },
-            loading: _ApplicationsSkeletonLoader(),
+                  color: colorScheme.primary,
+                  backgroundColor: colorScheme.surface,
+                  child: ListView.builder(
+                    physics: const BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics(),
+                    ),
+                    padding: const EdgeInsets.fromLTRB(
+                      AppTheme.spaceMd,
+                      AppTheme.spaceMd,
+                      AppTheme.spaceMd,
+                      120,
+                    ),
+                    itemCount: apps.length,
+                    itemBuilder: (context, i) {
+                      final isFirst = i == 0;
+                      final isLast = i == apps.length - 1;
+
+                      return StaggeredListItem(
+                        index: i,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: AppTheme.spaceSm,
+                          ),
+                          child: _TimelineApplicationCard(
+                            item: apps[i],
+                            isFirst: isFirst,
+                            isLast: isLast,
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  pageBuilder:
+                                      (
+                                        context,
+                                        animation,
+                                        secondaryAnimation,
+                                      ) => ApplicationDetailScreen(
+                                        item: apps[i],
+                                      ),
+                                  transitionsBuilder:
+                                      (
+                                        context,
+                                        animation,
+                                        secondaryAnimation,
+                                        child,
+                                      ) {
+                                        return FadeTransition(
+                                          opacity: animation,
+                                          child: SlideTransition(
+                                            position:
+                                                Tween<Offset>(
+                                                  begin: const Offset(0.05, 0),
+                                                  end: Offset.zero,
+                                                ).animate(
+                                                  CurvedAnimation(
+                                                    parent: animation,
+                                                    curve: AppTheme
+                                                        .curveEmphasized,
+                                                  ),
+                                                ),
+                                            child: child,
+                                          ),
+                                        );
+                                      },
+                                  transitionDuration: AppTheme.animFast,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+              loading: _ApplicationsSkeletonLoader(),
+            ),
           ),
         ),
       ],

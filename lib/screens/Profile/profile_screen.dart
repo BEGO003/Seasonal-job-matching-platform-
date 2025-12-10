@@ -31,56 +31,59 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          // 1. Minimal Header
-          SliverToBoxAdapter(
-            child: personalInfo.when(
-              data: (user) => _buildMinimalHeader(context, user),
-              loading: () => const SizedBox(
-                height: 300,
-                child: Center(child: CircularProgressIndicator()),
-              ),
-              error: (e, s) => const SizedBox(
-                height: 300,
-                child: Center(child: Text('Error loading profile')),
-              ),
-            ),
-          ),
-
-          // 2. Main Content
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            sliver: SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  const SizedBox(height: 24),
-                  // Resume Card
-                  _buildResumeCard(context, colorScheme),
-                  const SizedBox(height: 24),
-
-                  // Personal Details
-                  _buildSectionTitle(context, 'Personal Details'),
-                  const SizedBox(height: 12),
-                  personalInfo.when(
-                    data: (user) => _buildPersonalDetails(context, user),
-                    loading: () => const SizedBox(),
-                    error: (_, __) => const SizedBox(),
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Account Settings
-                  _buildSectionTitle(context, 'Account'),
-                  const SizedBox(height: 12),
-                  const AccountSettingsSection(),
-
-                  const SizedBox(height: 120),
-                ],
+      body: SafeArea(
+        top: false,
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            // 1. Minimal Header
+            SliverToBoxAdapter(
+              child: personalInfo.when(
+                data: (user) => _buildMinimalHeader(context, user),
+                loading: () => const SizedBox(
+                  height: 300,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+                error: (e, s) => const SizedBox(
+                  height: 300,
+                  child: Center(child: Text('Error loading profile')),
+                ),
               ),
             ),
-          ),
-        ],
+
+            // 2. Main Content
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 24),
+                    // Resume Card
+                    _buildResumeCard(context, colorScheme),
+                    const SizedBox(height: 24),
+
+                    // Personal Details
+                    _buildSectionTitle(context, 'Personal Details'),
+                    const SizedBox(height: 12),
+                    personalInfo.when(
+                      data: (user) => _buildPersonalDetails(context, user),
+                      loading: () => const SizedBox(),
+                      error: (_, __) => const SizedBox(),
+                    ),
+                    const SizedBox(height: 32),
+
+                    // Account Settings
+                    _buildSectionTitle(context, 'Account'),
+                    const SizedBox(height: 12),
+                    const AccountSettingsSection(),
+
+                    const SizedBox(height: 120),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -471,7 +471,11 @@ class _FilterModalState extends ConsumerState<_FilterModal> {
             ],
           ),
           // Handle keyboard padding
-          SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
+          SizedBox(
+            height:
+                MediaQuery.of(context).viewInsets.bottom +
+                MediaQuery.of(context).padding.bottom,
+          ),
         ],
       ),
     );

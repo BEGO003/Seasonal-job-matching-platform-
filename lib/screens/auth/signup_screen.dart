@@ -207,7 +207,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen>
                 ),
               ),
               child: SafeArea(
-                bottom: false,
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(
                     AppTheme.spaceLg,

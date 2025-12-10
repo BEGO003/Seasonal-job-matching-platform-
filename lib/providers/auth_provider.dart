@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:job_seeker/core/auth/auth_storage.dart';
-import 'package:job_seeker/models/profile_screen_models/personal_information_model.dart';
+
 import 'package:job_seeker/providers/home_screen_providers/favorites_provider.dart';
 import 'package:job_seeker/providers/applications_screen_providers/applications_provider.dart';
 import 'package:job_seeker/providers/jobs_screen_providers/job_apply_provider.dart';
@@ -31,7 +31,7 @@ class AuthNotifier extends AsyncNotifier<AuthResponseModel?> {
     required String password,
   }) async {
     state = const AsyncValue.loading();
-    
+
     try {
       final request = SignupRequestModel(
         name: name,
@@ -43,10 +43,11 @@ class AuthNotifier extends AsyncNotifier<AuthResponseModel?> {
       );
 
       final response = await _authService.signup(request);
-      
-      // Update personal information provider with new user data
-      ref.read(personalInformationProvider.notifier).updateUserData(response.user);
-      
+
+      // We do NOT manually update personalInformationProvider here.
+      // Instead, we let the provider rebuild naturally when accessed,
+      // which will trigger the full fetchUserData() + fetchFieldsOfInterest() logic.
+
       state = AsyncValue.data(response);
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
@@ -54,23 +55,18 @@ class AuthNotifier extends AsyncNotifier<AuthResponseModel?> {
     }
   }
 
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> login({required String email, required String password}) async {
     state = const AsyncValue.loading();
-    
+
     try {
-      final request = LoginRequestModel(
-        email: email,
-        password: password,
-      );
+      final request = LoginRequestModel(email: email, password: password);
 
       final response = await _authService.login(request);
-      
-      // Update personal information provider with logged in user data
-      ref.read(personalInformationProvider.notifier).updateUserData(response.user);
-      
+
+      // We do NOT manually update personalInformationProvider here.
+      // Instead, we let the provider rebuild naturally when accessed,
+      // which will trigger the full fetchUserData() + fetchFieldsOfInterest() logic.
+
       state = AsyncValue.data(response);
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
@@ -90,23 +86,11 @@ class AuthNotifier extends AsyncNotifier<AuthResponseModel?> {
     await authStorage.clearUserId();
     await authStorage.clearToken();
 
-    // Replace personal information with an empty safe model so dependent
-    // providers which read user data do not attempt network calls.
-    final emptyUser = PersonalInformationModel(
-      id: 0,
-      name: '',
-      country: '',
-      number: '',
-      email: '',
-      favoriteJobs: [],
-      ownedjobs: [],
-      ownedapplications: [],
-      resume: [],
-      fieldsOfInterest: null,
-    );
-
-    // Set the personal information provider to the empty state
-    ref.read(personalInformationProvider.notifier).updateUserData(emptyUser);
+    // Invalidate the personal information provider.
+    // This ensures that the next time it is read (e.g. by ProfileScreen),
+    // it will re-execute its build() method, fetching fresh data for the new user
+    // (or unrelated data if we were to support guest mode, though currently it's auth-dependent).
+    ref.invalidate(personalInformationProvider);
 
     // Clear optimistic local applied jobs
     ref.read(appliedJobsLocalProvider.notifier).state = <String>{};
@@ -117,4 +101,3 @@ class AuthNotifier extends AsyncNotifier<AuthResponseModel?> {
     ref.invalidate(jobsNotifierProvider);
   }
 }
-

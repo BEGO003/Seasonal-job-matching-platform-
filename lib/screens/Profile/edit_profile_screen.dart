@@ -140,142 +140,145 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         foregroundColor: Colors.black,
         centerTitle: true,
       ),
-      body: personalInfo.when(
-        data: (user) {
-          _initializeData(user);
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Avatar Placeholder
-                  Center(
-                    child: Stack(
-                      children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundColor: Colors.grey.shade200,
-                          child: Text(
-                            user.name.isNotEmpty
-                                ? user.name[0].toUpperCase()
-                                : 'U',
-                            style: const TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey,
+      body: SafeArea(
+        top: false,
+        child: personalInfo.when(
+          data: (user) {
+            _initializeData(user);
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Avatar Placeholder
+                    Center(
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundColor: Colors.grey.shade200,
+                            child: Text(
+                              user.name.isNotEmpty
+                                  ? user.name[0].toUpperCase()
+                                  : 'U',
+                              style: const TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ),
                             ),
                           ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: CircleAvatar(
-                            radius: 16,
-                            backgroundColor: Theme.of(context).primaryColor,
-                            child: const Icon(
-                              Icons.camera_alt,
-                              size: 16,
-                              color: Colors.white,
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: CircleAvatar(
+                              radius: 16,
+                              backgroundColor: Theme.of(context).primaryColor,
+                              child: const Icon(
+                                Icons.camera_alt,
+                                size: 16,
+                                color: Colors.white,
+                              ),
                             ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+
+                    _buildLabel('Full Name'),
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: _inputDecoration('Your name'),
+                      validator: (v) => v!.isEmpty ? 'Name is required' : null,
+                    ),
+                    const SizedBox(height: 20),
+
+                    _buildLabel('Phone Number'),
+                    TextFormField(
+                      controller: _phoneController,
+                      decoration: _inputDecoration('Your number'),
+                      keyboardType: TextInputType.phone,
+                    ),
+                    const SizedBox(height: 20),
+
+                    _buildLabel('Country / Location'),
+                    TextFormField(
+                      controller: _countryController,
+                      decoration: _inputDecoration('e.g. New York, USA'),
+                    ),
+                    const SizedBox(height: 24),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildLabel('Fields of Interest'),
+                        IconButton(
+                          onPressed: _addInterest,
+                          icon: const Icon(
+                            Icons.add_circle_outline,
+                            color: Colors.blue,
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 32),
-
-                  _buildLabel('Full Name'),
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: _inputDecoration('Your name'),
-                    validator: (v) => v!.isEmpty ? 'Name is required' : null,
-                  ),
-                  const SizedBox(height: 20),
-
-                  _buildLabel('Phone Number'),
-                  TextFormField(
-                    controller: _phoneController,
-                    decoration: _inputDecoration('Your number'),
-                    keyboardType: TextInputType.phone,
-                  ),
-                  const SizedBox(height: 20),
-
-                  _buildLabel('Country / Location'),
-                  TextFormField(
-                    controller: _countryController,
-                    decoration: _inputDecoration('e.g. New York, USA'),
-                  ),
-                  const SizedBox(height: 24),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildLabel('Fields of Interest'),
-                      IconButton(
-                        onPressed: _addInterest,
-                        icon: const Icon(
-                          Icons.add_circle_outline,
-                          color: Colors.blue,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: _currentInterests
-                        .map(
-                          (interest) => Chip(
-                            label: Text(interest),
-                            deleteIcon: const Icon(Icons.close, size: 16),
-                            onDeleted: () {
-                              setState(() {
-                                _currentInterests.remove(interest);
-                              });
-                            },
-                            backgroundColor: Colors.grey.shade50,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              side: BorderSide(color: Colors.grey.shade300),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: _currentInterests
+                          .map(
+                            (interest) => Chip(
+                              label: Text(interest),
+                              deleteIcon: const Icon(Icons.close, size: 16),
+                              onDeleted: () {
+                                setState(() {
+                                  _currentInterests.remove(interest);
+                                });
+                              },
+                              backgroundColor: Colors.grey.shade50,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                side: BorderSide(color: Colors.grey.shade300),
+                              ),
                             ),
-                          ),
-                        )
-                        .toList(),
-                  ),
+                          )
+                          .toList(),
+                    ),
 
-                  const SizedBox(height: 48),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _saveProfile,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                    const SizedBox(height: 48),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _saveProfile,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          backgroundColor: Theme.of(context).primaryColor,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
                         ),
-                        backgroundColor: Theme.of(context).primaryColor,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                      ),
-                      child: const Text(
-                        'Save Changes',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                        child: const Text(
+                          'Save Changes',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, s) => Center(child: Text('Error: $e')),
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, s) => Center(child: Text('Error: $e')),
+        ),
       ),
     );
   }

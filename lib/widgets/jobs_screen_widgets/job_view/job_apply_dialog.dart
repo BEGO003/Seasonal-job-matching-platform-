@@ -97,7 +97,12 @@ class _JobApplySheetState extends ConsumerState<_JobApplySheet> {
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      padding: EdgeInsets.fromLTRB(24, 12, 24, 24 + keyboardSpace),
+      padding: EdgeInsets.fromLTRB(
+        24,
+        12,
+        24,
+        24 + keyboardSpace + MediaQuery.of(context).padding.bottom,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

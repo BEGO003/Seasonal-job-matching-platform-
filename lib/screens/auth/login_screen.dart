@@ -118,7 +118,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                 gradient: AppTheme.primaryGradient,
               ),
               child: SafeArea(
-                bottom: false,
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(24, 40, 24, 60),
                   child: Column(
