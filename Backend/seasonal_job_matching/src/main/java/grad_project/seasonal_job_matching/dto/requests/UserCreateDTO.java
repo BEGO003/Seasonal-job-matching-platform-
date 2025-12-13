@@ -16,7 +16,7 @@ public class UserCreateDTO {
 
     private String country;
 
-    @Pattern(regexp = "^[0-9]{11}$") 
+    
     private String number;
 
     @Email
