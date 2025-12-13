@@ -46,7 +46,7 @@ public class User {
     @Column
     private String country;
 
-    @Column(length=11)
+    @Column
     private String number;
 
     @Column(nullable = false)
