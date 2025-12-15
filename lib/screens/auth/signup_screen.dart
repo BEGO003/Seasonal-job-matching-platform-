@@ -9,6 +9,7 @@ import 'package:job_seeker/theme/app_theme.dart';
 import 'package:job_seeker/widgets/common/animated_scale_button.dart';
 import 'package:job_seeker/widgets/common/staggered_list_item.dart';
 import 'package:job_seeker/widgets/common/gradient_button.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
@@ -22,7 +23,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen>
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _countryController = TextEditingController();
-  final _numberController = TextEditingController();
+  String _completePhoneNumber = '';
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -63,7 +64,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen>
     _headerAnimController.dispose();
     _nameController.dispose();
     _countryController.dispose();
-    _numberController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -129,7 +129,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen>
           .signup(
             name: _nameController.text.trim(),
             country: _countryController.text.trim(),
-            number: _numberController.text.trim(),
+            number: _completePhoneNumber,
             email: _emailController.text.trim(),
             password: _passwordController.text,
           );
@@ -389,22 +389,24 @@ class _SignupScreenState extends ConsumerState<SignupScreen>
                     // Phone Number field
                     StaggeredListItem(
                       index: 3,
-                      child: TextFormField(
-                        controller: _numberController,
-                        keyboardType: TextInputType.phone,
-                        textInputAction: TextInputAction.next,
-                        enabled: !isLoading,
+
+                      child: IntlPhoneField(
                         decoration: InputDecoration(
                           labelText: 'Phone Number',
-                          hintText: 'Enter your phone number',
+                          border: OutlineInputBorder(borderSide: BorderSide()),
                           prefixIcon: const Icon(Icons.phone_outlined),
                         ),
+                        initialCountryCode: 'EG',
+                        onChanged: (phone) {
+                          _completePhoneNumber = phone.completeNumber;
+                        },
+                        onCountryChanged: (country) {
+                          // Optional: Update country controller if you want to sync them
+                        },
+                        enabled: !isLoading,
                         validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
+                          if (value == null || value.number.trim().isEmpty) {
                             return 'Please enter your phone number';
-                          }
-                          if (!RegExp(r'^\+?[\d\s\-\(\)]+$').hasMatch(value)) {
-                            return 'Please enter a valid phone number';
                           }
                           return null;
                         },

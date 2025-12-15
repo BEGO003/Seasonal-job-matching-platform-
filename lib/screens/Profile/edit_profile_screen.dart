@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:job_seeker/providers/profile_screen_providers/personal_information_notifier.dart';
 import 'package:job_seeker/models/profile_screen_models/personal_information_model.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -13,8 +14,8 @@ class EditProfileScreen extends ConsumerStatefulWidget {
 class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
-  late TextEditingController _phoneController;
   late TextEditingController _countryController;
+  String _completePhoneNumber = '';
 
   List<String> _initialInterests = [];
   List<String> _currentInterests = [];
@@ -24,14 +25,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   void initState() {
     super.initState();
     _nameController = TextEditingController();
-    _phoneController = TextEditingController();
     _countryController = TextEditingController();
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _phoneController.dispose();
     _countryController.dispose();
     super.dispose();
   }
@@ -39,7 +38,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   void _initializeData(PersonalInformationModel user) {
     if (_initialized) return;
     _nameController.text = user.name;
-    _phoneController.text = user.number;
+    _completePhoneNumber = user.number;
     _countryController.text = user.country;
     _initialInterests = List.from(user.fieldsOfInterest ?? []);
     _currentInterests = List.from(_initialInterests);
@@ -57,8 +56,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       if (_nameController.text != user.name) {
         await notifier.updateName(_nameController.text);
       }
-      if (_phoneController.text != user.number) {
-        await notifier.updatePhone(_phoneController.text);
+      if (_completePhoneNumber != user.number) {
+        await notifier.updatePhone(_completePhoneNumber);
       }
       if (_countryController.text != user.country) {
         await notifier.updateCountry(_countryController.text);
@@ -197,10 +196,13 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     const SizedBox(height: 20),
 
                     _buildLabel('Phone Number'),
-                    TextFormField(
-                      controller: _phoneController,
+                    IntlPhoneField(
                       decoration: _inputDecoration('Your number'),
-                      keyboardType: TextInputType.phone,
+                      initialValue: _completePhoneNumber,
+                      initialCountryCode: 'EG',
+                      onChanged: (phone) {
+                        _completePhoneNumber = phone.completeNumber;
+                      },
                     ),
                     const SizedBox(height: 20),
 
