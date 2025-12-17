@@ -13,6 +13,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import { countryCodes } from "@/data/countryCodes";
 
 const slogans = [
   "New here? Let's get you set up to start hiring.",
@@ -33,6 +34,7 @@ export default function SignupPage() {
     password: "",
     confirmPassword: "",
   });
+  const [phoneIso, setPhoneIso] = useState("");
   const [randomSlogan, setRandomSlogan] = useState("");
 
   useEffect(() => {
@@ -82,7 +84,9 @@ export default function SignupPage() {
         email: formData.email.trim(),
         password: formData.password,
         country: formData.country.trim(),
-        number: formData.number.trim(),
+        number: `${
+          countryCodes.find((c) => c.country === phoneIso)?.code || ""
+        }${formData.number.trim()}`,
       });
       navigate(-1);
     } catch (err: any) {
@@ -153,23 +157,36 @@ export default function SignupPage() {
               <Input
                 id="name"
                 name="name"
-                placeholder="John Doe"
                 onChange={handleChange}
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-              <div>
-                <Label htmlFor="number">Phone Number</Label>
+            <div className="mb-3">
+              <Label htmlFor="number">Phone Number</Label>
+              <div className="flex gap-2">
+                <Select value={phoneIso} onValueChange={setPhoneIso}>
+                  <SelectTrigger className="w-[110px]">
+                    <SelectValue placeholder="Code" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {countryCodes.map((item) => (
+                      <SelectItem key={item.country} value={item.country}>
+                        {item.code} ({item.country})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <Input
                   id="number"
                   name="number"
                   type="tel"
-                  placeholder="+1 555 123 4567"
+                  placeholder="123 4567"
                   onChange={handleChange}
+                  className="flex-1"
                 />
               </div>
-              <div>
+            </div>
+             <div>
                 <Label htmlFor="country">Country</Label>
                 <Select
                   value={formData.country}
@@ -434,8 +451,6 @@ export default function SignupPage() {
 
                 </Select>
               </div>
-            </div>
-
             <div className="mb-3">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -452,7 +467,6 @@ export default function SignupPage() {
                 id="password"
                 type="password"
                 name="password"
-                placeholder="Enter your password"
                 onChange={handleChange}
               />
             </div>
@@ -463,7 +477,6 @@ export default function SignupPage() {
                 id="confirmPassword"
                 type="password"
                 name="confirmPassword"
-                placeholder="Confirm your password"
                 onChange={handleChange}
               />
             </div>
