@@ -11,6 +11,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import { countryCodes, splitPhoneNumber } from "@/data/countryCodes";
 import { authApi } from "@/api";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, X, Plus } from "lucide-react";
@@ -63,7 +64,10 @@ export default function ProfilePage() {
         name: editedUser.name,
         email: editedUser.email,
         country: editedUser.country,
-        number: editedUser.number,
+        number: `${
+          countryCodes.find((c) => c.country === editedUser.phoneIso)?.code ||
+          ""
+        }${editedUser.phoneBody}`,
       };
       // interests removed from updates
       const updated = await authApi.updateUser(user.id, updates);
@@ -134,7 +138,7 @@ export default function ProfilePage() {
                   onChange={(e) =>
                     setEditedUser({ ...editedUser, name: e.target.value })
                   }
-                  disabled={saving}
+                  disabled={!isEditing || saving}
                 />
               </div>
               <div className="space-y-2">
@@ -145,7 +149,7 @@ export default function ProfilePage() {
                   onChange={(e) =>
                     setEditedUser({ ...editedUser, email: e.target.value })
                   }
-                  disabled={saving}
+                  disabled={!isEditing || saving}
                 />
               </div>
               <div className="space-y-2">
@@ -555,24 +559,48 @@ export default function ProfilePage() {
                   <Input
                     value={user.country || ""}
                     readOnly
-                    disabled={saving}
+                  disabled={!isEditing || saving}
                   />
                 )}
               </div>
               <div className="space-y-2">
                 <Label>Phone Number</Label>
-                <Input
-                  value={
-                    isEditing
-                      ? editedUser?.number || ""
-                      : user.number || user.phone || ""
-                  }
-                  readOnly={!isEditing}
-                  onChange={(e) =>
-                    setEditedUser({ ...editedUser, number: e.target.value })
-                  }
-                  disabled={saving}
-                />
+                {isEditing ? (
+                  <div className="flex gap-2">
+                    <Select
+                      value={editedUser?.phoneIso}
+                      onValueChange={(value) =>
+                        setEditedUser({ ...editedUser, phoneIso: value })
+                      }
+                      disabled={saving}
+                    >
+                      <SelectTrigger className="w-[110px]">
+                        <SelectValue placeholder="Code" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {countryCodes.map((item) => (
+                          <SelectItem key={item.country} value={item.country}>
+                            {item.code} ({item.country})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      value={editedUser?.phoneBody || ""}
+                      onChange={(e) =>
+                        setEditedUser({ ...editedUser, phoneBody: e.target.value })
+                      }
+                      disabled={saving}
+                      className="flex-1"
+                    />
+                  </div>
+                ) : (
+                  <Input
+                    value={user.number || user.phone || ""}
+                    readOnly
+                    disabled
+                  />
+                )}
               </div>
               {/* Fields of Interest removed */}
             </div>
@@ -604,7 +632,14 @@ export default function ProfilePage() {
               <Button
                 className="bg-primary text-primary-foreground"
                 onClick={() => {
-                  setEditedUser({ ...user });
+                  const split = splitPhoneNumber(
+                    user.number || user.phone || ""
+                  );
+                  setEditedUser({
+                    ...user,
+                    phoneIso: split.country || countryCodes[0].country,
+                    phoneBody: split.number,
+                  });
                   setIsEditing(true);
                 }}
               >

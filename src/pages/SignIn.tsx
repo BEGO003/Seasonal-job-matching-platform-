@@ -46,22 +46,22 @@ export default function SignInPage() {
     if (name === "email") {
       const email = value.trim();
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      setErrors((prev) => ({
-        ...prev,
-        email:
-          email.length === 0
-            ? "Email is required"
-            : !emailRegex.test(email)
-            ? "Enter a valid email"
-            : undefined,
-      }));
+      // setErrors((prev) => ({
+      //   ...prev,
+      //   email:
+      //     email.length === 0
+      //       ? "Email is required"
+      //       : !emailRegex.test(email)
+      //       ? "Enter a valid email"
+      //       : undefined,
+      // }));
     }
     if (name === "password") {
       const pwd = value;
-      setErrors((prev) => ({
-        ...prev,
-        password: pwd.trim().length === 0 ? "Password is required" : undefined,
-      }));
+      // setErrors((prev) => ({
+      //   ...prev,
+      //   password: pwd.trim().length === 0 ? "Password is required" : undefined,
+      // }));
     }
   };
 
@@ -209,7 +209,6 @@ export default function SignInPage() {
                 id="password"
                 type="password"
                 name="password"
-                placeholder="Enter your password"
                 value={formData.password}
                 onChange={handleChange}
                 required

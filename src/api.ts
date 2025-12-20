@@ -264,8 +264,8 @@ export const jobApi = {
       location: jobData.location,
       startDate: formatDateForBackend(jobData.startDate || ""),
       duration: jobData.duration,
-      numofpositions: jobData.positions,
-      workarrangement: jobData.workArrangement?.toUpperCase?.(),
+      numOfPositions: jobData.positions,
+      workArrangement: jobData.workArrangement?.toUpperCase?.(),
       // Always send arrays, even if empty - backend expects arrays
       categories: Array.isArray(jobData.categories) ? jobData.categories : [],
       requirements: Array.isArray(jobData.requirements)
@@ -328,7 +328,7 @@ export const jobApi = {
     if (jobData.salary !== undefined) body.salary = jobData.salary;
     if (jobData.duration !== undefined) body.duration = jobData.duration;
     if (jobData.positions !== undefined)
-      body.numofpositions = jobData.positions;
+      body.numOfPositions = jobData.positions;
     if (jobData.startDate !== undefined)
       body.startDate = formatDateForBackend(jobData.startDate);
     // Always send arrays, even if empty - backend expects arrays
@@ -353,7 +353,7 @@ export const jobApi = {
       body.status = mapUiStatusToBackend(jobData.status as Job["status"]);
     }
     if (jobData.workArrangement) {
-      body.workarrangement = (jobData.workArrangement as string).toUpperCase();
+      body.workArrangement = (jobData.workArrangement as string).toUpperCase();
     }
 
     // Remove undefined and null values, but keep empty arrays
@@ -636,8 +636,8 @@ export const jobApi = {
       ),
       startDate: formatDateForBackend(jobData.startDate || "") || todayStr, // Use today if empty
       duration: getValueOrPlaceholder(jobData.duration, 0, "number"),
-      numofpositions: getValueOrPlaceholder(jobData.positions, 1, "number"),
-      workarrangement: jobData.workArrangement
+      numOfPositions: getValueOrPlaceholder(jobData.positions, 1, "number"),
+      workArrangement: jobData.workArrangement
         ? jobData.workArrangement.toUpperCase()
         : "REMOTE", // Default placeholder
       // Categories, requirements, and benefits are now required - use user data or empty array
