@@ -449,7 +449,7 @@ const PostJob = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="duration" className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4" /> Duration (days) *
+                  <Calendar className="w-4 h-4" /> Duration (Weeks) *
                 </Label>
                 <Input
                   id="duration"
