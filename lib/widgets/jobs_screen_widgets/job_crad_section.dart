@@ -1,91 +1,155 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:job_seeker/providers/jobs_screen_providers/job_notifier.dart';
+import 'package:job_seeker/providers/jobs_screen_providers/paginated_jobs_provider.dart';
 import 'package:job_seeker/providers/jobs_screen_providers/jobs_filter_provider.dart';
 import 'package:job_seeker/widgets/jobs_screen_widgets/job_card.dart';
+import 'package:job_seeker/widgets/jobs_screen_widgets/jobs_pagination_footer.dart';
 
+/// Job card section with paginated infinite scroll
+/// Uses NotificationListener for scroll detection (best practice)
 class JobCardSection extends ConsumerWidget {
   const JobCardSection({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final jobs = ref.watch(filteredJobsProvider);
+    final paginatedJobs = ref.watch(paginatedJobsProvider);
 
-    return jobs.when(
-      data: (data) {
-        if (data.isEmpty) {
-          // Wrap empty state in RefreshIndicator too
-          return RefreshIndicator(
-            onRefresh: () async {
-              ref.invalidate(jobsNotifierProvider);
-              await ref.read(jobsNotifierProvider.future);
-            },
-            color: Theme.of(context).colorScheme.primary,
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height - 200,
-                child: _EmptyState(),
-              ),
-            ),
-          );
-        }
-
-        return RefreshIndicator(
-          onRefresh: () async {
-            // Invalidate and wait for the future to complete
-            ref.invalidate(jobsNotifierProvider);
-            await ref.read(jobsNotifierProvider.future);
-          },
-          // Use theme color for consistency
-          color: Theme.of(context).colorScheme.primary,
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          strokeWidth: 3.0,
-          displacement: 40.0, // Pull distance before refresh
-          child: ListView.builder(
-            physics: const BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics(),
-            ),
-            padding: const EdgeInsets.only(top: 8, bottom: 120),
-            itemCount: data.length,
-            itemBuilder: (context, index) {
-              return JobCard(job: data[index]);
-            },
-          ),
-        );
-      },
-      error: (error, stackTrace) {
-        // Wrap error state in RefreshIndicator for easy retry
-        return RefreshIndicator(
-          onRefresh: () async {
-            ref.invalidate(jobsNotifierProvider);
-            await ref.read(jobsNotifierProvider.future);
-          },
-          color: Theme.of(context).colorScheme.primary,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height - 200,
-              child: _ErrorState(
-                error: error.toString(),
-                onRetry: () => ref.invalidate(jobsNotifierProvider),
-              ),
-            ),
-          ),
-        );
-      },
-      loading: () => _LoadingState(),
+    return paginatedJobs.when(
+      data: (state) => _buildJobsList(context, ref, state),
+      loading: () => const _LoadingState(),
+      error: (error, stackTrace) => _ErrorState(
+        error: error.toString(),
+        onRetry: () => ref.invalidate(paginatedJobsProvider),
+      ),
     );
+  }
+
+  Widget _buildJobsList(
+    BuildContext context,
+    WidgetRef ref,
+    PaginatedJobsState state,
+  ) {
+    // Apply local filtering to the loaded jobs
+    final filterState = ref.watch(jobsFilterProvider);
+    final filteredJobs = _applyFilters(state.jobs, filterState);
+
+    if (filteredJobs.isEmpty && state.jobs.isEmpty) {
+      return RefreshIndicator(
+        onRefresh: () => ref.read(paginatedJobsProvider.notifier).refresh(),
+        color: Theme.of(context).colorScheme.primary,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height - 200,
+            child: _EmptyState(),
+          ),
+        ),
+      );
+    }
+
+    // Use NotificationListener for scroll detection (preferred over ScrollController)
+    return NotificationListener<ScrollNotification>(
+      onNotification: (notification) {
+        // Trigger load when 300px from bottom
+        if (notification.metrics.pixels >=
+            notification.metrics.maxScrollExtent - 300) {
+          // Auto-load only for first 4 pages (200 items)
+          if (!state.hasReachedAutoLoadThreshold && state.hasMore) {
+            ref.read(paginatedJobsProvider.notifier).loadNextPage();
+          }
+        }
+        return false;
+      },
+      child: RefreshIndicator(
+        onRefresh: () async {
+          HapticFeedback.mediumImpact();
+          await ref.read(paginatedJobsProvider.notifier).refresh();
+        },
+        color: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        strokeWidth: 3.0,
+        displacement: 40.0,
+        child: ListView.builder(
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          padding: const EdgeInsets.only(top: 8, bottom: 120),
+          // +1 for the footer widget
+          itemCount: filteredJobs.length + 1,
+          itemBuilder: (context, index) {
+            // Last item is the footer
+            if (index == filteredJobs.length) {
+              return JobsPaginationFooter(state: state);
+            }
+
+            final job = filteredJobs[index];
+            // Check if job has been viewed in this session
+            final isViewed = state.viewedJobIds.contains(job.id);
+
+            return JobCard(
+              job: job,
+              isViewed: isViewed,
+              onTap: () {
+                // Mark job as viewed when user taps on it
+                ref
+                    .read(paginatedJobsProvider.notifier)
+                    .markJobAsViewed(job.id);
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  /// Apply local filters to the job list
+  List<dynamic> _applyFilters(List<dynamic> jobs, JobsFilterState filterState) {
+    return jobs.where((job) {
+      // Filter by search query (title or company)
+      if (filterState.searchQuery.isNotEmpty) {
+        final query = filterState.searchQuery.toLowerCase();
+        final titleMatch = job.title.toLowerCase().contains(query);
+        final companyMatch = job.jobposterName.toLowerCase().contains(query);
+        if (!titleMatch && !companyMatch) return false;
+      }
+
+      // Filter by Type
+      if (filterState.selectedType != null) {
+        if (job.type.toLowerCase() != filterState.selectedType!.toLowerCase()) {
+          return false;
+        }
+      }
+
+      // Filter by Location
+      if (filterState.selectedLocation != null) {
+        if (!job.location.toLowerCase().contains(
+          filterState.selectedLocation!.toLowerCase(),
+        )) {
+          return false;
+        }
+      }
+
+      // Filter by Minimum Salary
+      if (filterState.minSalary != null) {
+        if (job.amount < filterState.minSalary!) {
+          return false;
+        }
+      }
+
+      return true;
+    }).toList();
   }
 }
 
 class _LoadingState extends StatelessWidget {
+  const _LoadingState();
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       padding: const EdgeInsets.only(top: 8, bottom: 24),
-      physics:
-          const NeverScrollableScrollPhysics(), // Disable scroll during loading
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: 5,
       itemBuilder: (context, index) {
         return Padding(
@@ -327,7 +391,6 @@ class _EmptyState extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 32),
-            // Visual hint for pull-to-refresh
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -419,7 +482,6 @@ class _ErrorState extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            // Visual hint for pull-to-refresh alternative
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

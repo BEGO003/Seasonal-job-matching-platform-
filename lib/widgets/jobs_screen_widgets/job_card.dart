@@ -17,7 +17,18 @@ import 'package:job_seeker/utils/job_color_util.dart';
 class JobCard extends ConsumerStatefulWidget {
   final JobModel job;
 
-  const JobCard({super.key, required this.job});
+  /// Whether this job has been viewed in the current session
+  final bool isViewed;
+
+  /// Optional callback when job is tapped (for marking as viewed)
+  final VoidCallback? onTap;
+
+  const JobCard({
+    super.key,
+    required this.job,
+    this.isViewed = false,
+    this.onTap,
+  });
 
   @override
   ConsumerState<JobCard> createState() => _JobCardState();
@@ -111,250 +122,256 @@ class _JobCardState extends ConsumerState<JobCard>
         onTapUp: (_) {
           _controller.reverse();
           HapticFeedback.selectionClick();
+          // Call onTap to mark job as viewed
+          widget.onTap?.call();
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => JobView(job: widget.job)),
           );
         },
         onTapCancel: () => _controller.reverse(),
-        child: ScaleTransition(
-          scale: _scaleAnimation,
-          child: AppCard(
-            padding: EdgeInsets.zero,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd + 2),
-                color: colorScheme.surface,
-                boxShadow: AppTheme.shadowSm(colorScheme.shadow),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header with company avatar, title, and favorite
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppTheme.spaceMd,
-                      AppTheme.spaceMd,
-                      AppTheme.spaceMd,
-                      AppTheme.spaceSm,
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Company Avatar
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                companyColor,
-                                companyColor.withValues(alpha: 0.7),
+        // Apply opacity dimming for viewed jobs
+        child: Opacity(
+          opacity: widget.isViewed ? 0.65 : 1.0,
+          child: ScaleTransition(
+            scale: _scaleAnimation,
+            child: AppCard(
+              padding: EdgeInsets.zero,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd + 2),
+                  color: colorScheme.surface,
+                  boxShadow: AppTheme.shadowSm(colorScheme.shadow),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header with company avatar, title, and favorite
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppTheme.spaceMd,
+                        AppTheme.spaceMd,
+                        AppTheme.spaceMd,
+                        AppTheme.spaceSm,
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Company Avatar
+                          Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  companyColor,
+                                  companyColor.withValues(alpha: 0.7),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(
+                                AppTheme.radiusSm,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: companyColor.withValues(alpha: 0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
                               ],
                             ),
-                            borderRadius: BorderRadius.circular(
-                              AppTheme.radiusSm,
+                            child: Center(
+                              child: Text(
+                                widget.job.jobposterName.isNotEmpty
+                                    ? widget.job.jobposterName[0].toUpperCase()
+                                    : 'C',
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: companyColor.withValues(alpha: 0.3),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
+                          ),
+                          const SizedBox(width: AppTheme.spaceSm),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        widget.job.title,
+                                        style: theme.textTheme.titleMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w700,
+                                              color: colorScheme.onSurface,
+                                              height: 1.3,
+                                            ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    // New badge
+                                    if (isRecent)
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: AppTheme.spaceXs,
+                                        ),
+                                        child: NewBadge(animate: true),
+                                      ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  widget.job.jobposterName.isNotEmpty
+                                      ? widget.job.jobposterName
+                                      : 'Company Name',
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: AppTheme.spaceSm),
+                          _FavoriteButton(jobId: widget.job.id),
+                        ],
+                      ),
+                    ),
+
+                    // Info Chips
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppTheme.spaceMd,
+                      ),
+                      child: Wrap(
+                        spacing: AppTheme.spaceSm,
+                        runSpacing: AppTheme.spaceSm,
+                        children: [
+                          _InfoChip(
+                            icon: Icons.location_on_outlined,
+                            label: widget.job.location,
+                          ),
+                          _InfoChip(
+                            icon: Icons.work_outline,
+                            label: widget.job.type,
+                          ),
+                          ...widget.job.categories
+                              .take(2)
+                              .map(
+                                (c) => _InfoChip(
+                                  icon: Icons.category_rounded,
+                                  label: c,
+                                ),
+                              ),
+                          if (!isOpen)
+                            const StatusBadge(
+                              status: 'Closed',
+                              type: StatusType.error,
+                            ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: AppTheme.spaceMd),
+
+                    // Footer with Salary and Date
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppTheme.spaceMd,
+                        vertical: AppTheme.spaceSm + 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainerHighest.withValues(
+                          alpha: 0.3,
+                        ),
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(AppTheme.radiusMd + 2),
+                          bottomRight: Radius.circular(AppTheme.radiusMd + 2),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppTheme.spaceSm,
+                                  vertical: AppTheme.spaceXxs,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: colorScheme.primary.withValues(
+                                    alpha: 0.1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                    AppTheme.radiusSm,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.payments_outlined,
+                                      size: 16,
+                                      color: colorScheme.primary,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '\$${NumberFormat('#,##0').format(widget.job.amount)}',
+                                      style: theme.textTheme.titleSmall
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w700,
+                                            color: colorScheme.primary,
+                                          ),
+                                    ),
+                                    Text(
+                                      ' / ${widget.job.salary.toLowerCase().replaceAll('salary', '').trim()}',
+                                      style: theme.textTheme.labelSmall
+                                          ?.copyWith(
+                                            color: colorScheme.primary
+                                                .withValues(alpha: 0.7),
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
-                          child: Center(
-                            child: Text(
-                              widget.job.jobposterName.isNotEmpty
-                                  ? widget.job.jobposterName[0].toUpperCase()
-                                  : 'C',
-                              style: theme.textTheme.titleLarge?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: AppTheme.spaceSm),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          Row(
                             children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      widget.job.title,
-                                      style: theme.textTheme.titleMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.w700,
-                                            color: colorScheme.onSurface,
-                                            height: 1.3,
-                                          ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  // New badge
-                                  if (isRecent)
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        left: AppTheme.spaceXs,
-                                      ),
-                                      child: NewBadge(animate: true),
-                                    ),
-                                ],
+                              Icon(
+                                Icons.calendar_today_outlined,
+                                size: 14,
+                                color: colorScheme.onSurfaceVariant.withValues(
+                                  alpha: 0.7,
+                                ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(width: 4),
                               Text(
-                                widget.job.jobposterName.isNotEmpty
-                                    ? widget.job.jobposterName
-                                    : 'Company Name',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: colorScheme.onSurfaceVariant,
+                                formattedStart,
+                                style: theme.textTheme.labelMedium?.copyWith(
+                                  color: colorScheme.onSurfaceVariant
+                                      .withValues(alpha: 0.7),
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        const SizedBox(width: AppTheme.spaceSm),
-                        _FavoriteButton(jobId: widget.job.id),
-                      ],
-                    ),
-                  ),
-
-                  // Info Chips
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppTheme.spaceMd,
-                    ),
-                    child: Wrap(
-                      spacing: AppTheme.spaceSm,
-                      runSpacing: AppTheme.spaceSm,
-                      children: [
-                        _InfoChip(
-                          icon: Icons.location_on_outlined,
-                          label: widget.job.location,
-                        ),
-                        _InfoChip(
-                          icon: Icons.work_outline,
-                          label: widget.job.type,
-                        ),
-                        ...widget.job.categories
-                            .take(2)
-                            .map(
-                              (c) => _InfoChip(
-                                icon: Icons.category_rounded,
-                                label: c,
-                              ),
-                            ),
-                        if (!isOpen)
-                          const StatusBadge(
-                            status: 'Closed',
-                            type: StatusType.error,
-                          ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: AppTheme.spaceMd),
-
-                  // Footer with Salary and Date
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppTheme.spaceMd,
-                      vertical: AppTheme.spaceSm + 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: colorScheme.surfaceContainerHighest.withValues(
-                        alpha: 0.3,
-                      ),
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(AppTheme.radiusMd + 2),
-                        bottomRight: Radius.circular(AppTheme.radiusMd + 2),
+                        ],
                       ),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppTheme.spaceSm,
-                                vertical: AppTheme.spaceXxs,
-                              ),
-                              decoration: BoxDecoration(
-                                color: colorScheme.primary.withValues(
-                                  alpha: 0.1,
-                                ),
-                                borderRadius: BorderRadius.circular(
-                                  AppTheme.radiusSm,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.payments_outlined,
-                                    size: 16,
-                                    color: colorScheme.primary,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '\$${NumberFormat('#,##0').format(widget.job.amount)}',
-                                    style: theme.textTheme.titleSmall?.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      color: colorScheme.primary,
-                                    ),
-                                  ),
-                                  Text(
-                                    ' / ${widget.job.salary.toLowerCase().replaceAll('salary', '').trim()}',
-                                    style: theme.textTheme.labelSmall?.copyWith(
-                                      color: colorScheme.primary.withValues(
-                                        alpha: 0.7,
-                                      ),
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.calendar_today_outlined,
-                              size: 14,
-                              color: colorScheme.onSurfaceVariant.withValues(
-                                alpha: 0.7,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              formattedStart,
-                              style: theme.textTheme.labelMedium?.copyWith(
-                                color: colorScheme.onSurfaceVariant.withValues(
-                                  alpha: 0.7,
-                                ),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ),
-      ),
-    );
+          ), // Close ScaleTransition
+        ), // Close Opacity
+      ), // Close GestureDetector
+    ); // Close Padding
   }
 }
 

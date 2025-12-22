@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:job_seeker/core/dio_provider.dart';
 import 'package:job_seeker/endpoints.dart';
 import 'package:job_seeker/models/jobs_screen_models/job_model.dart';
-
+import 'package:job_seeker/models/jobs_screen_models/paginated_jobs_response.dart';
 import 'package:job_seeker/models/jobs_screen_models/recommended_jobs_response.dart';
 
 final jobServiceProvider = Provider<JobsServicesProvider>((ref) {
@@ -35,6 +35,23 @@ class JobsServicesProvider {
       throw _handleError(e);
     } catch (e, st) {
       print('Jobs unexpected error: $e\n$st');
+      rethrow;
+    }
+  }
+
+  /// Fetch jobs with pagination
+  /// [page] is 0-indexed (first page is 0)
+  /// Returns PaginatedJobsResponse with jobs and pagination metadata
+  Future<PaginatedJobsResponse> fetchJobsPage(int page) async {
+    try {
+      final response = await _dio.get('$jobsPath?page=$page');
+      print('Jobs page $page API response: ${response.data}');
+      return PaginatedJobsResponse.fromJson(response.data);
+    } on DioException catch (e) {
+      print('fetchJobsPage error: $e');
+      throw _handleError(e);
+    } catch (e, st) {
+      print('fetchJobsPage unexpected error: $e\n$st');
       rethrow;
     }
   }
