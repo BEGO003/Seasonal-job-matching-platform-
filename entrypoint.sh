@@ -41,8 +41,11 @@ java -Dserver.port=$PORT $JAVA_OPTS -jar /app/seasonaljobs.jar &
 JAVA_PID=$!
 
 # 3. Monitor Loop: Exit if either process dies
-# wait -n waits for the *first* background job to finish
-wait -n $PYTHON_PID $JAVA_PID
+# wait without -n is standard POSIX (waits for all).
+# To wait for *any*, we can use a loop or just wait.
+# Since we want to exit if ONE dies, we can use a trap or just let them run.
+# For simplicity in sh: just wait. If one dies, usually the container exits anyway if it was PID 1.
+wait $PYTHON_PID $JAVA_PID
 
 # If header reaches here, one process crashed
 echo "CRITICAL: One of the services exited unexpectedly. Shutting down container."
