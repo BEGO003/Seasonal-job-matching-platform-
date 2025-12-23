@@ -11,6 +11,7 @@ import grad_project.seasonal_job_matching.model.enums.JobType;
 import grad_project.seasonal_job_matching.model.enums.WorkArrangement;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -27,7 +28,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Jobs")
+@Table(name = "\"Jobs\"")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -56,22 +57,25 @@ public class Job {
     private Date startDate;
 
     // @Column
-    // private Date endDate; //check if you can remove this without breaking everything
+    // private Date endDate; //check if you can remove this without breaking
+    // everything
 
     @ManyToOne
-    @JoinColumn(name = "jobposterID", nullable = false, referencedColumnName = "id")// foreign key from user table
-    //@Column
-    @JsonIgnoreProperties({"ownedJobs", "password","ownedApplications"}) //to prevent infinite loop of getting user and all his info and then getting all of users jobs which is this one and so on
+    @JoinColumn(name = "jobposterID", nullable = false, referencedColumnName = "id") // foreign key from user table
+    // @Column
+    @JsonIgnoreProperties({ "ownedJobs", "password", "ownedApplications" }) // to prevent infinite loop of getting user
+                                                                            // and all his info and then getting all of
+                                                                            // users jobs which is this one and so on
     private User jobPoster;
 
-    //Both Need to add alter to table first before running this
+    // Both Need to add alter to table first before running this
     // @Column
     // private Salary salary;
 
     @Column
     private float amount;
 
-    @Column(columnDefinition = "salary") //because the enum in db is called salary
+    @Column // Let JPA handle the column definition based on the enum
     @Enumerated(EnumType.STRING)
     private Salary salary;
 
@@ -80,9 +84,9 @@ public class Job {
     private JobStatus status;
 
     @Column
-    private Integer numOfPositions; 
+    private Integer numOfPositions;
 
-    @Column //Need to add alter to table first before running this
+    @Column // Need to add alter to table first before running this
     private Integer duration;
 
     @Column
@@ -93,34 +97,39 @@ public class Job {
     private WorkArrangement workArrangement;
 
     // Add to job table
-    @OneToMany(mappedBy="job", cascade = CascadeType.ALL) //job has many applications
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL) // job has many applications
     @JsonIgnoreProperties("job")
     private List<Application> listOfJobApplications;
-    
+
+    @ElementCollection
     @Column
     private List<String> requirements;
 
+    @ElementCollection
     @Column
     private List<String> categories;
 
+    @ElementCollection
     @Column
     private List<String> benefits;
 
-    public Job(int id, String title, String description, JobType type, String location, Date startDate, User jobposter, float amount, Salary salary, Integer duration, int numofpositions, JobStatus status, WorkArrangement workarrangement){
+    public Job(int id, String title, String description, JobType type, String location, Date startDate, User jobposter,
+            float amount, Salary salary, Integer duration, int numofpositions, JobStatus status,
+            WorkArrangement workarrangement) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.type = type;
         this.location = location;
         this.startDate = startDate;
-        //this.endDate = endDate;
+        // this.endDate = endDate;
         this.jobPoster = jobposter;
-        this.salary = salary; //when changing this, change argument to Salary instead of float
+        this.salary = salary; // when changing this, change argument to Salary instead of float
         this.amount = amount;
         this.duration = duration;
         this.numOfPositions = numofpositions;
         this.status = status;
         this.workArrangement = workarrangement;
     }
-    
+
 }

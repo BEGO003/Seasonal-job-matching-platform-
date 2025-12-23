@@ -1,7 +1,5 @@
 package grad_project.seasonal_job_matching.model;
 
-
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,17 +30,17 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties("favoriteJobIds")
-@Table(name = "Users")
+@Table(name = "\"Users\"")
 public class User {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column//turn to UUID, review it first
+    @Column // turn to UUID, review it first
     private long id;
-    
-    @Column(nullable = false,length = 100)
+
+    @Column(nullable = false, length = 100)
     private String name;
-    
+
     @Column
     private String country;
 
@@ -58,31 +56,30 @@ public class User {
     @JsonIgnoreProperties("jobPoster")
     @OneToMany(mappedBy = "jobPoster", cascade = CascadeType.ALL)
     private List<Job> ownedJobs;
-    
-    
-    @JsonIgnoreProperties("user")
-    @OneToMany(mappedBy="user", cascade = CascadeType.ALL) //user has many application
-    private List<Application> ownedApplications;
-    
 
-    @Column //might need to change this to text[] and alter table in heroku cli 
+    @JsonIgnoreProperties("user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL) // user has many application
+    private List<Application> ownedApplications;
+
+    @jakarta.persistence.ElementCollection
+    @Column // might need to change this to text[] and alter table in heroku cli
     private List<String> fieldsOfInterest;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL) //user has one resume, might change later on
-    @JoinColumn(name = "resume_id", referencedColumnName = "id")// foreign key from user table
+    @OneToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL) // user has one resume, might change
+                                                                                  // later on
+    @JoinColumn(name = "resume_id", referencedColumnName = "id") // foreign key from user table
     private Resume resume;
 
-    @JsonIgnoreProperties({"jobPoster", "listOfJobApplications"})
+    @JsonIgnoreProperties({ "jobPoster", "listOfJobApplications" })
     @ManyToMany
-    @JoinTable( //creates a new table that stores this because cant have a onetomany relationship between user and job without creating an inverse side in the job class
-        name= "user_favorite_jobs",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "job_id")
-    )
-    private Set<Job> favoriteJobs = new HashSet<>(); //faster operations on hashlist
+    @JoinTable( // creates a new table that stores this because cant have a onetomany
+                // relationship between user and job without creating an inverse side in the job
+                // class
+            name = "user_favorite_jobs", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "job_id"))
+    private Set<Job> favoriteJobs = new HashSet<>(); // faster operations on hashlist
 
     // Default constructor required for JPA
-    public User(String name, String country, String number, String email, String password){
+    public User(String name, String country, String number, String email, String password) {
 
         this.name = name;
         this.country = country;
@@ -90,6 +87,5 @@ public class User {
         this.password = password;
         this.number = number;
     }
-
 
 }
