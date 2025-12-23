@@ -27,7 +27,9 @@ RUN apt-get update && \
         build-essential \
         gcc \
         libpq-dev \
+        libpq-dev \
         curl \
+        netcat-openbsd \
         openjdk-17-jre-headless \
     && rm -rf /var/lib/apt/lists/*
 
