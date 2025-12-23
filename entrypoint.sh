@@ -18,15 +18,22 @@ PYTHON_PID=$!
 
 # Wait for Python to be ready
 echo "Waiting for Python service to start on port 8000..."
-# Simple retry loop (requires netcat/nc or curl, using sleep for simplicity if nc missing)
+# Wait for Python to be ready
+echo "Waiting for Python service to start on port 8000..."
 for i in {1..30}; do
-  if (echo > /dev/tcp/127.0.0.1/8000) >/dev/null 2>&1; then
+  # Check if port 8000 is open using netcat (installed in Dockerfile)
+  if nc -z 127.0.0.1 8000; then
     echo "Python service is UP!"
     break
   fi
   echo "Waiting for Python... ($i/30)"
   sleep 2
 done
+
+# If loop finished but port still closed, warn but proceed (or exit)
+if ! nc -z 127.0.0.1 8000; then
+    echo "WARNING: Python service did not start within 60 seconds. Logs should appear above."
+fi
 
 # 2. Start Java Spring Boot Backend in the background
 echo "Starting Java Application..."
