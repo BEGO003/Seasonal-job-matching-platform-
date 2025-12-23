@@ -53,5 +53,10 @@ COPY --from=java-build /build/target/*.jar /app/seasonaljobs.jar
 # =======================
 # Python: internal (8000)
 # Java: public (PORT from Heroku)
-CMD sh -c "uvicorn app.main:app --host 0.0.0.0 --port 8000 & \
-           java -Dserver.port=$PORT $JAVA_OPTS -jar /app/seasonaljobs.jar"
+# =======================
+# ENTRYPOINT SCRIPT
+# =======================
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+CMD ["/app/entrypoint.sh"]
