@@ -30,7 +30,7 @@ RUN apt-get update && \
         libpq-dev \
         curl \
         netcat-openbsd \
-        openjdk-17-jre-headless \
+        default-jre-headless \
     && rm -rf /var/lib/apt/lists/*
 
 # =======================
