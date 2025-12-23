@@ -103,12 +103,14 @@ export const JobList = () => {
         </div>
 
         <TabsContent value="all" className="space-y-4">
-          {jobs.length === 0 ? (
+          {jobs.filter((job) => job.status !== "draft").length === 0 ? (
             <div className="text-center py-8">
               <p className="text-muted-foreground">No jobs found</p>
             </div>
           ) : (
-            jobs.map((job) => <JobCard key={job.id} job={job} />)
+            jobs
+              .filter((job) => job.status !== "draft")
+              .map((job) => <JobCard key={job.id} job={job} />)
           )}
         </TabsContent>
 
@@ -124,7 +126,7 @@ export const JobList = () => {
           )}
         </TabsContent>
 
-        <TabsContent value="drafts" className="space-y-4">
+        {/* <TabsContent value="drafts" className="space-y-4">
           {jobs.filter((job) => job.status === "draft").length === 0 ? (
             <div className="text-center py-8">
               <p className="text-muted-foreground">No draft jobs found</p>
@@ -134,7 +136,7 @@ export const JobList = () => {
               .filter((job) => job.status === "draft")
               .map((job) => <JobCard key={job.id} job={job} />)
           )}
-        </TabsContent>
+        </TabsContent> */}
 
         <TabsContent value="closed" className="space-y-4">
           {jobs.filter((job) => job.status === "closed").length === 0 ? (

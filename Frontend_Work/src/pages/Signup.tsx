@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { countryCodes } from "@/data/countryCodes";
+import { getNameError, getEmailError, getPhoneError } from "@/lib/validation";
 
 const slogans = [
   "New here? Let's get you set up to start hiring.",
@@ -36,6 +37,13 @@ export default function SignupPage() {
   });
   const [phoneIso, setPhoneIso] = useState("");
   const [randomSlogan, setRandomSlogan] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [nameError, setNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const [countryError, setCountryError] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsError, setTermsError] = useState("");
 
   useEffect(() => {
     // Pick a random slogan on component mount
@@ -45,36 +53,91 @@ export default function SignupPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    // Clear errors when user types
+    if (e.target.name === "password") {
+      setPasswordError("");
+    }
+    if (e.target.name === "name") {
+      setNameError("");
+    }
+    if (e.target.name === "email") {
+      setEmailError("");
+    }
+    if (e.target.name === "number") {
+      setPhoneError("");
+    }
+    if (e.target.name === "country") {
+      setCountryError("");
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name.trim()) {
-      alert("Please enter your full name.");
-      return;
+    
+    // Clear all errors first
+    setNameError("");
+    setEmailError("");
+    setPhoneError("");
+    setCountryError("");
+    setPasswordError("");
+    setTermsError("");
+    
+    let hasError = false;
+    
+    // Validate name
+    const nameValidationError = getNameError(formData.name);
+    if (nameValidationError) {
+      setNameError(nameValidationError);
+      hasError = true;
     }
-    if (!formData.email.trim()) {
-      alert("Please enter your email.");
-      return;
+    
+    // Validate email
+    const emailValidationError = getEmailError(formData.email);
+    if (emailValidationError) {
+      setEmailError(emailValidationError);
+      hasError = true;
     }
-    if (!formData.number.trim()) {
-      alert("Please enter your number.");
-      return;
+    
+    // Validate phone number
+    const phoneValidationError = getPhoneError(formData.number);
+    if (phoneValidationError) {
+      setPhoneError(phoneValidationError);
+      hasError = true;
     }
+    
     if (!formData.country.trim()) {
-      alert("Please enter your country.");
-      return;
+      setCountryError("Please select your country.");
+      hasError = true;
     }
     if (!formData.password.trim()) {
-      alert("Please enter your password.");
-      return;
+      setPasswordError("Please enter your password.");
+      hasError = true;
+    }
+    
+    // Password validation: at least 8 chars, 1 digit, 1 uppercase letter
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (formData.password.trim() && !passwordRegex.test(formData.password)) {
+      setPasswordError(
+        "Password must be at least 8 characters long, contain at least one digit, and at least one uppercase letter."
+      );
+      hasError = true;
     }
     if (!formData.confirmPassword.trim()) {
-      alert("Please confirm your password.");
-      return;
+      setPasswordError("Please confirm your password.");
+      hasError = true;
     }
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match.");
+      setPasswordError("Passwords do not match.");
+      hasError = true;
+    }
+    
+    // Validate terms acceptance
+    if (!termsAccepted) {
+      setTermsError("You must accept the Terms & Conditions to create an account.");
+      hasError = true;
+    }
+    
+    if (hasError) {
       return;
     }
     try {
@@ -146,7 +209,7 @@ export default function SignupPage() {
           </h3>
           <p className="text-sm mb-4 md:mb-6 text-muted-foreground">
             Already have an account?{" "}
-            <Link to="/profile" className="text-primary hover:underline">
+            <Link to="/" className="text-primary hover:underline">
               Login
             </Link>
           </p>
@@ -159,6 +222,9 @@ export default function SignupPage() {
                 name="name"
                 onChange={handleChange}
               />
+              {nameError && (
+                <p className="text-red-500 text-xs mt-1">{nameError}</p>
+              )}
             </div>
 
             <div className="mb-3">
@@ -185,14 +251,18 @@ export default function SignupPage() {
                   className="flex-1"
                 />
               </div>
+              {phoneError && (
+                <p className="text-red-500 text-xs mt-1">{phoneError}</p>
+              )}
             </div>
              <div>
                 <Label htmlFor="country">Country</Label>
                 <Select
                   value={formData.country}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, country: value })
-                  }
+                  onValueChange={(value) => {
+                    setFormData({ ...formData, country: value });
+                    setCountryError("");
+                  }}
                 >
                   <SelectTrigger id="country">
                     <SelectValue placeholder="Select country" />
@@ -450,6 +520,9 @@ export default function SignupPage() {
 </SelectContent>
 
                 </Select>
+                {countryError && (
+                  <p className="text-red-500 text-xs mt-1">{countryError}</p>
+                )}
               </div>
             <div className="mb-3">
               <Label htmlFor="email">Email</Label>
@@ -459,6 +532,9 @@ export default function SignupPage() {
                 placeholder="example@email.com"
                 onChange={handleChange}
               />
+              {emailError && (
+                <p className="text-red-500 text-xs mt-1">{emailError}</p>
+              )}
             </div>
 
             <div className="mb-3">
@@ -469,6 +545,9 @@ export default function SignupPage() {
                 name="password"
                 onChange={handleChange}
               />
+              {passwordError && (
+                <p className="text-red-500 text-xs mt-1">{passwordError}</p>
+              )}
             </div>
 
             <div className="mb-4">
@@ -481,14 +560,26 @@ export default function SignupPage() {
               />
             </div>
 
-            <div className="flex items-center space-x-2 mb-6">
-              <Checkbox id="terms" />
-              <Label htmlFor="terms" className="text-sm text-muted-foreground">
-                I agree to the{" "}
-                <a href="#" className="text-primary hover:underline">
-                  terms & conditions
-                </a>
-              </Label>
+            <div className="mb-6">
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="TermsConditions" 
+                  checked={termsAccepted}
+                  onCheckedChange={(checked) => {
+                    setTermsAccepted(checked === true);
+                    setTermsError("");
+                  }}
+                />
+                <Label htmlFor="TermsConditions" className="text-sm text-muted-foreground">
+                  I agree to the{" "}
+                  <Link to="/TermsConditions" className="text-primary hover:underline">
+                    Terms & Conditions
+                  </Link>
+                </Label>
+              </div>
+              {termsError && (
+                <p className="text-red-500 text-xs mt-1">{termsError}</p>
+              )}
             </div>
 
             <Button

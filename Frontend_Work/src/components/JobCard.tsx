@@ -91,7 +91,7 @@ export const JobCard = ({ job }: JobCardProps) => {
 
   const formatDurationInfo = () => {
     if (duration) {
-      return `${duration} Weeks`;
+      return `${duration} Days`;
     }
     return "Duration not specified";
   };

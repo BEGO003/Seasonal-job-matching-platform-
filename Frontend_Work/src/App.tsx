@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound";
 import SignupPage from "./pages/Signup";
 import ProfilePage from "./pages/Profile";
 import SignInPage from "./pages/SignIn";
+import TermsConditions from "./pages/TermsConditions";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/resumes/:userId" element={<ResumeDetails />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/TermsConditions" element={<TermsConditions />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

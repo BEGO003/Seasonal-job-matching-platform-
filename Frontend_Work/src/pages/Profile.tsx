@@ -15,6 +15,7 @@ import { countryCodes, splitPhoneNumber } from "@/data/countryCodes";
 import { authApi } from "@/api";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, X, Plus } from "lucide-react";
+import { getNameError, getEmailError, getPhoneError } from "@/lib/validation";
 
 export default function ProfilePage() {
   const navigate = useNavigate();
@@ -22,6 +23,9 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState<any>(null);
   const [saving, setSaving] = useState(false);
+  const [nameError, setNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
 
   useEffect(() => {
     const load = async () => {
@@ -57,6 +61,39 @@ export default function ProfilePage() {
       });
       return;
     }
+    
+    // Clear all errors first
+    setNameError("");
+    setEmailError("");
+    setPhoneError("");
+    
+    let hasError = false;
+    
+    // Validate name
+    const nameValidationError = getNameError(editedUser.name);
+    if (nameValidationError) {
+      setNameError(nameValidationError);
+      hasError = true;
+    }
+    
+    // Validate email
+    const emailValidationError = getEmailError(editedUser.email);
+    if (emailValidationError) {
+      setEmailError(emailValidationError);
+      hasError = true;
+    }
+    
+    // Validate phone number
+    const phoneValidationError = getPhoneError(editedUser.phoneBody);
+    if (phoneValidationError) {
+      setPhoneError(phoneValidationError);
+      hasError = true;
+    }
+    
+    if (hasError) {
+      return;
+    }
+    
     setSaving(true);
     console.log("[Profile] Saving user updates", editedUser);
     try {
@@ -135,22 +172,30 @@ export default function ProfilePage() {
                 <Input
                   value={isEditing ? editedUser?.name || "" : user.name || ""}
                   readOnly={!isEditing}
-                  onChange={(e) =>
-                    setEditedUser({ ...editedUser, name: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setEditedUser({ ...editedUser, name: e.target.value });
+                    setNameError("");
+                  }}
                   disabled={!isEditing || saving}
                 />
+                {isEditing && nameError && (
+                  <p className="text-red-500 text-xs mt-1">{nameError}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Email</Label>
                 <Input
                   value={isEditing ? editedUser?.email || "" : user.email || ""}
                   readOnly={!isEditing}
-                  onChange={(e) =>
-                    setEditedUser({ ...editedUser, email: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setEditedUser({ ...editedUser, email: e.target.value });
+                    setEmailError("");
+                  }}
                   disabled={!isEditing || saving}
                 />
+                {isEditing && emailError && (
+                  <p className="text-red-500 text-xs mt-1">{emailError}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Country</Label>
@@ -587,9 +632,10 @@ export default function ProfilePage() {
                     </Select>
                     <Input
                       value={editedUser?.phoneBody || ""}
-                      onChange={(e) =>
-                        setEditedUser({ ...editedUser, phoneBody: e.target.value })
-                      }
+                      onChange={(e) => {
+                        setEditedUser({ ...editedUser, phoneBody: e.target.value });
+                        setPhoneError("");
+                      }}
                       disabled={saving}
                       className="flex-1"
                     />
@@ -600,6 +646,9 @@ export default function ProfilePage() {
                     readOnly
                     disabled
                   />
+                )}
+                {isEditing && phoneError && (
+                  <p className="text-red-500 text-xs mt-1">{phoneError}</p>
                 )}
               </div>
               {/* Fields of Interest removed */}

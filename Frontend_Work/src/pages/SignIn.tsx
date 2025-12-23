@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { authApi } from "@/api";
 import { useToast } from "@/hooks/use-toast";
+import { isValidEmail } from "@/lib/validation";
 
 const slogans = [
   "Let's kick off another great hiring season!",
@@ -45,13 +46,12 @@ export default function SignInPage() {
     // live-validate basic rules
     if (name === "email") {
       const email = value.trim();
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       // setErrors((prev) => ({
       //   ...prev,
       //   email:
       //     email.length === 0
       //       ? "Email is required"
-      //       : !emailRegex.test(email)
+      //       : !isValidEmail(email)
       //       ? "Enter a valid email"
       //       : undefined,
       // }));
@@ -73,7 +73,6 @@ export default function SignInPage() {
       // Trim inputs and validate before hitting API
       const email = formData.email.trim();
       const password = formData.password;
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
       if (!email) {
         setErrors((prev) => ({ ...prev, email: "Email is required" }));
@@ -84,7 +83,7 @@ export default function SignInPage() {
         });
         return;
       }
-      if (!emailRegex.test(email)) {
+      if (!isValidEmail(email)) {
         setErrors((prev) => ({ ...prev, email: "Enter a valid email" }));
         toast({
           title: "Validation error",
@@ -125,7 +124,7 @@ export default function SignInPage() {
   const canSubmit =
     !!formData.email.trim() &&
     !!formData.password.trim() &&
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim());
+    isValidEmail(formData.email.trim());
 
   return (
     <div

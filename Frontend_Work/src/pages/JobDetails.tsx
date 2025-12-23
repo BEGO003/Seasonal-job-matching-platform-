@@ -119,7 +119,7 @@ export default function JobDetails() {
 
   const statusConfig: Record<string, { label: string; className: string }> = {
     active: { label: "Active", className: "bg-green-600 text-white" },
-    draft: { label: "Draft", className: "bg-gray-500 text-white" },
+    // draft: { label: "Draft", className: "bg-gray-500 text-white" },
     closed: { label: "Closed", className: "bg-red-500 text-white" },
   };
 
@@ -151,7 +151,7 @@ export default function JobDetails() {
     );
   }
 
-  const statusInfo = statusConfig[job.status] || statusConfig.draft;
+  const statusInfo = statusConfig[job.status] || statusConfig.active;
 
   const formatSalaryType = (salaryType: string) => {
     const typeMap: Record<string, string> = {
@@ -318,7 +318,7 @@ export default function JobDetails() {
                 />
                 <MetaRow
                   label="Duration"
-                  value={<span>{job.duration} Weeks</span>}
+                  value={<span>{job.duration} Days</span>}
                 />
                 <MetaRow
                   label="Applications"
@@ -327,7 +327,7 @@ export default function JobDetails() {
               </div>
 
               <div className="mt-4 flex flex-col gap-2">
-                {job.status === "draft" && (
+                {/* {job.status === "draft" && (
                   <Button
                     variant="default"
                     onClick={handleEdit}
@@ -335,7 +335,7 @@ export default function JobDetails() {
                   >
                     Edit Job
                   </Button>
-                )}
+                )} */}
                 <Button
                   variant="destructive"
                   onClick={handleCloseJob}
