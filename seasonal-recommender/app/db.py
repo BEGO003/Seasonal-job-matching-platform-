@@ -10,9 +10,21 @@ elif DATABASE_URL.startswith("postgresql://"):
 else:
     ASYNC_DATABASE_URL = DATABASE_URL
 
-# Ensure SSL is enabled for asyncpg (required for NeonDB/Heroku)
-# (Done in config.py now to match consistency)
-engine = create_async_engine(ASYNC_DATABASE_URL, echo=False, future=True, pool_pre_ping=True)
+import ssl
+
+# Create a relaxed SSL context to avoid certificate validation issues with Neon/Heroku
+ssl_context = ssl.create_default_context()
+ssl_context.check_hostname = False
+ssl_context.verify_mode = ssl.CERT_NONE
+
+# Pass this context to asyncpg
+engine = create_async_engine(
+    ASYNC_DATABASE_URL, 
+    echo=False, 
+    future=True, 
+    pool_pre_ping=True,
+    connect_args={"ssl": ssl_context}
+)
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 async def get_session() -> AsyncSession:

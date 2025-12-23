@@ -53,5 +53,5 @@ COPY --from=java-build /build/target/*.jar /app/seasonaljobs.jar
 # =======================
 # Python: internal (8000)
 # Java: public (PORT from Heroku)
-CMD sh -c "uvicorn app.main:app --host 127.0.0.1 --port 8000 & \
+CMD sh -c "uvicorn app.main:app --host 0.0.0.0 --port 8000 & \
            java -Dserver.port=$PORT $JAVA_OPTS -jar /app/seasonaljobs.jar"
