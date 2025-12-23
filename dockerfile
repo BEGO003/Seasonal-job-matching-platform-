@@ -34,11 +34,11 @@ RUN apt-get update && \
 # =======================
 # PYTHON SETUP
 # =======================
-COPY requirements.txt /app/requirements.txt
+COPY seasonal-recommender/requirements.txt /app/requirements.txt
 RUN pip install --upgrade pip \
     && pip install --no-cache-dir -r /app/requirements.txt
 
-COPY . /app
+COPY seasonal-recommender /app
 
 RUN mkdir -p /app/app/cache
 ENV RECOMMENDER_CACHE_PATH=/app/app/cache
