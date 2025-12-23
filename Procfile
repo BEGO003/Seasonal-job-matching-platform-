@@ -1,1 +1,1 @@
-web: /app/entrypoint.sh
+web: sh /app/entrypoint.sh
