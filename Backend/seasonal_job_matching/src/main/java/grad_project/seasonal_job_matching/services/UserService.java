@@ -56,8 +56,8 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class); //good practice for debugging, writes any calls that go through here in logs to find where things break exactly
 
 
-    @Value("${external.api.ngrok.url}") //gets it from application.properties.
-    private String ngrokBaseUrl;
+    @Value("${external.api.recommendation.url}") // gets it from application.properties.
+    private String recommendationBaseUrl;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JobRepository jobRepository, RestTemplate restTemplate){
         this.userRepository = userRepository;
@@ -78,21 +78,13 @@ public class UserService {
     //parses data from matching engines response to dto format
     public List<JobResponseDTO> getRecommendedJobs(Long userId) {
         try {
-            String url = ngrokBaseUrl + "/recommend/" + userId;
+            String url = recommendationBaseUrl + "/recommend/" + userId;
             
             logger.info("Calling external API: {}", url);
-
-                // Create headers to bypass ngrok browser warning
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("ngrok-skip-browser-warning", "true");
-            HttpEntity<String> entity = new HttpEntity<>(headers);
             
-            ResponseEntity<RecommendedJobsResponse> response = restTemplate.exchange(
-                url, 
-                HttpMethod.GET,
-                entity,
-                RecommendedJobsResponse.class
-            );
+            ResponseEntity<RecommendedJobsResponse> response = restTemplate.getForEntity(
+                    url,
+                    RecommendedJobsResponse.class);
             
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 logger.info("Successfully received recommendations for user {}", userId);
