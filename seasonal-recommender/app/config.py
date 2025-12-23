@@ -16,6 +16,12 @@ if not DATABASE_URL:
     if db_user and db_host and db_name:
         DATABASE_URL = f"postgresql+asyncpg://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}?ssl=require"
 
+# 3. Ensure SSL is enabled matching Spring Boot's 'sslmode=require'
+#    (Heroku/Neon usually require this for external/driver connections)
+if DATABASE_URL and "ssl=" not in DATABASE_URL:
+    joiner = "&" if "?" in DATABASE_URL else "?"
+    DATABASE_URL += f"{joiner}ssl=require"
+
 # Fallback/Constants for reference (optional)
 PROD_DB_HOST = os.getenv("PROD_DB_HOST", "")
 PROD_DB_NAME = os.getenv("PROD_DB_NAME", "")
