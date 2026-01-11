@@ -10,6 +10,7 @@ import java.util.Arrays;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ import grad_project.seasonal_job_matching.dto.responses.JobResponseDTO;
 import grad_project.seasonal_job_matching.services.JobService;
 
 @WebMvcTest(JobController.class)
+@AutoConfigureMockMvc(addFilters = false)  // Disable security filters
 @DisplayName("JobController Tests")
 class JobControllerTest {
 

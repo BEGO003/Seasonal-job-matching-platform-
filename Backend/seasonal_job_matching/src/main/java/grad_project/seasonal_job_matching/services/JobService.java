@@ -38,13 +38,12 @@ public class JobService {
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
 
-
-    @Autowired
     private JobMapper jobMapper;
 
-    public JobService(JobRepository jobRepository, UserRepository userRepository){
+    public JobService(JobRepository jobRepository, UserRepository userRepository, JobMapper jobMapper){
         this.jobRepository = jobRepository;
         this.userRepository = userRepository;
+        this.jobMapper = jobMapper;
     }
     
     // public List<JobResponseDTO> findAllJobs(){

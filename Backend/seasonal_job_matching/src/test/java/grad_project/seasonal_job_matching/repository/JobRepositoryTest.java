@@ -10,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.Page;
@@ -42,6 +44,7 @@ class JobRepositoryTest {
     @BeforeEach
     void setUp() {
         testUser = new User();
+        testUser.setName("Test User");
         testUser.setEmail("test@example.com");
         testUser.setPassword("password");
         entityManager.persistAndFlush(testUser);
@@ -87,7 +90,7 @@ class JobRepositoryTest {
 
         // Act
         Page<Job> result = jobRepository.findByTitleContainingIgnoreCaseAndStatusNotIn(
-            "developer", excludedStatuses, pageable);
+                "developer", excludedStatuses, pageable);
 
         // Assert
         assertEquals(1, result.getContent().size());
@@ -103,7 +106,7 @@ class JobRepositoryTest {
 
         // Act
         Page<Job> result = jobRepository.findByTitleContainingIgnoreCaseAndStatusNotIn(
-            "nonexistent", excludedStatuses, pageable);
+                "nonexistent", excludedStatuses, pageable);
 
         // Assert
         assertEquals(0, result.getContent().size());
