@@ -30,4 +30,4 @@ WORKDIR /app
 # Copy the JAR directly from the /app/target folder found in the logs
 COPY --from=build /app/target/*.jar seasonaljobs.jar
 
-ENTRYPOINT ["sh", "-c", "java -Xmx300m -jar seasonaljobs.jar"]
+ENTRYPOINT ["java", "-jar", "/app/seasonaljobs.jar"]
