@@ -1,15 +1,37 @@
-#got this from docker hub, java 17
-FROM maven:3.9.9-eclipse-temurin-17
+# #got this from docker hub, java 17
+# FROM maven:3.9.9-eclipse-temurin-17
 
-# Set the working directory to organize application files.
+# # Set the working directory to organize application files.
+# WORKDIR /app
+
+# #Set the maven built jar file from local machine to /app and renaminig it to springbootdocker.jar
+# COPY target/seasonal_job_matching-0.0.1-SNAPSHOT.jar /app/seasonaljobs.jar
+
+# #Get rid of old jar and gets new one with updated code, can add -DskipTests if we want to avoid testing
+# #if on ubuntu use RUN mvn clean package
+# #RUN ./mvnw clean package 
+
+# #Run jar files when docker contrainer starts
+# ENTRYPOINT [ "java", "-jar", "seasonaljobs.jar" ]
+# --- Stage 1: Build the JAR file ---
+FROM maven:3.9.9-eclipse-temurin-17 AS build
 WORKDIR /app
 
-#Set the maven built jar file from local machine to /app and renaminig it to springbootdocker.jar
-COPY target/seasonal_job_matching-0.0.1-SNAPSHOT.jar /app/seasonaljobs.jar
+# Copy the entire project context
+COPY . .
 
-#Get rid of old jar and gets new one with updated code, can add -DskipTests if we want to avoid testing
-#if on ubuntu use RUN mvn clean package
-#RUN ./mvnw clean package 
+# Move into the backend directory where the pom.xml is
+WORKDIR /app/Backend/seasonal_job_matching
 
-#Run jar files when docker contrainer starts
-ENTRYPOINT [ "java", "-jar", "seasonaljobs.jar" ]
+# Build the application (skipping tests to save time during deploy)
+RUN mvn clean package -DskipTests
+
+# --- Stage 2: Run the Application ---
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+
+# Copy the built JAR from the 'build' stage above
+# Note: Ensure the JAR name matches what your pom.xml generates
+COPY --from=build /app/Backend/seasonal_job_matching/target/*.jar seasonaljobs.jar
+
+ENTRYPOINT ["java", "-jar", "seasonaljobs.jar"]
