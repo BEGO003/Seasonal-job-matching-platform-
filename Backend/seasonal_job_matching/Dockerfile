@@ -30,4 +30,4 @@ WORKDIR /app
 # Copy the JAR directly from the /app/target folder found in the logs
 COPY --from=build /app/target/*.jar seasonaljobs.jar
 
-ENTRYPOINT ["sh", "-c", "java -Xmx200m -Xms200m -XX:MaxMetaspaceSize=128m -Xss512k -Dserver.port=$PORT -jar seasonaljobs.jar"]
+ENTRYPOINT ["sh", "-c", "java -Xmx300m -Dserver.port=$PORT -jar seasonaljobs.jar"]
