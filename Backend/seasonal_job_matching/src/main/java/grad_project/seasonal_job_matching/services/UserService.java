@@ -234,17 +234,17 @@ public class UserService {
                 .toList();
     }
 
-    public UserResponseDTO editUser(UserEditDTO dto, long id) {
-        User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
+    public UserResponseDTO editUser(UserEditDTO dto, long id){
+        User existingUser = userRepository.findById(id).orElseThrow(()-> new RuntimeException("User not found with ID: " + id));
 
-        // checks to see if we are editing email
-        // in case we're editing a different field than email, check new email isn't
-        // empty, checks new email isnt same as OLD email
-        if (dto.getEmail() != null && !dto.getEmail().trim().isEmpty()
-                && !dto.getEmail().equals(existingUser.getEmail())) {
-            // after confirming that we are editing email, checks new email isnt as another
-            // email in db
+        if (existingUser.getFieldsOfInterest() == null) {
+            existingUser.setFieldsOfInterest(new ArrayList<>());
+        }
+
+        //checks to see if we are editing email
+        //in case we're editing a different field than email, check new email isn't empty, checks new email isnt same as OLD email
+        if (dto.getEmail()!=null && !dto.getEmail().trim().isEmpty() && !dto.getEmail().equals(existingUser.getEmail())) {
+            //after confirming that we are editing email, checks new email isnt as another email in db
             if (userRepository.existsByEmail(existingUser.getEmail())) {
                 throw new RuntimeException("Cannot update user, email already exists: " + dto.getEmail());
             }

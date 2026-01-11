@@ -1,6 +1,3 @@
 build:
-  config:
-    MAVEN_CUSTOM_GOALS: "clean package"
-  languages:
-    java:
-      root: Backend/seasonal_job_matching
+  docker:
+    web: Backend/seasonal_job_matching/Dockerfile
