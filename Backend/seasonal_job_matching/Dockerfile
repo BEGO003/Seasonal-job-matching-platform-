@@ -13,25 +13,41 @@
 
 # #Run jar files when docker contrainer starts
 # ENTRYPOINT [ "java", "-jar", "seasonaljobs.jar" ]
-# --- Stage 1: Build the JAR file ---
+# --- Stage 1: Build the JAR ---
 FROM maven:3.9.9-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# Copy the entire project context
+# Copy files. 
+# If context is root, this copies Backend/seasonal...
+# If context is subdir, this copies src/ pom.xml...
 COPY . .
 
-# Move into the backend directory where the pom.xml is
-WORKDIR /app/Backend/seasonal_job_matching
+# --- DEBUG: Print file structure to logs ---
+RUN echo "STRUCTURE BEFORE BUILD:" && ls -R /app
 
-# Build the application (skipping tests to save time during deploy)
-RUN mvn clean package -DskipTests
+# Smart Build: Check where pom.xml is and run maven there
+RUN if [ -f "/app/pom.xml" ]; then \
+        echo "Context is SUBDIRECTORY. Building in /app"; \
+        mvn clean package -DskipTests; \
+    elif [ -f "/app/Backend/seasonal_job_matching/pom.xml" ]; then \
+        echo "Context is ROOT. Moving to Backend folder"; \
+        cd /app/Backend/seasonal_job_matching && mvn clean package -DskipTests; \
+    else \
+        echo "ERROR: Could not find pom.xml"; \
+        exit 1; \
+    fi
 
-# --- Stage 2: Run the Application ---
+# --- Stage 2: Run the JAR ---
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
-# Copy the built JAR from the 'build' stage above
-# Note: Ensure the JAR name matches what your pom.xml generates
-COPY --from=build /app/Backend/seasonal_job_matching/target/*.jar seasonaljobs.jar
+# Copy the JAR. We use shell command to find it because we don't know the exact path
+# (Docker COPY doesn't support complex wildcards easily, so we copy from the most likely spot or use a shell hack in Stage 1)
+
+# HACK: In Stage 1, we will move the built jar to a known location so Stage 2 can find it easily
+COPY --from=build /app/**/target/*.jar ./temp_jar_search/
+
+# Flatten the jar to the final name
+RUN find ./temp_jar_search -name "*.jar" -exec mv {} seasonaljobs.jar \;
 
 ENTRYPOINT ["java", "-jar", "seasonaljobs.jar"]
