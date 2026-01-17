@@ -2,6 +2,9 @@ fastapi>=0.95.0
 uvicorn[standard]>=0.22.0
 SQLAlchemy>=2.0
 asyncpg>=0.27.0
-sentence-transformers>=2.2.2
-torch>=2.0.0
+
+torch==2.2.2+cpu
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+sentence-transformers==2.7.0
 faiss-cpu>=1.7.3.post2
