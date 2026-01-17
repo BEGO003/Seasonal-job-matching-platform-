@@ -1,5 +1,6 @@
 package grad_project.seasonal_job_matching.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.ElementCollection;
