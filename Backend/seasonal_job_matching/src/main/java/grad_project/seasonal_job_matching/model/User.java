@@ -30,7 +30,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties("favoriteJobIds")
-@Table(name = "\"Users\"")
+@Table(name = "users")
 public class User {
 
     @Id
@@ -61,9 +61,8 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL) // user has many application
     private List<Application> ownedApplications;
 
-    @jakarta.persistence.ElementCollection
-    @Column // might need to change this to text[] and alter table in heroku cli
-    private List<String> fieldsOfInterest;
+    @Column(columnDefinition = "text[]")
+    private List<String> fieldsOfInterest = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL) // user has one resume, might change
                                                                                   // later on
