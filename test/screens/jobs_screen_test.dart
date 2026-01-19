@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:job_seeker/screens/jobs_screen.dart';
-import 'package:job_seeker/widgets/jobs_screen_widgets/jobs_search_header.dart';
-import 'package:job_seeker/widgets/jobs_screen_widgets/job_crad_section.dart';
-import 'package:job_seeker/providers/jobs_screen_providers/job_notifier.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:job_seeker/models/jobs_screen_models/job_model.dart';
-import 'package:job_seeker/providers/profile_screen_providers/personal_information_notifier.dart';
-import 'package:job_seeker/models/profile_screen_models/personal_information_model.dart';
+import 'package:job_seeker/providers/jobs_screen_providers/paginated_jobs_provider.dart';
+import 'package:job_seeker/screens/jobs_screen.dart';
+import 'package:job_seeker/widgets/jobs_screen_widgets/job_card.dart';
 
 // Mock data
-final List<JobModel> mockJobs = [
+final mockJobs = [
   JobModel(
     id: 1,
     title: 'Software Engineer',
@@ -31,71 +28,116 @@ final List<JobModel> mockJobs = [
   ),
 ];
 
+// Mock PaginatedJobs notifier for different states
+class MockPaginatedJobs extends PaginatedJobs {
+  final AsyncValue<PaginatedJobsState> stateToReturn;
+
+  MockPaginatedJobs(this.stateToReturn);
+
+  @override
+  Future<PaginatedJobsState> build() async {
+    return stateToReturn.when(
+      data: (value) => value,
+      loading: () => const PaginatedJobsState(),
+      error: (e, st) => throw e,
+    );
+  }
+
+  bool viewed = false;
+
+  @override
+  void markJobAsViewed(int jobId) {
+    viewed = true;
+  }
+}
+
 void main() {
-  testWidgets('JobsScreen renders SearchHeader and JobCardSection', (
-    WidgetTester tester,
-  ) async {
+  // A test helper to pump the widget with the provided notifier
+  Future<void> pumpJobsScreen(
+      WidgetTester tester, MockPaginatedJobs notifier) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          jobsNotifierProvider.overrideWith(() => MockJobNotifier()),
-          personalInformationProvider.overrideWith(
-            () => MockPersonalInfoNotifier(),
-          ),
+          paginatedJobsProvider.overrideWith(() => notifier),
         ],
-        child: const MaterialApp(home: Scaffold(body: JobsScreen())),
+        child: const MaterialApp(
+          home: Scaffold(
+            body: JobsScreen(),
+          ),
+        ),
       ),
     );
+  }
 
-    expect(find.byType(JobsSearchHeader), findsOneWidget);
-    expect(find.byType(JobCardSection), findsOneWidget);
-    expect(find.text('Search jobs, companies...'), findsOneWidget);
+  group('JobsScreen Tests', () {
+    testWidgets('Shows loading shimmer when in loading state',
+        (WidgetTester tester) async {
+      final notifier = MockPaginatedJobs(const AsyncLoading());
+      await pumpJobsScreen(tester, notifier);
+
+      // The loading state is a ListView of shimmer cards
+      expect(find.byType(ListView), findsOneWidget);
+    });
+
+    testWidgets('Shows error message when in error state',
+        (WidgetTester tester) async {
+      final notifier =
+          MockPaginatedJobs(AsyncError('Failed to fetch jobs', StackTrace.current));
+      await pumpJobsScreen(tester, notifier);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Oops! Something went wrong'), findsOneWidget);
+      expect(find.text('Try Again'), findsOneWidget);
+    });
+
+    testWidgets('Shows empty state message when no jobs are available',
+        (WidgetTester tester) async {
+      final emptyState = PaginatedJobsState(
+        jobs: [],
+        totalPages: 0,
+        totalElements: 0,
+      );
+      final notifier = MockPaginatedJobs(AsyncData(emptyState));
+      await pumpJobsScreen(tester, notifier);
+      await tester.pumpAndSettle();
+
+      expect(find.text('No Jobs Available'), findsOneWidget);
+    });
+
+    testWidgets('Displays a list of jobs when data is loaded successfully',
+        (WidgetTester tester) async {
+      final dataState = PaginatedJobsState(
+        jobs: mockJobs,
+        totalPages: 1,
+        totalElements: 1,
+      );
+      final notifier = MockPaginatedJobs(AsyncData(dataState));
+      await pumpJobsScreen(tester, notifier);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(JobCard), findsOneWidget);
+      expect(find.text('Software Engineer'), findsOneWidget);
+      expect(find.text('Tech Corp'), findsOneWidget);
+    });
+
+    testWidgets('Tapping a JobCard marks it as viewed',
+        (WidgetTester tester) async {
+      final dataState = PaginatedJobsState(
+        jobs: mockJobs,
+        totalPages: 1,
+        totalElements: 1,
+      );
+      final notifier = MockPaginatedJobs(AsyncData(dataState));
+      await pumpJobsScreen(tester, notifier);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(JobCard), findsOneWidget);
+
+      await tester.tap(find.byType(JobCard));
+      await tester.pumpAndSettle();
+
+      // Verify that the notifier's method was called
+      expect(notifier.viewed, isTrue);
+    });
   });
-}
-
-class MockJobNotifier extends AsyncNotifier<List<JobModel>>
-    implements JobNotifier {
-  @override
-  Future<List<JobModel>> build() async {
-    return mockJobs;
-  }
-
-  @override
-  Future<void> refresh() async {}
-}
-
-class MockPersonalInfoNotifier extends AsyncNotifier<PersonalInformationModel>
-    implements PersonalInformationAsyncNotifier {
-  @override
-  Future<PersonalInformationModel> build() async {
-    return const PersonalInformationModel(
-      id: 1,
-      name: 'Test User',
-      email: 'test@example.com',
-      country: 'USA',
-      number: '1234567890',
-      favoriteJobs: [],
-    );
-  }
-
-  @override
-  Future<void> updateName(String value) async {}
-  @override
-  Future<void> updateEmail(String value) async {}
-  @override
-  Future<void> updatePhone(String value) async {}
-  @override
-  Future<void> updateCountry(String value) async {}
-  @override
-  Future<void> toggleFavoriteJob(String jobId) async {}
-  @override
-  bool hasApplied(int jobId) => false;
-  @override
-  Future<void> refreshAppliedJobs() async {}
-  @override
-  Future<void> refreshFieldsOfInterest() async {}
-  @override
-  Future<void> refreshOnlyFieldsOfInterest() async {}
-  @override
-  void updateUserData(PersonalInformationModel userData) {}
 }

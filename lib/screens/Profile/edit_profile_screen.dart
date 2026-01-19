@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:job_seeker/providers/profile_screen_providers/personal_information_notifier.dart';
 import 'package:job_seeker/models/profile_screen_models/personal_information_model.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:intl_phone_field/countries.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -16,6 +17,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   late TextEditingController _nameController;
   late TextEditingController _countryController;
   String _completePhoneNumber = '';
+  String _initialCountryCode = 'EG';
+  String _initialNumber = '';
 
   List<String> _initialInterests = [];
   List<String> _currentInterests = [];
@@ -38,8 +41,32 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   void _initializeData(PersonalInformationModel user) {
     if (_initialized) return;
     _nameController.text = user.name;
-    _completePhoneNumber = user.number;
     _countryController.text = user.country;
+
+    String phoneNumber = user.number;
+    String normalizedPhone = phoneNumber.replaceAll(RegExp(r'[+\-\s]'), '');
+    String countryCode = 'EG';
+    String number = normalizedPhone;
+
+    try {
+      final sortedCountries = List.from(countries)
+        ..sort((a, b) => b.dialCode.length.compareTo(a.dialCode.length));
+
+      for (var country in sortedCountries) {
+        if (normalizedPhone.startsWith(country.dialCode)) {
+          countryCode = country.code;
+          number = normalizedPhone.substring(country.dialCode.length);
+          break;
+        }
+      }
+    } catch (e) {
+      // Fallback
+    }
+
+    _completePhoneNumber = user.number;
+    _initialCountryCode = countryCode;
+    _initialNumber = number;
+
     _initialInterests = List.from(user.fieldsOfInterest ?? []);
     _currentInterests = List.from(_initialInterests);
     _initialized = true;
@@ -198,8 +225,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     _buildLabel('Phone Number'),
                     IntlPhoneField(
                       decoration: _inputDecoration('Your number'),
-                      initialValue: _completePhoneNumber,
-                      initialCountryCode: 'EG',
+                      initialValue: _initialNumber,
+                      initialCountryCode: _initialCountryCode,
                       onChanged: (phone) {
                         _completePhoneNumber = phone.completeNumber;
                       },
