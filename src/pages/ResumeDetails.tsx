@@ -99,21 +99,6 @@ const ResumeDetails = () => {
     );
   }
 
-  if (error || !user) {
-    return (
-      <div className="min-h-screen bg-slate-100">
-        <Header />
-        <main className="container mx-auto px-4 py-8 flex flex-col items-center justify-center min-h-[60vh]">
-          <h2 className="text-2xl font-bold mb-4 text-slate-900">User Not Found</h2>
-          <p className="text-slate-600 mb-6">The user profile you are looking for does not exist or could not be loaded.</p>
-          <Button onClick={() => navigate(-1)}>
-            <ArrowLeft className="mr-2 h-4 w-4" /> Go Back
-          </Button>
-        </main>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-slate-100">
       <Header />
