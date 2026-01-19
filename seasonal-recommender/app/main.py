@@ -1,6 +1,6 @@
 # app/main.py
 from fastapi import FastAPI
-from .app.api.endpoints import router as api_router
+from .app.endpoints import router as api_router
 
 # import admin router (create file if it doesn't exist)
 try:
@@ -20,3 +20,5 @@ if admin_router is not None:
 @app.get("/")
 async def root():
     return {"status": "ok", "message": "Recommender service running"}
+
+
