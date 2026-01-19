@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   ArrowLeft,
   Mail,
   MapPin,
@@ -21,6 +20,7 @@ import { resumeApi } from "@/api";
 import { Resume } from "@/types/resume";
 import { User } from "@/types/user";
 import { useToast } from "@/components/ui/use-toast";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ResumeDetails = () => {
   const { userId } = useParams<{ userId: string }>();
