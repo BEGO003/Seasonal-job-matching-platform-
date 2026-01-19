@@ -47,6 +47,9 @@ import grad_project.seasonal_job_matching.SeasonalJobMatchingApplication;
 @ActiveProfiles("test")
 @Transactional
 @DisplayName("JobRepository Tests")
+@ImportAutoConfiguration(exclude = {
+    org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class
+})
 class JobRepositoryTest {
 
     @Autowired
