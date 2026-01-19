@@ -136,7 +136,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen>
 
       if (mounted) {
         HapticFeedback.heavyImpact();
-        Navigator.of(context).pushReplacement(
+        Navigator.of(context).pushAndRemoveUntil(
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
                 const LayoutScreen(),
@@ -161,6 +161,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen>
                 },
             transitionDuration: AppTheme.animNormal,
           ),
+          (route) => false,
         );
       }
     } catch (e) {
@@ -466,6 +467,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen>
                             decoration: InputDecoration(
                               labelText: 'Password',
                               hintText: 'Create a strong password',
+                              helperText:
+                                  'At least 8 characters with uppercase, lowercase and numbers',
+                              helperMaxLines: 2,
                               prefixIcon: const Icon(Icons.lock_outlined),
                               suffixIcon: IconButton(
                                 icon: Icon(
