@@ -80,7 +80,16 @@ class JobCardSection extends ConsumerWidget {
           itemBuilder: (context, index) {
             // Last item is the footer
             if (index == filteredJobs.length) {
-              return JobsPaginationFooter(state: state);
+              final isFiltered = filterState.searchQuery.isNotEmpty ||
+                  filterState.selectedType != null ||
+                  filterState.selectedLocation != null ||
+                  filterState.minSalary != null;
+              
+              return JobsPaginationFooter(
+                state: state,
+                isFiltered: isFiltered,
+                filteredCount: filteredJobs.length,
+              );
             }
 
             final job = filteredJobs[index];
