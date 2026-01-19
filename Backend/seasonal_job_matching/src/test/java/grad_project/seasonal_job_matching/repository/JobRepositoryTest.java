@@ -26,12 +26,35 @@ import grad_project.seasonal_job_matching.model.User;
 import grad_project.seasonal_job_matching.model.enums.JobStatus;
 
 
+
+
+
+
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import grad_project.seasonal_job_matching.SeasonalJobMatchingApplication;
+
+
+
+
+
+
+
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
 @DisplayName("JobRepository Tests")
 
-    
+@SpringBootTest(
+    classes = SeasonalJobMatchingApplication.class,
+    webEnvironment = SpringBootTest.WebEnvironment.NONE
+)
+@ActiveProfiles("test")
+@Transactional
+@DisplayName("JobRepository Tests")
+@ImportAutoConfiguration(exclude = {
+    SecurityAutoConfiguration.class
+})    
 class JobRepositoryTest {
 
     @Autowired
