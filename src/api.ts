@@ -2,15 +2,13 @@ import { Job, JobFormData, JobStats } from "@/types/job";
 import { User, LoginCredentials, SignupData, AuthResponse } from "@/types/user";
 import { Application, ApplicationStatus } from "@/types/application";
 import { USERS, JOBS, getUserJobs } from "../endpoints";
+// ✅ Cloudflare-only API base URL
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// Use proxy base in dev to avoid CORS; fallback to '/api' if env missing
-const isLocalhost =
-  typeof window !== "undefined" &&
-  /^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname);
-const API_BASE_URL = (
-  (isLocalhost ? "/api" : import.meta.env.VITE_API_BASE_URL) || "/api"
-).replace(/\/$/, "");
-console.log("[api] Base URL:", API_BASE_URL);
+if (!API_BASE_URL) {
+  throw new Error("VITE_API_BASE_URL is not defined");
+}
+
 
 // Read the logged-in user's id from localStorage
 const getLoggedInUserId = (): number | null => {
