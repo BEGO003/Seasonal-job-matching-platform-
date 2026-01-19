@@ -30,10 +30,12 @@ import grad_project.seasonal_job_matching.model.enums.JobType;
 import grad_project.seasonal_job_matching.model.enums.Salary;
 import grad_project.seasonal_job_matching.model.enums.WorkArrangement;
 
-@DataJpaTest
+@SpringBootTest
 @ActiveProfiles("test")
-@EntityScan(basePackages = "grad_project.seasonal_job_matching.model")
+@Transactional
 @DisplayName("JobRepository Tests")
+
+    
 class JobRepositoryTest {
 
     @Autowired
