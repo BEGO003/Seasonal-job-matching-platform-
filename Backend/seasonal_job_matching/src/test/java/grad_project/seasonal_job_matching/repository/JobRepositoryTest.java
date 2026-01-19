@@ -40,11 +40,6 @@ import grad_project.seasonal_job_matching.SeasonalJobMatchingApplication;
 
 
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Transactional
-@DisplayName("JobRepository Tests")
-
 @SpringBootTest(
     classes = SeasonalJobMatchingApplication.class,
     webEnvironment = SpringBootTest.WebEnvironment.NONE
@@ -52,9 +47,6 @@ import grad_project.seasonal_job_matching.SeasonalJobMatchingApplication;
 @ActiveProfiles("test")
 @Transactional
 @DisplayName("JobRepository Tests")
-@ImportAutoConfiguration(exclude = {
-    SecurityAutoConfiguration.class
-})    
 class JobRepositoryTest {
 
     @Autowired
