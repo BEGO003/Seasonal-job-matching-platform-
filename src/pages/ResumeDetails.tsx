@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   ArrowLeft,
   Mail,
   MapPin,
