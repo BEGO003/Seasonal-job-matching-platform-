@@ -2,6 +2,10 @@ package grad_project.seasonal_job_matching.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+
+
 import java.sql.Date;
 import java.util.Arrays;
 import java.util.List;
