@@ -29,10 +29,10 @@ jobs:
       - name: Make mvnw executable
         run: chmod +x mvnw
 
-      - name: Run build and tests
+      - name: Build and run tests
         run: ./mvnw -B clean verify
 
-      - name: Upload unit test reports
+      - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -41,9 +41,9 @@ jobs:
             Backend/seasonal_job_matching/target/surefire-reports
             Backend/seasonal_job_matching/target/failsafe-reports
 
-      - name: Upload coverage reports
+      - name: Upload coverage/site reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report
+          name: site-reports
           path: Backend/seasonal_job_matching/target/site
