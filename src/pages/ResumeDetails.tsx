@@ -43,7 +43,7 @@ const ResumeDetails = () => {
         // Parallel fetch for user details and resume
         const [resumeData, userResponse] = await Promise.allSettled([
           resumeApi.getResumeByUserId(id),
-          fetch(`/api/users/${id}`).then((res) => {
+          fetch(`${API_BASE_URL}/users/${id}`).then((res) => {
             if (!res.ok) throw new Error("Failed to fetch user");
             return res.json();
           }),
