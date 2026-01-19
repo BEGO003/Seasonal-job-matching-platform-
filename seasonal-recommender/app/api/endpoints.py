@@ -4,8 +4,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from fastapi.responses import JSONResponse
 
-from app.db import get_session
-from app.recommender.engine import build_index, recommend_for_user, fetch_jobs_by_ids, build_user_profile
+from ..db import get_session
+from ..recommender_engine import (
+    build_index,
+    recommend_for_user,
+    fetch_jobs_by_ids,
+    build_user_profile,
+)
+
 
 router = APIRouter()
 
