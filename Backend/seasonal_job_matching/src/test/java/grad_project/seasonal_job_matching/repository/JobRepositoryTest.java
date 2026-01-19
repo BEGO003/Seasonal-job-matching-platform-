@@ -2,10 +2,6 @@ package grad_project.seasonal_job_matching.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-
-
 import java.sql.Date;
 import java.util.Arrays;
 import java.util.List;
@@ -13,11 +9,13 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,9 +24,7 @@ import org.springframework.data.domain.Sort;
 import grad_project.seasonal_job_matching.model.Job;
 import grad_project.seasonal_job_matching.model.User;
 import grad_project.seasonal_job_matching.model.enums.JobStatus;
-import grad_project.seasonal_job_matching.model.enums.JobType;
-import grad_project.seasonal_job_matching.model.enums.Salary;
-import grad_project.seasonal_job_matching.model.enums.WorkArrangement;
+
 
 @SpringBootTest
 @ActiveProfiles("test")
