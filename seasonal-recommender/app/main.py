@@ -4,7 +4,7 @@ from .app.endpoints import router as api_router
 
 # import admin router (create file if it doesn't exist)
 try:
-    from .app.api.admin import admin_router
+    from .app.admin import admin_router
 except Exception:
     admin_router = None
 
