@@ -1,11 +1,16 @@
+import os
 from pathlib import Path
 
-# === DATABASE CREDENTIALS (set via environment variables in production)
-DATABASE_URL = ""
-PROD_DB_HOST = ""
-PROD_DB_NAME = ""
-PROD_DB_USERNAME = ""
-PROD_DB_PASSWORD = ""
+# === DATABASE (Heroku provides DATABASE_URL)
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL environment variable is not set")
+
+# Async SQLAlchemy requires asyncpg driver
+ASYNC_DATABASE_URL = DATABASE_URL.replace(
+    "postgres://", "postgresql+asyncpg://", 1
+)
 
 # === Recommender settings
 RECOMMENDER_CACHE_PATH = str(Path(__file__).resolve().parent / "cache")
