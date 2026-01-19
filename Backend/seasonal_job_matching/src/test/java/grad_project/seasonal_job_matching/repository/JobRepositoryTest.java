@@ -27,6 +27,8 @@ import grad_project.seasonal_job_matching.model.enums.Salary;
 import grad_project.seasonal_job_matching.model.enums.WorkArrangement;
 
 @DataJpaTest
+@ActiveProfiles("test")
+@EntityScan(basePackages = "grad_project.seasonal_job_matching.model")
 @DisplayName("JobRepository Tests")
 class JobRepositoryTest {
 
