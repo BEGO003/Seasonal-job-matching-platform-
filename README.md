@@ -16,7 +16,7 @@ This project will involve designing and implementing a comprehensive, multi-plat
 
 ---
 
- 
+  
 
 \## 🚀 Key System Components \& Features
 
@@ -95,6 +95,7 @@ We are looking for a dedicated team of five students to take ownership of the fo
 | \*\*4. Backend Developer (Matching Engine)\*\* | Develop and optimize the \*\*intelligent matching algorithm\*\*, integrating features like \*\*full-text search\*\* and the \*\*hybrid recommendation system\*\*. | Backend (ML/AI) |
 
 | \*\*5. DevOps \& QA Engineer\*\* | Set up \*\*CI/CD pipelines\*\* (e.g., using GitHub Actions/GitLab CI), manage containerization with \*\*Docker\*\*, implement \*\*automated testing\*\* frameworks, and manage project tracking (e.g., \*\*Jira\*\*). | Infrastructure \& Process |
+
 
 
 
