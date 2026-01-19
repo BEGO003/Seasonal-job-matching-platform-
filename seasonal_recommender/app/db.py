@@ -1,6 +1,6 @@
 # app/db.py
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from app.config import DATABASE_URL
+from .config import DATABASE_URL
 
 # Convert classic postgres URL to asyncpg dialect if needed
 if DATABASE_URL.startswith("postgres://"):
