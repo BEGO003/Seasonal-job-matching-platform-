@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:job_seeker/models/jobs_screen_models/job_model.dart';
-import 'package:job_seeker/models/jobs_screen_models/paginated_jobs_response.dart';
 import 'package:job_seeker/services/jobs_screen_services/jobs_services_provider.dart';
 
 part 'paginated_jobs_provider.g.dart';
@@ -99,8 +98,13 @@ class PaginatedJobs extends _$PaginatedJobs {
     final currentJobs = isInitial ? <JobModel>[] : (state.value?.jobs ?? []);
     final currentViewedIds = state.value?.viewedJobIds ?? {};
 
+    // Prevent duplicates by checking IDs
+    final existingIds = currentJobs.map((j) => j.id).toSet();
+    final newUniqueJobs =
+        response.content.where((job) => !existingIds.contains(job.id)).toList();
+
     return PaginatedJobsState(
-      jobs: [...currentJobs, ...response.content],
+      jobs: [...currentJobs, ...newUniqueJobs],
       currentPage: response.number,
       totalPages: response.totalPages,
       totalElements: response.totalElements,
