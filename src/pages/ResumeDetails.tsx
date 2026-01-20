@@ -86,7 +86,7 @@ const ResumeDetails = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-100">
-        <Header />
+        {/* <Header /> */}
         <main className="container mx-auto px-4 py-8">
           <div className="space-y-6">
             <Skeleton className="h-12 w-32" />
@@ -115,7 +115,7 @@ if (error || !user) {
   }
   return (
     <div className="min-h-screen bg-slate-100">
-      <Header />
+      {/* <Header /> */}
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <Button
