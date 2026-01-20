@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "\"Jobs\"")
+@Table(name = "jobs")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -101,16 +101,13 @@ public class Job {
     @JsonIgnoreProperties("job")
     private List<Application> listOfJobApplications;
 
-    @ElementCollection
-    @Column
+    @Column(columnDefinition = "text[]")
     private List<String> requirements;
 
-    @ElementCollection
-    @Column
+    @Column(columnDefinition = "text[]")
     private List<String> categories;
 
-    @ElementCollection
-    @Column
+    @Column(columnDefinition = "text[]")
     private List<String> benefits;
 
     public Job(int id, String title, String description, JobType type, String location, Date startDate, User jobposter,

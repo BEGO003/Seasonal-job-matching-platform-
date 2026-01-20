@@ -7,7 +7,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,9 +88,20 @@ public class UserService {
 
             logger.info("Calling external API: {}", url);
 
-            ResponseEntity<RecommendedJobsResponse> response = restTemplate.getForEntity(
-                    url,
-                    RecommendedJobsResponse.class);
+            // ResponseEntity<RecommendedJobsResponse> response = restTemplate.getForEntity(
+            //         url,
+            //         RecommendedJobsResponse.class);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("ngrok-skip-browser-warning", "true");
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+                    
+            ResponseEntity<RecommendedJobsResponse> response = restTemplate.exchange(
+                url, 
+                HttpMethod.GET,
+                entity,
+                RecommendedJobsResponse.class
+            );
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 logger.info("Successfully received recommendations for user {}", userId);
