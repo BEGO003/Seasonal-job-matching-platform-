@@ -429,7 +429,7 @@ const PostJob = () => {
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y">
                 <Label htmlFor="salaryType">Salary Type *</Label>
                 <Select
                   value={salaryType}
