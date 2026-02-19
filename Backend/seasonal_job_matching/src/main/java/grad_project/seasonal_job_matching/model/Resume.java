@@ -2,7 +2,11 @@ package grad_project.seasonal_job_matching.model;
 
 import java.util.List;
 
-import jakarta.persistence.ElementCollection;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
+import org.hibernate.type.SqlTypes;
+import io.hypersistence.utils.hibernate.type.array.ListArrayType;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,24 +30,24 @@ public class Resume {
     @Column
     private long id;
 
-    @ElementCollection
-    @Column(nullable = false)
+    @Type(ListArrayType.class)
+    @Column(columnDefinition = "text[]", nullable = false)
     private List<String> education;
 
-    @ElementCollection
-    @Column(nullable = false)
+    @Type(ListArrayType.class)
+    @Column(columnDefinition = "text[]", nullable = false)
     private List<String> experience; // can these be empty or people have to have experience
 
-    @ElementCollection
-    @Column(nullable = false)
+    @Type(ListArrayType.class)
+    @Column(columnDefinition = "text[]", nullable = false)
     private List<String> certificates;
 
-    @ElementCollection
-    @Column(nullable = false)
+    @Type(ListArrayType.class)
+    @Column(columnDefinition = "text[]", nullable = false)
     private List<String> skills;
 
-    @ElementCollection
-    @Column(nullable = false)
+    @Type(ListArrayType.class)
+    @Column(columnDefinition = "text[]", nullable = false)
     private List<String> languages;
 
     // @Column

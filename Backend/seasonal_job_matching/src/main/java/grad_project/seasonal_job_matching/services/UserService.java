@@ -1,7 +1,9 @@
 package grad_project.seasonal_job_matching.services;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,6 +33,8 @@ import grad_project.seasonal_job_matching.model.Job;
 import grad_project.seasonal_job_matching.model.User;
 import grad_project.seasonal_job_matching.repository.JobRepository;
 import grad_project.seasonal_job_matching.repository.UserRepository;
+import grad_project.seasonal_job_matching.security.JWTService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +53,9 @@ public class UserService {
     @Autowired
     private JobMapper jobMapper;
 
+    private final JWTService jwtService;
+
+
     private final RestTemplate restTemplate;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class); // good practice for debugging,
@@ -60,11 +67,12 @@ public class UserService {
     private String recommendationBaseUrl;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JobRepository jobRepository,
-            RestTemplate restTemplate) {
+            RestTemplate restTemplate, JWTService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jobRepository = jobRepository;
         this.restTemplate = restTemplate;
+        this.jwtService = jwtService;
 
     }
 
@@ -169,7 +177,7 @@ public class UserService {
         return user.getOwnedJobs().stream().map(jobMapper::maptoreturnJob).collect(Collectors.toList());
     }
 
-    public UserResponseDTO loginUser(UserLoginDTO dto) {
+    public Map<String, Object> loginUser(UserLoginDTO dto) {
 
         // 1. Find the user by their email
         User user = userRepository.findByEmail(dto.getEmail())
@@ -177,12 +185,27 @@ public class UserService {
 
         // 2. Check if the provided password matches the stored hashed password
         if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            // 3. Generate JWT token with user data (email, userId, phoneNumber)
+            String token = jwtService.generateToken(
+                user.getId(), 
+                user.getEmail(), 
+                user.getNumber(),
+                user.getName()
+            );
             // 3. Passwords match, return the user's data (without the password)
-            return userMapper.maptoreturnUser(user);
-        } else {
-            // 4. Passwords do not match
-            throw new RuntimeException("Authentication failed: Invalid credentials.");
-        }
+            UserResponseDTO userResponseDTO = userMapper.maptoreturnUser(user);
+
+            Map <String, Object> response = new HashMap<>();
+            response.put("token", token);
+            response.put("user", userResponseDTO);
+            response.put("message", "Login successful");
+            
+            return response;
+    }else{
+        throw new RuntimeException("Authentication failed");
+    }
+
+
     }
 
     public Optional<UserResponseDTO> findByID(long id) {
@@ -245,7 +268,7 @@ public class UserService {
         //in case we're editing a different field than email, check new email isn't empty, checks new email isnt same as OLD email
         if (dto.getEmail()!=null && !dto.getEmail().trim().isEmpty() && !dto.getEmail().equals(existingUser.getEmail())) {
             //after confirming that we are editing email, checks new email isnt as another email in db
-            if (userRepository.existsByEmail(existingUser.getEmail())) {
+            if (userRepository.existsByEmail(dto.getEmail())) {
                 throw new RuntimeException("Cannot update user, email already exists: " + dto.getEmail());
             }
         }

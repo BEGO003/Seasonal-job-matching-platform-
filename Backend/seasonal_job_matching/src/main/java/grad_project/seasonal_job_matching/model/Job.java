@@ -3,15 +3,19 @@ package grad_project.seasonal_job_matching.model;
 import java.sql.Date;
 import java.util.List;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
+import org.hibernate.type.SqlTypes;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import grad_project.seasonal_job_matching.model.enums.Salary;
 import grad_project.seasonal_job_matching.model.enums.JobStatus;
 import grad_project.seasonal_job_matching.model.enums.JobType;
 import grad_project.seasonal_job_matching.model.enums.WorkArrangement;
+import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -101,16 +105,16 @@ public class Job {
     @JsonIgnoreProperties("job")
     private List<Application> listOfJobApplications;
 
-    @ElementCollection
-    @Column
+    @Type(ListArrayType.class)
+    @Column(columnDefinition = "text[]")
     private List<String> requirements;
 
-    @ElementCollection
-    @Column
+    @Type(ListArrayType.class)
+    @Column(columnDefinition = "text[]")
     private List<String> categories;
 
-    @ElementCollection
-    @Column
+    @Type(ListArrayType.class)
+    @Column(columnDefinition = "text[]")
     private List<String> benefits;
 
     public Job(int id, String title, String description, JobType type, String location, Date startDate, User jobposter,

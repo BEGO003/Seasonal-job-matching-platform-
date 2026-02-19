@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,7 +25,9 @@ import grad_project.seasonal_job_matching.dto.responses.JobResponseDTO;
 import grad_project.seasonal_job_matching.model.enums.JobType;
 import grad_project.seasonal_job_matching.model.enums.Salary;
 import grad_project.seasonal_job_matching.model.enums.WorkArrangement;
+import grad_project.seasonal_job_matching.security.CurrentUserService;
 import grad_project.seasonal_job_matching.services.JobService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 
@@ -34,9 +37,11 @@ import jakarta.validation.Valid;
 public class JobController {
 
     final private JobService job_service;
+    final private CurrentUserService currentUserService;
 
-    public JobController(JobService job_service){
+    public JobController(JobService job_service, CurrentUserService currentUserService){
         this.job_service = job_service;
+        this.currentUserService = currentUserService;
     }
 
 
@@ -79,7 +84,11 @@ public class JobController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createJob(@Valid @RequestBody JobCreateDTO jobdto){//if user is from mobile than type is jobseeker, else it is employer  
+    public ResponseEntity<?> createJob(@Valid @RequestBody JobCreateDTO jobdto, HttpServletRequest request){//if user is from mobile than type is jobseeker, else it is employer  
+        Long currentUserId = currentUserService.getCurrentUserId(request);
+        if (currentUserId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (currentUserId != jobdto.getJobposterId()) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
         try {
             JobResponseDTO job = job_service.createJob(jobdto);
             return ResponseEntity.ok()
@@ -95,7 +104,12 @@ public class JobController {
              
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> editJob(@PathVariable long id,@Valid @RequestBody JobEditDTO dto){
+    public ResponseEntity<?> editJob(@PathVariable long id, @Valid @RequestBody JobEditDTO dto, HttpServletRequest request) {
+        Long currentUserId = currentUserService.getCurrentUserId(request);
+        if (currentUserId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        Optional<JobResponseDTO> jobDetails = job_service.findByID(id);
+        if (jobDetails.isEmpty()) return ResponseEntity.notFound().build();
+        if (currentUserId != jobDetails.get().getJobposterId()) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         try {
             JobResponseDTO job = job_service.editJob(dto, id);
             return ResponseEntity.ok()
@@ -111,20 +125,14 @@ public class JobController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteJob(@PathVariable Long id){
-        // if ("Job found!".equals(findByID(id).getBody())) { //this returns job.get not "Job found so always not found"
-        //     job_service.deleteJob(id);
-        //     return ResponseEntity.ok("Job deleted successfully!");
-        // }else{
-        //     return ResponseEntity.ok("Job not found!");
-        // }
-        Optional<JobResponseDTO> job = job_service.findByID(id);
-        if (job.isPresent()) {
-            job_service.deleteJob(id);
-            return ResponseEntity.ok("Job deleted successfully!");
-        }else{
-            return ResponseEntity.ok("Job not found!");
-        }           
+    public ResponseEntity<String> deleteJob(@PathVariable Long id, HttpServletRequest request) {
+        Long currentUserId = currentUserService.getCurrentUserId(request);
+        if (currentUserId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        Optional<JobResponseDTO> jobDetails = job_service.findByID(id);
+        if (jobDetails.isEmpty()) return ResponseEntity.notFound().build();
+        if (currentUserId != jobDetails.get().getJobposterId()) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        job_service.deleteJob(id);
+        return ResponseEntity.ok("Job deleted successfully!");
     }
  
 }
