@@ -113,6 +113,28 @@ public class ApplicationService {
     }
 
     /**
+     * Returns the user id of the applicant who submitted the application.
+     * Used for authorization (only applicant can withdraw/delete their application).
+     */
+    @Transactional(readOnly = true)
+    public long getApplicantId(long applicationId) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new RuntimeException("Application not found with ID: " + applicationId));
+        return application.getUser().getId();
+    }
+
+    /**
+     * Returns the user id of the job poster (owner) for the given job.
+     * Used for authorization (only job owner can see applications for their job).
+     */
+    @Transactional(readOnly = true)
+    public long getJobOwnerId(long jobId) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Job not found with ID: " + jobId));
+        return job.getJobPoster().getId();
+    }
+
+    /**
      * Gets all applications that have been submitted for a specific job.
      */
     @Transactional(readOnly = true)

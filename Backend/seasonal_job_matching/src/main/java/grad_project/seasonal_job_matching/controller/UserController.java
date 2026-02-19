@@ -22,8 +22,10 @@ import grad_project.seasonal_job_matching.dto.requests.UserLoginDTO;
 import grad_project.seasonal_job_matching.dto.responses.JobResponseDTO;
 import grad_project.seasonal_job_matching.dto.responses.UserFieldsOfInterestResponseDTO;
 import grad_project.seasonal_job_matching.dto.responses.UserResponseDTO;
+import grad_project.seasonal_job_matching.security.CurrentUserService;
 import grad_project.seasonal_job_matching.services.ApplicationService;
 import grad_project.seasonal_job_matching.services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 
@@ -31,22 +33,30 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
+
+    final private CurrentUserService currentUserService;
     final private UserService users_service;
     final private ApplicationService application_service;
 
-    public UserController(UserService service, ApplicationService application_service){
+    public UserController(UserService service, ApplicationService application_service, CurrentUserService currentUserService){
         this.users_service = service;
         this.application_service = application_service;
+        this.currentUserService = currentUserService;
     }
 
-    
+
     @GetMapping
     public List<UserResponseDTO> findAll(){
         return users_service.findAllUsers();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findByID(@PathVariable long id){
+    public ResponseEntity<?> findByID(@PathVariable long id, HttpServletRequest request){
+        Long currentUserId = currentUserService.getCurrentUserId(request);
+        if (currentUserId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (currentUserId != id) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+
         Optional<UserResponseDTO> user = users_service.findByID(id);
         if(user.isEmpty()){
             return ResponseEntity.notFound().build();
@@ -58,12 +68,9 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginDTO dto) {
         try {
-            UserResponseDTO user = users_service.loginUser(dto);
+            Map<String, Object> response = users_service.loginUser(dto);
             // Authentication successful
-            return ResponseEntity.ok().body(Map.of(
-                "message", "Login successful",
-                "user", user
-            ));
+            return ResponseEntity.ok().body(response);
         } catch (RuntimeException e) {
             // Authentication failed (from service)
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -72,14 +79,25 @@ public class UserController {
     }
 
     @GetMapping("/{id}/jobs")
-    public List<JobResponseDTO> findUserJobs(@PathVariable long id) {
-        return users_service.findUserJobs(id);
+    public ResponseEntity<?> findUserJobs(@PathVariable long id, HttpServletRequest request) {
+        Long currentUserId = currentUserService.getCurrentUserId(request);
+        if (currentUserId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (currentUserId != id) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        
+        //we get list<jobresponsedto> wrapped in response entity
+        return ResponseEntity.ok(users_service.findUserJobs(id));
     }
 
     @GetMapping("/{userId}/applied/{jobId}")
     public ResponseEntity<?> hasUserAppliedToJob(
             @PathVariable long userId, 
-            @PathVariable long jobId) {
+            @PathVariable long jobId,
+        HttpServletRequest request) {
+
+        Long currentUserId = currentUserService.getCurrentUserId(request);
+        if (currentUserId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (currentUserId != userId) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        
         try {
             boolean hasApplied = application_service.hasUserAppliedToJob(userId, jobId);
             return ResponseEntity.ok(Map.of("hasApplied", hasApplied));
@@ -90,7 +108,11 @@ public class UserController {
 
 
     @GetMapping("/FOI/{userId}")
-    public ResponseEntity<?> getFieldsOfInterest(@PathVariable long userId) {
+    public ResponseEntity<?> getFieldsOfInterest(@PathVariable long userId, HttpServletRequest request) {
+        Long currentUserId = currentUserService.getCurrentUserId(request);
+        if (currentUserId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (currentUserId != userId) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        
         try {
             UserFieldsOfInterestResponseDTO foi = users_service.getFieldsOfInterest(userId);
             if (foi.getFieldsOfInterest() == null || foi.getFieldsOfInterest().isEmpty()) {
@@ -104,13 +126,22 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/favorite-jobs")
-    public ResponseEntity<List<Long>> getFavoriteJobIds(@PathVariable long userId) {
+    public ResponseEntity<List<Long>> getFavoriteJobIds(@PathVariable long userId, HttpServletRequest request) {
+        Long currentUserId = currentUserService.getCurrentUserId(request);
+        //the .build makes the generic response into whatever the function needs so in this case it builds into a list<long>
+        if (currentUserId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (currentUserId != userId) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
         List<Long> jobIds = users_service.getFavoriteJobIds(userId);
         return ResponseEntity.ok(jobIds);
     }
     
     @GetMapping("/{userId}/recommended-jobs")
-    public ResponseEntity<?> getRecommendedJobs(@PathVariable long userId) {
+    public ResponseEntity<?> getRecommendedJobs(@PathVariable long userId, HttpServletRequest request) {
+        Long currentUserId = currentUserService.getCurrentUserId(request);
+        if (currentUserId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (currentUserId != userId) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        
         try {
             List<JobResponseDTO> recommendedJobs = users_service.getRecommendedJobs(userId);
             return ResponseEntity.ok(Map.of(
@@ -141,7 +172,10 @@ public class UserController {
         
     
     @PatchMapping("/{id}")
-    public ResponseEntity<?> editUser(@PathVariable long id,@Valid @RequestBody UserEditDTO dto){
+    public ResponseEntity<?> editUser(@PathVariable long id,@Valid @RequestBody UserEditDTO dto, HttpServletRequest request){
+        Long currentUserId = currentUserService.getCurrentUserId(request);
+        if (currentUserId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (currentUserId != id) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         try {
             UserResponseDTO user = users_service.editUser(dto, id);
             return ResponseEntity.ok().body(Map.of(
@@ -155,7 +189,10 @@ public class UserController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id){
+    public ResponseEntity<String> deleteUser(@PathVariable Long id, HttpServletRequest request){
+        Long currentUserId = currentUserService.getCurrentUserId(request);
+        if (currentUserId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (currentUserId != id) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         Optional<UserResponseDTO> user = users_service.findByID(id);
         if (user.isPresent()) {
             users_service.deleteUser(id);

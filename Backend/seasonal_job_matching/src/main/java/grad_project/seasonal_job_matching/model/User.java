@@ -3,10 +3,14 @@ package grad_project.seasonal_job_matching.model;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.ArrayList;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
+import org.hibernate.type.SqlTypes;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -62,8 +66,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL) // user has many application
     private List<Application> ownedApplications;
 
-    @Column(columnDefinition = "text[]")
-    private List<String> fieldsOfInterest = new ArrayList<>();
+    @Type(ListArrayType.class)
+    @Column(columnDefinition = "text[]") // might need to change this to text[] and alter table in heroku cli
+    private List<String> fieldsOfInterest;
 
     @OneToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.ALL) // user has one resume, might change
                                                                                   // later on

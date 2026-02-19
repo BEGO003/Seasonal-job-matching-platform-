@@ -3,7 +3,11 @@ package grad_project.seasonal_job_matching.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.ElementCollection;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
+import org.hibernate.type.SqlTypes;
+import io.hypersistence.utils.hibernate.type.array.ListArrayType;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,20 +30,25 @@ public class Resume {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Type(ListArrayType.class)
     @Column(columnDefinition = "text[]", nullable = false)
-    private List<String> education = new ArrayList<>();
+    private List<String> education;
 
+    @Type(ListArrayType.class)
     @Column(columnDefinition = "text[]", nullable = false)
-    private List<String> experience = new ArrayList<>();
+    private List<String> experience; // can these be empty or people have to have experience
 
+    @Type(ListArrayType.class)
     @Column(columnDefinition = "text[]", nullable = false)
-    private List<String> certificates = new ArrayList<>();
+    private List<String> certificates;
 
+    @Type(ListArrayType.class)
     @Column(columnDefinition = "text[]", nullable = false)
-    private List<String> skills = new ArrayList<>();
+    private List<String> skills;
 
+    @Type(ListArrayType.class)
     @Column(columnDefinition = "text[]", nullable = false)
-    private List<String> languages = new ArrayList<>();
+    private List<String> languages;
 
     // @Column
     // @OneToOne(mappedBy="resume")//to avoid doing another table and keeping things
