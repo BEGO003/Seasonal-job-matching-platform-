@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:job_seeker/models/jobs_screen_models/job_model.dart';
 import 'package:job_seeker/services/jobs_screen_services/jobs_services_provider.dart';
+import 'package:job_seeker/providers/jobs_screen_providers/jobs_filter_provider.dart';
 
 part 'paginated_jobs_provider.g.dart';
 
@@ -83,6 +84,9 @@ class PaginatedJobs extends _$PaginatedJobs {
 
   @override
   Future<PaginatedJobsState> build() async {
+    // Watch filters so we rebuild (refresh) when they change
+    ref.watch(jobsFilterProvider);
+    
     // Initial load - page 0
     return _loadPage(0, isInitial: true);
   }
@@ -93,7 +97,22 @@ class PaginatedJobs extends _$PaginatedJobs {
     bool isInitial = false,
   }) async {
     final service = ref.read(jobServiceProvider);
-    final response = await service.fetchJobsPage(page);
+    final filterState = ref.read(jobsFilterProvider);
+
+    final isFiltered = filterState.searchQuery.isNotEmpty ||
+        filterState.selectedType != null ||
+        filterState.selectedLocation != null ||
+        filterState.salaryType != null;
+
+    final response = await (isFiltered
+        ? service.searchJobs(
+            page,
+            query: filterState.searchQuery,
+            type: filterState.selectedType,
+            location: filterState.selectedLocation,
+            salaryType: filterState.salaryType,
+          )
+        : service.fetchJobsPage(page));
 
     final currentJobs = isInitial ? <JobModel>[] : (state.value?.jobs ?? []);
     final currentViewedIds = state.value?.viewedJobIds ?? {};

@@ -40,11 +40,13 @@ class FavoriteJobsNotifier extends AsyncNotifier<FavoriteJobsState> {
 
   @override
   Future<FavoriteJobsState> build() async {
-    // Wait for personal info first (has favoriteJobs ids)
-    final personalInfo = await ref.watch(personalInformationProvider.future);
-    final favoriteIds = personalInfo.favoriteJobs
-        .map((e) => e.toString())
-        .toList();
+    // Watch only the favoriteJobs list from the profile.
+    // This ensures we only rebuild when the list of favorites actually changes.
+    final favoriteJobIds = await ref.watch(
+      personalInformationProvider.selectAsync((data) => data.favoriteJobs),
+    );
+
+    final favoriteIds = favoriteJobIds.map((e) => e.toString()).toList();
 
     if (favoriteIds.isEmpty) {
       return FavoriteJobsState.empty;

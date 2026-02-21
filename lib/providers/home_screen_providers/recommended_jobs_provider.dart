@@ -16,14 +16,18 @@ class RecommendedJobsNotifier extends AsyncNotifier<RecommendedJobsResponse> {
   }
 
   Future<RecommendedJobsResponse> _fetchRecommendedJobs() async {
-    final user = await ref.watch(personalInformationProvider.future);
+    // Only watch for User ID changes.
+    // This prevents the recommendations from reloading when the user favorites a job (which updates the profile but not the ID).
+    final userId = await ref.watch(
+      personalInformationProvider.selectAsync((data) => data.id),
+    );
 
-    if (user.id == 0) {
+    if (userId == 0) {
       return const RecommendedJobsResponse(count: 0, jobs: []);
     }
 
     final service = ref.read(jobServiceProvider);
-    return await service.fetchRecommendedJobs(user.id.toString());
+    return await service.fetchRecommendedJobs(userId.toString());
   }
 
   Future<void> refresh() async {

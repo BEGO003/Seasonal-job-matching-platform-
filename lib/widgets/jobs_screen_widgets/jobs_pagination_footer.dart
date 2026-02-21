@@ -7,14 +7,10 @@ import 'package:job_seeker/providers/jobs_screen_providers/paginated_jobs_provid
 /// "Load More" button, or end-of-list message
 class JobsPaginationFooter extends ConsumerWidget {
   final PaginatedJobsState state;
-  final bool isFiltered;
-  final int filteredCount;
 
   const JobsPaginationFooter({
     super.key,
     required this.state,
-    this.isFiltered = false,
-    this.filteredCount = 0,
   });
 
   @override
@@ -69,10 +65,6 @@ class JobsPaginationFooter extends ConsumerWidget {
   }
 
   Widget _buildEndOfList(ThemeData theme, int totalElements) {
-    final message = isFiltered
-        ? 'End of results. Found $filteredCount matches.'
-        : 'You\'ve seen all $totalElements jobs';
-
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
       child: Column(
@@ -91,7 +83,7 @@ class JobsPaginationFooter extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            message,
+            'You\'ve seen all $totalElements jobs',
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -114,14 +106,6 @@ class JobsPaginationFooter extends ConsumerWidget {
     ThemeData theme,
     int remainingCount,
   ) {
-    final buttonLabel = isFiltered
-        ? 'Load More Jobs'
-        : 'Load More Jobs ($remainingCount remaining)';
-
-    final statusText = isFiltered
-        ? 'Scanned ${state.jobs.length} jobs. Showing $filteredCount matches.'
-        : '${state.jobs.length} of ${state.totalElements} jobs loaded';
-
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       child: Column(
@@ -161,7 +145,7 @@ class JobsPaginationFooter extends ConsumerWidget {
                 ref.read(paginatedJobsProvider.notifier).loadMore();
               },
               icon: const Icon(Icons.add_rounded, size: 20),
-              label: Text(buttonLabel),
+              label: Text('Load More Jobs ($remainingCount remaining)'),
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 side: BorderSide(
@@ -176,7 +160,7 @@ class JobsPaginationFooter extends ConsumerWidget {
 
           const SizedBox(height: 12),
           Text(
-            statusText,
+            '${state.jobs.length} of ${state.totalElements} jobs loaded',
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
             ),

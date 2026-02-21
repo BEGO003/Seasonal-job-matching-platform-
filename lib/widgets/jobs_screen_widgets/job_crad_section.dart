@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:job_seeker/providers/jobs_screen_providers/paginated_jobs_provider.dart';
-import 'package:job_seeker/providers/jobs_screen_providers/jobs_filter_provider.dart';
 import 'package:job_seeker/widgets/jobs_screen_widgets/job_card.dart';
 import 'package:job_seeker/widgets/jobs_screen_widgets/jobs_pagination_footer.dart';
 
@@ -30,11 +29,11 @@ class JobCardSection extends ConsumerWidget {
     WidgetRef ref,
     PaginatedJobsState state,
   ) {
-    // Apply local filtering to the loaded jobs
-    final filterState = ref.watch(jobsFilterProvider);
-    final filteredJobs = _applyFilters(state.jobs, filterState);
+    // Server-side filtering is now active via the provider.
+    // state.jobs contains the filtered results.
+    final jobs = state.jobs;
 
-    if (filteredJobs.isEmpty && state.jobs.isEmpty) {
+    if (jobs.isEmpty) {
       return RefreshIndicator(
         onRefresh: () => ref.read(paginatedJobsProvider.notifier).refresh(),
         color: Theme.of(context).colorScheme.primary,
@@ -76,23 +75,16 @@ class JobCardSection extends ConsumerWidget {
           ),
           padding: const EdgeInsets.only(top: 8, bottom: 120),
           // +1 for the footer widget
-          itemCount: filteredJobs.length + 1,
+          itemCount: jobs.length + 1,
           itemBuilder: (context, index) {
             // Last item is the footer
-            if (index == filteredJobs.length) {
-              final isFiltered = filterState.searchQuery.isNotEmpty ||
-                  filterState.selectedType != null ||
-                  filterState.selectedLocation != null ||
-                  filterState.minSalary != null;
-              
+            if (index == jobs.length) {
               return JobsPaginationFooter(
                 state: state,
-                isFiltered: isFiltered,
-                filteredCount: filteredJobs.length,
               );
             }
 
-            final job = filteredJobs[index];
+            final job = jobs[index];
             // Check if job has been viewed in this session
             final isViewed = state.viewedJobIds.contains(job.id);
 
@@ -112,43 +104,8 @@ class JobCardSection extends ConsumerWidget {
     );
   }
 
-  /// Apply local filters to the job list
-  List<dynamic> _applyFilters(List<dynamic> jobs, JobsFilterState filterState) {
-    return jobs.where((job) {
-      // Filter by search query (title or company)
-      if (filterState.searchQuery.isNotEmpty) {
-        final query = filterState.searchQuery.toLowerCase();
-        final titleMatch = job.title.toLowerCase().contains(query);
-        final companyMatch = job.jobposterName.toLowerCase().contains(query);
-        if (!titleMatch && !companyMatch) return false;
-      }
-
-      // Filter by Type
-      if (filterState.selectedType != null) {
-        if (job.type.toLowerCase() != filterState.selectedType!.toLowerCase()) {
-          return false;
-        }
-      }
-
-      // Filter by Location
-      if (filterState.selectedLocation != null) {
-        if (!job.location.toLowerCase().contains(
-          filterState.selectedLocation!.toLowerCase(),
-        )) {
-          return false;
-        }
-      }
-
-      // Filter by Minimum Salary
-      if (filterState.minSalary != null) {
-        if (job.amount < filterState.minSalary!) {
-          return false;
-        }
-      }
-
-      return true;
-    }).toList();
-  }
+  // _applyFilters method is no longer needed but keeping it commented out or removing it is fine.
+  // I will remove it.
 }
 
 class _LoadingState extends StatelessWidget {
@@ -211,11 +168,11 @@ class _ShimmerCardState extends State<_ShimmerCard>
             color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: theme.colorScheme.outlineVariant.withOpacity(0.3),
+              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
             ),
             boxShadow: [
               BoxShadow(
-                color: theme.colorScheme.shadow.withOpacity(0.05),
+                color: theme.colorScheme.shadow.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -395,7 +352,7 @@ class _EmptyState extends StatelessWidget {
               'There are currently no job postings.\nPull down to refresh and check for new opportunities!',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 height: 1.5,
               ),
             ),
@@ -406,13 +363,13 @@ class _EmptyState extends StatelessWidget {
                 Icon(
                   Icons.arrow_downward_rounded,
                   size: 20,
-                  color: theme.colorScheme.primary.withOpacity(0.5),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.5),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   'Pull down to refresh',
                   style: theme.textTheme.labelMedium?.copyWith(
-                    color: theme.colorScheme.primary.withOpacity(0.7),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -474,7 +431,7 @@ class _ErrorState extends StatelessWidget {
               'We couldn\'t load the jobs.\nPull down to refresh or tap the button below.',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 height: 1.5,
               ),
             ),
@@ -497,13 +454,13 @@ class _ErrorState extends StatelessWidget {
                 Icon(
                   Icons.arrow_downward_rounded,
                   size: 20,
-                  color: theme.colorScheme.primary.withOpacity(0.5),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.5),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   'Or pull down to refresh',
                   style: theme.textTheme.labelMedium?.copyWith(
-                    color: theme.colorScheme.primary.withOpacity(0.7),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.7),
                   ),
                 ),
               ],

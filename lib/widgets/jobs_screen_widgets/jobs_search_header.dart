@@ -36,6 +36,7 @@ class _JobsSearchHeaderState extends ConsumerState<JobsSearchHeader> {
   }
 
   void _showFilterModal(BuildContext context) {
+    _focusNode.unfocus(); // Remove search focus when opening filters
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -53,7 +54,7 @@ class _JobsSearchHeaderState extends ConsumerState<JobsSearchHeader> {
         filterState.searchQuery.isNotEmpty ||
         filterState.selectedType != null ||
         filterState.selectedLocation != null ||
-        filterState.minSalary != null;
+        filterState.salaryType != null;
 
     return Container(
       decoration: BoxDecoration(
@@ -155,7 +156,7 @@ class _JobsSearchHeaderState extends ConsumerState<JobsSearchHeader> {
                         decoration: BoxDecoration(
                           color:
                               (filterState.selectedLocation != null ||
-                                  filterState.minSalary != null)
+                                  filterState.salaryType != null)
                               ? colorScheme.primary
                               : colorScheme.surfaceContainerHighest.withValues(
                                   alpha: 0.4,
@@ -166,7 +167,7 @@ class _JobsSearchHeaderState extends ConsumerState<JobsSearchHeader> {
                           Icons.tune_rounded,
                           color:
                               (filterState.selectedLocation != null ||
-                                  filterState.minSalary != null)
+                                  filterState.salaryType != null)
                               ? Colors.white
                               : colorScheme.onSurfaceVariant,
                         ),
@@ -188,10 +189,13 @@ class _JobsSearchHeaderState extends ConsumerState<JobsSearchHeader> {
                           padding: const EdgeInsets.only(right: 8),
                           child: _FilterChip(
                             label: type.label,
-                            isSelected: filterState.selectedType == type.label,
-                            onTap: () => ref
+                            isSelected: filterState.selectedType == type.apiValue,
+                            onTap: () {
+                              _focusNode.unfocus(); // Remove search focus when chip is tapped
+                              ref
                                 .read(jobsFilterProvider.notifier)
-                                .setType(type.label),
+                                .setType(type.apiValue);
+                            },
                           ),
                         );
                       }),
@@ -200,6 +204,7 @@ class _JobsSearchHeaderState extends ConsumerState<JobsSearchHeader> {
                         GestureDetector(
                           onTap: () {
                             HapticFeedback.mediumImpact();
+                            _focusNode.unfocus(); // Unfocus on clear
                             _searchController.clear();
                             ref
                                 .read(jobsFilterProvider.notifier)
@@ -321,20 +326,14 @@ class _FilterModal extends ConsumerStatefulWidget {
 
 class _FilterModalState extends ConsumerState<_FilterModal> {
   final _locationController = TextEditingController();
-  double _minSalary = 0;
+  String? _salaryType;
 
   @override
   void initState() {
     super.initState();
     final state = ref.read(jobsFilterProvider);
     _locationController.text = state.selectedLocation ?? '';
-    // Convert stored salary (e.g. 30000) to slider value (30k)
-    // Avoid division by zero issues? Range is 0-200.
-    if (state.minSalary != null) {
-      _minSalary = (state.minSalary! / 1000).clamp(0, 200);
-    } else {
-      _minSalary = 0;
-    }
+    _salaryType = state.salaryType;
   }
 
   @override
@@ -346,7 +345,6 @@ class _FilterModalState extends ConsumerState<_FilterModal> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24),
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -354,129 +352,131 @@ class _FilterModalState extends ConsumerState<_FilterModal> {
           topRight: Radius.circular(32),
         ),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            'Filters',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 24),
-
-          // Location Input
-          const Text(
-            'Location',
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _locationController,
-            decoration: InputDecoration(
-              hintText: 'e.g. Remote, New York',
-              prefixIcon: const Icon(Icons.location_on_outlined),
-              filled: true,
-              fillColor: Colors.grey.shade100,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 24),
-
-          // Min Salary Slider
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      // Use Padding to push content up above the keyboard
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: SingleChildScrollView(
+        // Allow scrolling if content is taller than available space
+        physics: const BouncingScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
               const Text(
-                'Min Salary',
+                'Filters',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 24),
+
+              // Location Input
+              const Text(
+                'Location',
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
               ),
-              Text(
-                '\$${_minSalary.toInt().toString()}k / yr',
-                style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.bold,
+              const SizedBox(height: 12),
+              TextField(
+                controller: _locationController,
+                decoration: InputDecoration(
+                  hintText: 'e.g. Remote, New York',
+                  prefixIcon: const Icon(Icons.location_on_outlined),
+                  filled: true,
+                  fillColor: Colors.grey.shade100,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
-            ],
-          ),
-          Slider(
-            value: _minSalary,
-            min: 0,
-            max: 200, // Assuming 200k max
-            divisions: 20,
-            label: '\$${_minSalary.toInt()}k',
-            onChanged: (v) {
-              setState(() => _minSalary = v);
-            },
-          ),
 
-          const SizedBox(height: 32),
+              const SizedBox(height: 24),
 
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () {
-                    ref.read(jobsFilterProvider.notifier).clearFilters();
-                    Navigator.pop(context);
-                  },
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+              // Salary Type Selector
+              const Text(
+                'Salary Type',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                children: ['HOURLY', 'MONTHLY', 'YEARLY'].map((type) {
+                  final isSelected = _salaryType == type;
+                  return ChoiceChip(
+                    label: Text(type),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      setState(() {
+                        _salaryType = selected ? type : null;
+                      });
+                    },
+                    selectedColor: Theme.of(context).primaryColor,
+                    labelStyle: TextStyle(
+                      color: isSelected ? Colors.white : Colors.black87,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  );
+                }).toList(),
+              ),
+
+              const SizedBox(height: 32),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        ref.read(jobsFilterProvider.notifier).clearFilters();
+                        Navigator.pop(context);
+                      },
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: const Text("Reset"),
                     ),
                   ),
-                  child: const Text("Reset"),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    final notifier = ref.read(jobsFilterProvider.notifier);
-                    notifier.setLocation(_locationController.text);
-                    // minSalary is stored as double representing full value?
-                    // Logic used k (thousands). If job amount is 120000, slider 120 means 120k?
-                    // I should probably Multiply by 1000 if job amount is full.
-                    // Let's assume job amount is full number.
-                    notifier.setMinSalary(_minSalary * 1000);
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).primaryColor,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        final notifier = ref.read(jobsFilterProvider.notifier);
+                        notifier.setLocation(_locationController.text);
+                        notifier.setSalaryType(_salaryType);
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).primaryColor,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        foregroundColor: Colors.white,
+                      ),
+                      child: const Text("Apply Filters"),
                     ),
-                    foregroundColor: Colors.white,
                   ),
-                  child: const Text("Apply Filters"),
-                ),
+                ],
               ),
+              // Extra safe area at the bottom
+              SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
             ],
           ),
-          // Handle keyboard padding
-          SizedBox(
-            height:
-                MediaQuery.of(context).viewInsets.bottom +
-                MediaQuery.of(context).padding.bottom,
-          ),
-        ],
+        ),
       ),
     );
   }

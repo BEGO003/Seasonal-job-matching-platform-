@@ -56,6 +56,38 @@ class JobsServicesProvider {
     }
   }
 
+  /// Search jobs with server-side filtering and pagination
+  Future<PaginatedJobsResponse> searchJobs(
+    int page, {
+    String? query,
+    String? type,
+    String? location,
+    String? salaryType,
+  }) async {
+    try {
+      final Map<String, dynamic> queryParams = {'page': page};
+      
+      // Map to the specific parameter names provided: title, jobTypes, location
+      if (query != null && query.isNotEmpty) queryParams['title'] = query;
+      if (type != null && type.isNotEmpty) queryParams['jobTypes'] = type;
+      if (location != null && location.isNotEmpty) queryParams['location'] = location;
+      
+      // arrangements, jobTypes, salaryTypes, location, title
+      if (salaryType != null && salaryType.isNotEmpty) queryParams['salaryTypes'] = salaryType;
+
+      final response = await _dio.get('$jobsPath/filter', queryParameters: queryParams);
+      
+      print('Search Jobs page $page API response: ${response.data}');
+      return PaginatedJobsResponse.fromJson(response.data);
+    } on DioException catch (e) {
+      print('searchJobs error: $e');
+      throw _handleError(e);
+    } catch (e, st) {
+      print('searchJobs unexpected error: $e\n$st');
+      rethrow;
+    }
+  }
+
   Future<JobModel> fetchJobById(String jobId) async {
     try {
       final response = await _dio.get('$jobsPath/$jobId');
