@@ -83,6 +83,22 @@ public class JobController {
 
     }
 
+    @GetMapping("/employer/{id}")
+    public ResponseEntity<?> employerFindByID(@PathVariable long id, HttpServletRequest request){
+        Long currentUserId = currentUserService.getCurrentUserId(request);
+        if (currentUserId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        Optional<JobResponseDTO> job = job_service.findByID(id);
+        if (currentUserId != job.get().getJobposterId()) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        if(job.isEmpty()){
+            return ResponseEntity.ok("Job not found!");
+        }else{
+            return ResponseEntity.ok(job.get());
+        }
+
+    }
+
     @PostMapping("")
     public ResponseEntity<?> createJob(@Valid @RequestBody JobCreateDTO jobdto, HttpServletRequest request){//if user is from mobile than type is jobseeker, else it is employer  
         Long currentUserId = currentUserService.getCurrentUserId(request);
