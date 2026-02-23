@@ -35,7 +35,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties("favoriteJobIds")
-@Table(name = "\"Users\"")
+@Table(name = "users")
 public class User {
 
     @Id

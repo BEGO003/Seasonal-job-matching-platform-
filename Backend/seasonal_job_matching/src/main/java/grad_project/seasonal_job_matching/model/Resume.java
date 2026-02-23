@@ -1,5 +1,6 @@
 package grad_project.seasonal_job_matching.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.JdbcTypeCode;
@@ -22,12 +23,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "\"Resume\"")
+@Table(name = "resume")
 public class Resume {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
     private long id;
 
     @Type(ListArrayType.class)
