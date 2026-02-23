@@ -42,10 +42,10 @@ public class ResumeController {
     // }
 
     @GetMapping("/{id}")//using user ID, if has no resume returns 500, could add try catch to avoid this
-    public ResponseEntity<?> findByID(@PathVariable long id, HttpServletRequest request){
-        Long currentUserId = currentUserService.getCurrentUserId(request);
-        if (currentUserId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        if (currentUserId != id) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    public ResponseEntity<?> findByID(@PathVariable long id){
+        // Long currentUserId = currentUserService.getCurrentUserId(request);
+        // if (currentUserId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        // if (currentUserId != id) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
         Optional<ResumeResponseDTO> resume = resume_service.findResumeByUserId(id);
         if(resume.isEmpty()){
