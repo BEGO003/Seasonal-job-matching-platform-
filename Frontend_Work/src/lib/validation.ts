@@ -39,9 +39,9 @@ export function isValidPhone(phone: string): boolean {
   if (!phone || phone.trim().length === 0) {
     return false;
   }
-  // Only allow digits (no letters or special characters except spaces which we'll strip)
-  const phoneRegex = /^\d+$/;
-  return phoneRegex.test(phone.trim().replace(/\s/g, ''));
+
+  const phoneRegex = /^[\d-]+$/;
+  return phoneRegex.test(phone.trim());
 }
 
 /**

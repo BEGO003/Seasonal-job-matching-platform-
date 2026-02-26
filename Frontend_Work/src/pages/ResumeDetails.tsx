@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,10 +24,14 @@ import { useToast } from "@/components/ui/use-toast";
 const ResumeDetails = () => {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
 
   const [resume, setResume] = useState<Resume | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  // Seed user from navigation state passed by ApplicationCard (avoids the forbidden /api/users call)
+  const [user, setUser] = useState<User | null>(
+    (location.state as { user?: User } | null)?.user ?? null
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,36 +43,21 @@ const ResumeDetails = () => {
         setLoading(true);
         const id = parseInt(userId);
 
-        // Parallel fetch for user details and resume
-        const [resumeData, userResponse] = await Promise.allSettled([
-          resumeApi.getResumeByUserId(id),
-          fetch(`/api/users/${id}`).then((res) => {
-            if (!res.ok) throw new Error("Failed to fetch user");
-            return res.json();
-          }),
-        ]);
+        // Only fetch the resume — user data comes from navigation state
+        const resumeResult = await resumeApi.getResumeByUserId(id).catch((err) => {
+          console.log("No resume found or error fetching resume", err);
+          return null;
+        });
 
-        // Handle Resume Data
-        if (resumeData.status === "fulfilled") {
-          // resumeApi might return { data: Resume } or Resume directly
-          const r = (resumeData.value as any)?.data || resumeData.value;
-          setResume(r);
-        } else {
-          // Resume might not exist, which is fine — show empty state
-          console.log("No resume found or error fetching resume", resumeData.reason);
-        }
+        setResume(resumeResult);
 
-        // Handle User Data
-        if (userResponse.status === "fulfilled") {
-          // API might return { data: User } or just User
-          const userData = (userResponse.value as any)?.data || userResponse.value;
-          setUser(userData);
-        } else {
-          setError("Failed to load user information.");
+        // If user wasn't passed via state (e.g. direct URL visit), show a clear error
+        if (!(location.state as { user?: User } | null)?.user) {
+          setError("Applicant details could not be loaded. Please go back and try again.");
           toast({
             variant: "destructive",
             title: "Error",
-            description: "Could not fetch user details.",
+            description: "Could not load applicant details.",
           });
         }
       } catch (err) {
@@ -85,7 +74,7 @@ const ResumeDetails = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-100">
-        <Header />
+        {/* <Header /> */}
         <main className="container mx-auto px-4 py-8">
           <div className="space-y-6">
             <Skeleton className="h-12 w-32" />
@@ -102,7 +91,7 @@ const ResumeDetails = () => {
   if (error || !user) {
     return (
       <div className="min-h-screen bg-slate-100">
-        <Header />
+        {/* <Header /> */}
         <main className="container mx-auto px-4 py-8 flex flex-col items-center justify-center min-h-[60vh]">
           <h2 className="text-2xl font-bold mb-4 text-slate-900">User Not Found</h2>
           <p className="text-slate-600 mb-6">The user profile you are looking for does not exist or could not be loaded.</p>
@@ -116,7 +105,7 @@ const ResumeDetails = () => {
 
   return (
     <div className="min-h-screen bg-slate-100">
-      <Header />
+      {/* <Header /> */}
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <Button

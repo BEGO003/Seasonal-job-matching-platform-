@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
     proxy: {
       "/api": {
-        target: "https://seasonal-job-matctching-ff74a4d37cbc.herokuapp.com",
+        target: "https://seasonal-job-matching-898a9d15a9e5.herokuapp.com",
         changeOrigin: true,
         secure: true,
         rewrite: (path) => path.replace(/^\/api/, "/api"),
@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => ({
           proxy.on("proxyReq", (proxyReq, req, _res) => {
             proxyReq.setHeader(
               "Origin",
-              "https://seasonal-job-matctching-ff74a4d37cbc.herokuapp.com"
+              "https://seasonal-job-matching-898a9d15a9e5.herokuapp.com"
             );
           });
         },

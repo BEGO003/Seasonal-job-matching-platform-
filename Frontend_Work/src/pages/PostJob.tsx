@@ -40,6 +40,7 @@ const PostJob = () => {
   const { id } = useParams<{ id: string }>();
   const isEditMode = !!id;
   const [loading, setLoading] = useState(false);
+  const [savingDraft, setSavingDraft] = useState(false);
   const [loadingJob, setLoadingJob] = useState(isEditMode);
   const [error, setError] = useState<string | null>(null);
   const [jobType, setJobType] = useState<JobType | "">("");
@@ -240,7 +241,11 @@ const PostJob = () => {
           benefits: updateData.benefits,
           status: updateData.status,
         });
-        await jobApi.updateJob(Number(id), updateData);
+        await jobApi.updateJob(Number(id), updateData, {
+          categories: currentJob?.categories ?? [],
+          requirements: currentJob?.requirements ?? [],
+          benefits: currentJob?.benefits ?? [],
+        });
       } else {
         await jobApi.createJob(jobData);
       }
@@ -261,7 +266,7 @@ const PostJob = () => {
   };
 
   const handleSaveDraft = async () => {
-    setLoading(true);
+    setSavingDraft(true);
     setError(null);
 
     const toYmd = (d: Date | null): string => {
@@ -275,7 +280,7 @@ const PostJob = () => {
       title: title,
       description: description,
       location: location,
-      jobType: jobType as "full-time" | "part-time" | "contract" | "temporary",
+      jobType: (jobType || "full-time") as "full-time" | "part-time" | "contract" | "temporary",
       workArrangement: workArrangement as WorkArrangement,
       startDate: toYmd(startDate),
       duration: Number(duration),
@@ -294,7 +299,7 @@ const PostJob = () => {
       setError(
         "Please fill at least the job title or description to save a draft"
       );
-      setLoading(false);
+      setSavingDraft(false);
       return;
     }
 
@@ -320,7 +325,11 @@ const PostJob = () => {
           requirements: jobData.requirements,
           benefits: jobData.benefits,
         });
-        await jobApi.updateJob(Number(id), { ...jobData, status: "draft" });
+        await jobApi.updateJob(Number(id), { ...jobData, status: "draft" }, {
+          categories: currentJob?.categories ?? [],
+          requirements: currentJob?.requirements ?? [],
+          benefits: currentJob?.benefits ?? [],
+        });
       } else {
         await jobApi.saveDraft(jobData);
       }
@@ -328,7 +337,7 @@ const PostJob = () => {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save draft");
     } finally {
-      setLoading(false);
+      setSavingDraft(false);
     }
   };
 
@@ -339,7 +348,7 @@ const PostJob = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={handleBack}
+            onClick={handleSaveDraft}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="w-4 h-4" /> Back
@@ -429,8 +438,8 @@ const PostJob = () => {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="salaryType">Salary Type *</Label>
+              <div className="space-y">
+                <Label htmlFor="salaryType" >Salary Type *</Label>
                 <Select
                   value={salaryType}
                   onValueChange={(value) => setSalaryType(value as SalaryType)}
@@ -687,29 +696,25 @@ const PostJob = () => {
             <div className="flex flex-col sm:flex-row gap-4 pt-6 ">
               <Button
                 type="submit"
-                disabled={loading || loadingJob}
+                disabled={loading || savingDraft || loadingJob}
                 className="bg-primary hover:bg-primary/90 text-white px-8 py-2"
               >
-                {loading ? "Posting..." : "Post Job"}
+                {loading ? "Posting..." : isEditMode ? "Update Job" : "Post Job"}
               </Button>
-              {/* <Button
+              <Button
                 type="button"
                 variant="outline"
                 onClick={handleSaveDraft}
-                disabled={loading || loadingJob}
-                className="border-secondary text-foreground hover:bg-secondary px-8 py-2"
+                disabled={loading || savingDraft || loadingJob}
+                className="bg-slate-200 text-slate-900 border border-slate-300 hover:bg-slate-300 px-8 py-2 rounded transition-colors"
               >
-                {loading
-                  ? "Saving..."
-                  : isEditMode
-                  ? "Save as Draft"
-                  : "Save as Draft"}
-              </Button> */}
+                {savingDraft ? "Saving Draft..." : "Save as Draft"}
+              </Button>
               <Button
                 type="button"
                 variant="outline"
                 onClick={handleBack}
-                disabled={loading || loadingJob}
+                disabled={loading || savingDraft || loadingJob}
                 className="border-secondary text-foreground hover:bg-secondary px-8 py-2"
               >
                 Cancel

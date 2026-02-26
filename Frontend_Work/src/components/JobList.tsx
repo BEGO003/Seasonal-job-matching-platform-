@@ -74,7 +74,7 @@ export const JobList = () => {
 
       <Tabs defaultValue="all" className="w-full">
         <div className="flex items-center justify-center mb-8">
-          <TabsList className="grid w-full max-w-xl grid-cols-3 bg-gradient-to-r from-secondary to-secondary/70 p-1 rounded-xl">
+          <TabsList className="grid w-full max-w-xl grid-cols-4 bg-gradient-to-r from-secondary to-secondary/70 p-1 rounded-xl">
             <TabsTrigger
               value="all"
               className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg"
@@ -87,12 +87,12 @@ export const JobList = () => {
             >
               Active
             </TabsTrigger>
-            {/* <TabsTrigger
+             <TabsTrigger
               value="drafts"
               className="data-[state=active]:bg-gradient-to-r from-gray-200 to-gray-200/100 data-[state=active]:text-black rounded-lg"
             >
               Drafts
-            </TabsTrigger> */}
+            </TabsTrigger> 
             <TabsTrigger
               value="closed"
               className="data-[state=active]:bg-gradient-to-r from-red-100 to-red-200/100 data-[state=active]:text-black rounded-lg"
@@ -103,16 +103,14 @@ export const JobList = () => {
         </div>
 
         <TabsContent value="all" className="space-y-4">
-          {jobs.filter((job) => job.status !== "draft").length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">No jobs found</p>
-            </div>
-          ) : (
-            jobs
-              .filter((job) => job.status !== "draft")
-              .map((job) => <JobCard key={job.id} job={job} />)
-          )}
-        </TabsContent>
+  {jobs.length === 0 ? (
+    <div className="text-center py-8">
+      <p className="text-muted-foreground">No jobs found</p>
+    </div>
+  ) : (
+    jobs.map((job) => <JobCard key={job.id} job={job} />)
+  )}
+</TabsContent>
 
         <TabsContent value="active" className="space-y-4">
           {jobs.filter((job) => job.status === "active").length === 0 ? (
@@ -126,7 +124,7 @@ export const JobList = () => {
           )}
         </TabsContent>
 
-        {/* <TabsContent value="drafts" className="space-y-4">
+         <TabsContent value="drafts" className="space-y-4">
           {jobs.filter((job) => job.status === "draft").length === 0 ? (
             <div className="text-center py-8">
               <p className="text-muted-foreground">No draft jobs found</p>
@@ -136,7 +134,7 @@ export const JobList = () => {
               .filter((job) => job.status === "draft")
               .map((job) => <JobCard key={job.id} job={job} />)
           )}
-        </TabsContent> */}
+        </TabsContent> 
 
         <TabsContent value="closed" className="space-y-4">
           {jobs.filter((job) => job.status === "closed").length === 0 ? (

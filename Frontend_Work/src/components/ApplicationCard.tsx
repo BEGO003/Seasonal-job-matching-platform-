@@ -140,7 +140,7 @@ export const ApplicationCard = ({
           size="sm"
           variant="outline"
           className="border-primary text-primary hover:bg-primary/10"
-          onClick={() => navigate(`/resumes/${application.user.id}`)}
+          onClick={() => navigate(`/resumes/${application.user.id}`, { state: { user: application.user } })}
         >
           <Briefcase className="w-4 h-4 mr-1" /> View Resume
         </Button>

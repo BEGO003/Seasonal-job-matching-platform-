@@ -17,7 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { jobApi } from "@/api";
+import { jobApi, ApiError } from "@/api";
 import { applicationApi } from "@/api";
 import { Job } from "@/types/job";
 import { formatDateRange, formatDateDDMMYYYY } from "@/lib/date";
@@ -28,6 +28,7 @@ export default function JobDetails() {
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isUnauthorized, setIsUnauthorized] = useState(false);
   const [applicantCount, setApplicantCount] = useState<number>(0);
 
   useEffect(() => {
@@ -45,7 +46,11 @@ export default function JobDetails() {
           setApplicantCount(0);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to fetch job");
+        if (err instanceof ApiError && err.status === 403) {
+          setIsUnauthorized(true);
+        } else {
+          setError(err instanceof Error ? err.message : "Failed to fetch job");
+        }
       } finally {
         setLoading(false);
       }
@@ -104,7 +109,7 @@ export default function JobDetails() {
         job,
       });
       // Pass the full job object to ensure we have all the correct data
-      await jobApi.deleteJob(job);
+      await jobApi.deleteJob(jobId);
       console.log("[JobDetails] Delete success, navigating to /dashboard");
       navigate("/dashboard");
     } catch (err) {
@@ -119,7 +124,8 @@ export default function JobDetails() {
 
   const statusConfig: Record<string, { label: string; className: string }> = {
     active: { label: "Active", className: "bg-green-600 text-white" },
-    // draft: { label: "Draft", className: "bg-gray-500 text-white" },
+    draft: { label: "Draft",     className: "bg-gradient-to-r from-gray-600 to-gray-700 text-white",
+ },
     closed: { label: "Closed", className: "bg-red-500 text-white" },
   };
 
@@ -130,6 +136,27 @@ export default function JobDetails() {
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mx-auto"></div>
           <p className="text-muted-foreground">Loading job details...</p>
         </div>
+      </div>
+    );
+  }
+
+  if (isUnauthorized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-secondary/10 to-background">
+        <Card className="max-w-md w-full p-8 text-center space-y-4">
+          <div className="flex justify-center">
+            <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+              <span className="text-3xl">🔒</span>
+            </div>
+          </div>
+          <h2 className="text-xl font-semibold text-foreground">Access Denied</h2>
+          <p className="text-muted-foreground text-sm">
+            You are not authorized to view this job. It may belong to another employer.
+          </p>
+          <Button onClick={handleBack} className="mt-2">
+            <ArrowLeft className="w-4 h-4 mr-2" /> Go Back
+          </Button>
+        </Card>
       </div>
     );
   }
@@ -327,22 +354,22 @@ export default function JobDetails() {
               </div>
 
               <div className="mt-4 flex flex-col gap-2">
-                {/* {job.status === "draft" && (
+                {job.status === "draft" && (
                   <Button
                     variant="default"
                     onClick={handleEdit}
-                    className="w-full"
+                    className="w-full flex items-center gap-2"
                   >
-                    Edit Job
+                    <Edit className="w-4 h-4" /> Edit Job
                   </Button>
-                )} */}
+                )}
                 <Button
                   variant="destructive"
                   onClick={handleCloseJob}
                   className="w-full"
                   disabled={job.status !== "active"}
                 >
-                  {job.status === "active" ? "Close Job" : "Close Job"}
+                  Close Job
                 </Button>
                 <Button
                   variant="destructive"
