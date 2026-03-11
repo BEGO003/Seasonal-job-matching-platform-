@@ -117,6 +117,10 @@ public class Job {
     @Column(columnDefinition = "text[]")
     private List<String> benefits;
 
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true) 
+    @JsonIgnoreProperties("job") 
+    private List<JobComment> comments;
+
     public Job(int id, String title, String description, JobType type, String location, Date startDate, User jobposter,
             float amount, Salary salary, Integer duration, int numofpositions, JobStatus status,
             WorkArrangement workarrangement) {

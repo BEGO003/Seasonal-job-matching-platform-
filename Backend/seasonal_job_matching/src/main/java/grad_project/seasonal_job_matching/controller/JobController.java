@@ -1,6 +1,5 @@
 package grad_project.seasonal_job_matching.controller;
 
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,9 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import grad_project.seasonal_job_matching.dto.requests.JobCommentCreateDTO;
 import grad_project.seasonal_job_matching.dto.requests.JobCreateDTO;
 import grad_project.seasonal_job_matching.dto.requests.JobEditDTO;
+import grad_project.seasonal_job_matching.dto.responses.JobCommentResponseDTO;
 import grad_project.seasonal_job_matching.dto.responses.JobResponseDTO;
+import grad_project.seasonal_job_matching.model.JobComment;
 import grad_project.seasonal_job_matching.model.enums.JobType;
 import grad_project.seasonal_job_matching.model.enums.Salary;
 import grad_project.seasonal_job_matching.model.enums.WorkArrangement;
@@ -29,7 +31,6 @@ import grad_project.seasonal_job_matching.security.CurrentUserService;
 import grad_project.seasonal_job_matching.services.JobService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -39,21 +40,21 @@ public class JobController {
     final private JobService job_service;
     final private CurrentUserService currentUserService;
 
-    public JobController(JobService job_service, CurrentUserService currentUserService){
+    public JobController(JobService job_service, CurrentUserService currentUserService) {
         this.job_service = job_service;
         this.currentUserService = currentUserService;
     }
 
-
     @GetMapping
-    public Page<JobResponseDTO> findAll(@RequestParam(defaultValue = "0") int page){
-        //return job_service.findAllJobs(); old method that gets all jobs
+    public Page<JobResponseDTO> findAll(@RequestParam(defaultValue = "0") int page) {
+        // return job_service.findAllJobs(); old method that gets all jobs
         return job_service.getJobsPaged(page);
     }
 
-    //MAYBE USE SLICE INSTEAD OF PAGE TO MAKE IT FASTER
+    // MAYBE USE SLICE INSTEAD OF PAGE TO MAKE IT FASTER
     @GetMapping("/search")
-    public Page<JobResponseDTO> findJobsFromSearch(@RequestParam(defaultValue = "0") int page, @RequestParam(required = false) String title){
+    public Page<JobResponseDTO> findJobsFromSearch(@RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) String title) {
         return job_service.getSearchedJobs(page, title);
     }
 
@@ -65,90 +66,166 @@ public class JobController {
             @RequestParam(required = false) List<Salary> salaryTypes,
             @RequestParam(required = false) String location,
             @RequestParam(required = false) String title) {
-        
+
         Page<JobResponseDTO> jobs = job_service.getJobsWithAdvancedFilters(
-            page, arrangements, jobTypes, salaryTypes, location, title
-        );
+                page, arrangements, jobTypes, salaryTypes, location, title);
         return ResponseEntity.ok(jobs);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findByID(@PathVariable long id){
+    public ResponseEntity<?> findByID(@PathVariable long id) {
         Optional<JobResponseDTO> job = job_service.findByID(id);
-        if(job.isEmpty()){
+        if (job.isEmpty()) {
             return ResponseEntity.ok("Job not found!");
-        }else{
+        } else {
             return ResponseEntity.ok(job.get());
         }
 
     }
 
     @GetMapping("/employer/{id}")
-    public ResponseEntity<?> employerFindByID(@PathVariable long id, HttpServletRequest request){
+    public ResponseEntity<?> employerFindByID(@PathVariable long id, HttpServletRequest request) {
         Long currentUserId = currentUserService.getCurrentUserId(request);
-        if (currentUserId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (currentUserId == null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         Optional<JobResponseDTO> job = job_service.findByID(id);
-        if (currentUserId != job.get().getJobposterId()) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        if (currentUserId != job.get().getJobposterId())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        if(job.isEmpty()){
+        if (job.isEmpty()) {
             return ResponseEntity.ok("Job not found!");
-        }else{
+        } else {
             return ResponseEntity.ok(job.get());
         }
 
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createJob(@Valid @RequestBody JobCreateDTO jobdto, HttpServletRequest request){//if user is from mobile than type is jobseeker, else it is employer  
+    public ResponseEntity<?> createJob(@Valid @RequestBody JobCreateDTO jobdto, HttpServletRequest request) {
         Long currentUserId = currentUserService.getCurrentUserId(request);
-        if (currentUserId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        if (currentUserId != jobdto.getJobposterId()) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        if (currentUserId == null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (currentUserId != jobdto.getJobposterId())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
         try {
             JobResponseDTO job = job_service.createJob(jobdto);
             return ResponseEntity.ok()
-            .body(Map.of(
-                "message", "Job created successfully",
-                "job", job
-            )); 
+                    .body(Map.of(
+                            "message", "Job created successfully",
+                            "job", job));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest()
-            .body(Map.of("error", e.getMessage()));
+                    .body(Map.of("error", e.getMessage()));
         }
     }
-             
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> editJob(@PathVariable long id, @Valid @RequestBody JobEditDTO dto, HttpServletRequest request) {
+    public ResponseEntity<?> editJob(@PathVariable long id, @Valid @RequestBody JobEditDTO dto,
+            HttpServletRequest request) {
         Long currentUserId = currentUserService.getCurrentUserId(request);
-        if (currentUserId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (currentUserId == null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         Optional<JobResponseDTO> jobDetails = job_service.findByID(id);
-        if (jobDetails.isEmpty()) return ResponseEntity.notFound().build();
-        if (currentUserId != jobDetails.get().getJobposterId()) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        if (jobDetails.isEmpty())
+            return ResponseEntity.notFound().build();
+        if (currentUserId != jobDetails.get().getJobposterId())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         try {
             JobResponseDTO job = job_service.editJob(dto, id);
             return ResponseEntity.ok()
-            .body(Map.of(
-                "message", "Job edited successfully",
-                "job", job
-            )); 
+                    .body(Map.of(
+                            "message", "Job edited successfully",
+                            "job", job));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest()
-            .body(Map.of("error", e.getMessage()));
+                    .body(Map.of("error", e.getMessage()));
         }
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteJob(@PathVariable Long id, HttpServletRequest request) {
         Long currentUserId = currentUserService.getCurrentUserId(request);
-        if (currentUserId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (currentUserId == null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         Optional<JobResponseDTO> jobDetails = job_service.findByID(id);
-        if (jobDetails.isEmpty()) return ResponseEntity.notFound().build();
-        if (currentUserId != jobDetails.get().getJobposterId()) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        if (jobDetails.isEmpty())
+            return ResponseEntity.notFound().build();
+        if (currentUserId != jobDetails.get().getJobposterId())
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         job_service.deleteJob(id);
         return ResponseEntity.ok("Job deleted successfully!");
     }
- 
+
+    @PostMapping("/{jobId}/comments")
+    public ResponseEntity<?> addComment(@PathVariable Long jobId,
+            @Valid @RequestBody JobCommentCreateDTO commentDto, HttpServletRequest request) {
+        Long currentUserId = currentUserService.getCurrentUserId(request);
+        if (currentUserId == null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        Optional<JobResponseDTO> jobDetails = job_service.findByID(jobId);
+        if (jobDetails.isEmpty())
+            return ResponseEntity.notFound().build();
+
+        try {
+            JobCommentResponseDTO response = job_service.addComment(commentDto, jobId, currentUserId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/{jobId}/comments/{commentId}/replies")
+    public ResponseEntity<?> addReply(@PathVariable Long jobId, @PathVariable Long commentId,
+            @Valid @RequestBody JobCommentCreateDTO commentDto, HttpServletRequest request) {
+
+        Optional<JobCommentResponseDTO> comment = job_service.getComment(commentId);
+        Long currentUserId = currentUserService.getCurrentUserId(request);
+        if (currentUserId == null || comment.get().getUserId() != currentUserId)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        Optional<JobResponseDTO> jobDetails = job_service.findByID(jobId);
+        if (jobDetails.isEmpty())
+            return ResponseEntity.notFound().build();
+
+        try {// commentId is the parent comment, the one we want to reply to
+            JobCommentResponseDTO response = job_service.addReply(commentDto, jobId, currentUserId, commentId);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{jobId}/comments")
+    public ResponseEntity<?> getJobComments(@PathVariable Long jobId) {
+        try {
+            List<JobCommentResponseDTO> comments = job_service.getJobComments(jobId);
+
+            // If the list is empty, it just returns an empty array
+            return ResponseEntity.ok(comments);
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/{jobId}/comments/{commentId}")
+    public ResponseEntity<?> deleteComment(@PathVariable Long jobId, @PathVariable Long commentId,
+            HttpServletRequest request) {
+        Long currentUserId = currentUserService.getCurrentUserId(request);
+        Optional<JobCommentResponseDTO> comment = job_service.getComment(commentId);
+        if (currentUserId == null || comment.get().getUserId() != currentUserId)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        Optional<JobResponseDTO> jobDetails = job_service.findByID(jobId);
+        if (jobDetails.isEmpty())
+            return ResponseEntity.notFound().build();
+
+        try {
+            job_service.deleteComment(commentId);
+            return ResponseEntity.ok("Comment deleted successfully!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Comment failed to delete!"));
+
+        }
+    }
 }
