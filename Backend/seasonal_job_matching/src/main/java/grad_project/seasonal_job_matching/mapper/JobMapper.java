@@ -16,6 +16,7 @@ public interface JobMapper {
     @Mapping(target = "workArrangement", source = "workArrangement") 
     @Mapping(target = "listOfJobApplications", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "comments", ignore = true)
     @Mapping(target = "numOfPositions", source = "numOfPositions")  
     Job maptoAddJob(JobCreateDTO dto);
 
@@ -25,6 +26,7 @@ public interface JobMapper {
     @Mapping(target = "numOfPositions", source = "numOfPositions")  
     @Mapping(target = "listOfJobApplications", ignore = true) 
     @Mapping(target = "requirements", ignore = true) 
+    @Mapping(target = "comments", ignore = true)
     @Mapping(target = "categories", ignore = true) 
     @Mapping(target = "benefits", ignore = true)  
     Job maptoEditJob(JobEditDTO dto);
