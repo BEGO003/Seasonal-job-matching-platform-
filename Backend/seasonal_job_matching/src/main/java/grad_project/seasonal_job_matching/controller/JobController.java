@@ -163,10 +163,10 @@ public class JobController {
             @Valid @RequestBody JobCommentCreateDTO commentDto, HttpServletRequest request) {
         Long currentUserId = currentUserService.getCurrentUserId(request);
         if (currentUserId == null)
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build("Login first");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login first");
         Optional<JobResponseDTO> jobDetails = job_service.findByID(jobId);
         if (jobDetails.isEmpty())
-            return ResponseEntity.notFound().build("No such job");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No such job");
 
         try {
             JobCommentResponseDTO response = job_service.addComment(commentDto, jobId, currentUserId);
@@ -180,13 +180,13 @@ public class JobController {
     public ResponseEntity<?> addReply(@PathVariable Long jobId, @PathVariable Long commentId,
             @Valid @RequestBody JobCommentCreateDTO commentDto, HttpServletRequest request) {
 
-        Optional<JobCommentResponseDTO> comment = job_service.getComment(commentId);
+        // Optional<JobCommentResponseDTO> comment = job_service.getComment(commentId);
         Long currentUserId = currentUserService.getCurrentUserId(request);
         if (currentUserId == null)
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build("Login first");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login first");
         Optional<JobResponseDTO> jobDetails = job_service.findByID(jobId);
         if (jobDetails.isEmpty())
-            return ResponseEntity.notFound().build("No such job");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No such job");
         if (!currentUserId.equals(jobDetails.get().getJobposterId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only the job poster can reply.");
         }
@@ -220,7 +220,7 @@ public class JobController {
         if (comment.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment not found");
         if (currentUserId == null || comment.get().getUserId() != currentUserId)
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build("You can only delete your own comments");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You can only delete your own comments");
         Optional<JobResponseDTO> jobDetails = job_service.findByID(jobId);
         if (jobDetails.isEmpty())
             return ResponseEntity.notFound().build();
