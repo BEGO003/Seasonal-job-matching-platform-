@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AuthResponseModel {
 
-@JsonKey(name: "user") PersonalInformationModel get user;
+@JsonKey(name: "user") PersonalInformationModel get user; String? get token;
 /// Create a copy of AuthResponseModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $AuthResponseModelCopyWith<AuthResponseModel> get copyWith => _$AuthResponseMode
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthResponseModel&&(identical(other.user, user) || other.user == user));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthResponseModel&&(identical(other.user, user) || other.user == user)&&(identical(other.token, token) || other.token == token));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,user);
+int get hashCode => Object.hash(runtimeType,user,token);
 
 @override
 String toString() {
-  return 'AuthResponseModel(user: $user)';
+  return 'AuthResponseModel(user: $user, token: $token)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $AuthResponseModelCopyWith<$Res>  {
   factory $AuthResponseModelCopyWith(AuthResponseModel value, $Res Function(AuthResponseModel) _then) = _$AuthResponseModelCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: "user") PersonalInformationModel user
+@JsonKey(name: "user") PersonalInformationModel user, String? token
 });
 
 
@@ -65,10 +65,11 @@ class _$AuthResponseModelCopyWithImpl<$Res>
 
 /// Create a copy of AuthResponseModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? user = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? user = null,Object? token = freezed,}) {
   return _then(_self.copyWith(
 user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
-as PersonalInformationModel,
+as PersonalInformationModel,token: freezed == token ? _self.token : token // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 /// Create a copy of AuthResponseModel
@@ -162,10 +163,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "user")  PersonalInformationModel user)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "user")  PersonalInformationModel user,  String? token)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuthResponseModel() when $default != null:
-return $default(_that.user);case _:
+return $default(_that.user,_that.token);case _:
   return orElse();
 
 }
@@ -183,10 +184,10 @@ return $default(_that.user);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "user")  PersonalInformationModel user)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "user")  PersonalInformationModel user,  String? token)  $default,) {final _that = this;
 switch (_that) {
 case _AuthResponseModel():
-return $default(_that.user);case _:
+return $default(_that.user,_that.token);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -203,10 +204,10 @@ return $default(_that.user);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "user")  PersonalInformationModel user)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "user")  PersonalInformationModel user,  String? token)?  $default,) {final _that = this;
 switch (_that) {
 case _AuthResponseModel() when $default != null:
-return $default(_that.user);case _:
+return $default(_that.user,_that.token);case _:
   return null;
 
 }
@@ -218,10 +219,11 @@ return $default(_that.user);case _:
 @JsonSerializable()
 
 class _AuthResponseModel implements AuthResponseModel {
-  const _AuthResponseModel({@JsonKey(name: "user") required this.user});
+  const _AuthResponseModel({@JsonKey(name: "user") required this.user, this.token});
   factory _AuthResponseModel.fromJson(Map<String, dynamic> json) => _$AuthResponseModelFromJson(json);
 
 @override@JsonKey(name: "user") final  PersonalInformationModel user;
+@override final  String? token;
 
 /// Create a copy of AuthResponseModel
 /// with the given fields replaced by the non-null parameter values.
@@ -236,16 +238,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthResponseModel&&(identical(other.user, user) || other.user == user));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthResponseModel&&(identical(other.user, user) || other.user == user)&&(identical(other.token, token) || other.token == token));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,user);
+int get hashCode => Object.hash(runtimeType,user,token);
 
 @override
 String toString() {
-  return 'AuthResponseModel(user: $user)';
+  return 'AuthResponseModel(user: $user, token: $token)';
 }
 
 
@@ -256,7 +258,7 @@ abstract mixin class _$AuthResponseModelCopyWith<$Res> implements $AuthResponseM
   factory _$AuthResponseModelCopyWith(_AuthResponseModel value, $Res Function(_AuthResponseModel) _then) = __$AuthResponseModelCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: "user") PersonalInformationModel user
+@JsonKey(name: "user") PersonalInformationModel user, String? token
 });
 
 
@@ -273,10 +275,11 @@ class __$AuthResponseModelCopyWithImpl<$Res>
 
 /// Create a copy of AuthResponseModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? user = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? user = null,Object? token = freezed,}) {
   return _then(_AuthResponseModel(
 user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
-as PersonalInformationModel,
+as PersonalInformationModel,token: freezed == token ? _self.token : token // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

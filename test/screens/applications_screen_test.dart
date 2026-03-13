@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:job_seeker/models/applications_screen_models/application_model.dart';
 import 'package:job_seeker/models/jobs_screen_models/job_model.dart';
-import 'package:job_seeker/providers/applications_screen_providers/applications_provider.dart';
 import 'package:job_seeker/services/applications_screen_services/applications_service.dart';
 import 'package:job_seeker/screens/applications_screen.dart';
 import 'package:job_seeker/providers/profile_screen_providers/personal_information_notifier.dart';
@@ -65,8 +64,12 @@ void main() {
   });
 
   group('ApplicationsScreen Tests', () {
-    testWidgets('Shows empty state when no applications', (WidgetTester tester) async {
-      when(() => mockService.getApplicationsForUser(any())).thenAnswer((_) async => []);
+    testWidgets('Shows empty state when no applications', (
+      WidgetTester tester,
+    ) async {
+      when(
+        () => mockService.getApplicationsForUser(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(
         ProviderScope(
@@ -86,9 +89,7 @@ void main() {
               ),
             ),
           ],
-          child: const MaterialApp(
-            home: Scaffold(body: ApplicationsScreen()),
-          ),
+          child: const MaterialApp(home: Scaffold(body: ApplicationsScreen())),
         ),
       );
 
@@ -96,9 +97,12 @@ void main() {
       expect(find.text('No Applications Yet'), findsOneWidget);
     });
 
-    testWidgets('Shows application list when data exists', (WidgetTester tester) async {
-      when(() => mockService.getApplicationsForUser(any()))
-          .thenAnswer((_) async => [mockApplicationWithJob]);
+    testWidgets('Shows application list when data exists', (
+      WidgetTester tester,
+    ) async {
+      when(
+        () => mockService.getApplicationsForUser(any()),
+      ).thenAnswer((_) async => [mockApplicationWithJob]);
 
       await tester.pumpWidget(
         ProviderScope(
@@ -118,9 +122,7 @@ void main() {
               ),
             ),
           ],
-          child: const MaterialApp(
-            home: Scaffold(body: ApplicationsScreen()),
-          ),
+          child: const MaterialApp(home: Scaffold(body: ApplicationsScreen())),
         ),
       );
 

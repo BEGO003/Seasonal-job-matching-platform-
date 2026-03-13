@@ -45,6 +45,42 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         );
 
     _animationController.forward();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _listenAuthState();
+    });
+  }
+
+  void _listenAuthState() {
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (next.status == AuthStatus.authenticated && mounted) {
+        Navigator.of(context).pushReplacement(
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                const LayoutScreen(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+            transitionDuration: AppTheme.animNormal,
+          ),
+        );
+      }
+    });
+
+    final currentState = ref.read(authProvider);
+    if (currentState.status == AuthStatus.authenticated && mounted) {
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const LayoutScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          transitionDuration: AppTheme.animNormal,
+        ),
+      );
+    }
   }
 
   @override

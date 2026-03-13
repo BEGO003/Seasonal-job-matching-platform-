@@ -93,8 +93,9 @@ class JobsServicesProvider {
       final response = await _dio.get('$jobsPath/$jobId');
       print('JobById API response: ${response.data}');
       final fixed = Map<String, dynamic>.from(response.data as Map);
-      if (fixed['id'] != null && fixed['id'] is! String)
+      if (fixed['id'] != null && fixed['id'] is! String) {
         fixed['id'] = fixed['id'].toString();
+      }
       return JobModel.fromJson(fixed);
     } on DioException catch (e) {
       print('fetchJobById error: $e');

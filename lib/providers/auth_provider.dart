@@ -1,26 +1,101 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:job_seeker/core/auth/auth_storage.dart';
-
 import 'package:job_seeker/providers/home_screen_providers/favorites_provider.dart';
 import 'package:job_seeker/providers/applications_screen_providers/applications_provider.dart';
 import 'package:job_seeker/providers/jobs_screen_providers/job_apply_provider.dart';
 import 'package:job_seeker/providers/jobs_screen_providers/job_notifier.dart';
-import 'package:job_seeker/models/auth_models/auth_response_model.dart';
 import 'package:job_seeker/models/auth_models/login_request_model.dart';
 import 'package:job_seeker/models/auth_models/signup_request_model.dart';
 import 'package:job_seeker/services/auth_service.dart';
 import 'package:job_seeker/providers/profile_screen_providers/personal_information_notifier.dart';
 
-final authProvider = AsyncNotifierProvider<AuthNotifier, AuthResponseModel?>(
+enum AuthStatus { initial, authenticated, unauthenticated }
+
+class AuthState {
+  final AuthStatus status;
+  final String? token;
+  final int? userId;
+  final String? error;
+
+  const AuthState({
+    this.status = AuthStatus.initial,
+    this.token,
+    this.userId,
+    this.error,
+  });
+
+  AuthState copyWith({
+    AuthStatus? status,
+    String? token,
+    int? userId,
+    String? error,
+  }) {
+    return AuthState(
+      status: status ?? this.status,
+      token: token ?? this.token,
+      userId: userId ?? this.userId,
+      error: error,
+    );
+  }
+
+  bool get isAuthenticated => status == AuthStatus.authenticated;
+  bool get isLoading => status == AuthStatus.initial;
+}
+
+final authProvider = NotifierProvider<AuthNotifier, AuthState>(
   AuthNotifier.new,
 );
 
-class AuthNotifier extends AsyncNotifier<AuthResponseModel?> {
+class AuthNotifier extends Notifier<AuthState> {
   late final AuthService _authService = ref.read(authServiceProvider);
+  final AuthStorage _storage = AuthStorage();
 
   @override
-  Future<AuthResponseModel?> build() async {
-    return null;
+  AuthState build() {
+    _checkStoredSession();
+    return const AuthState();
+  }
+
+  Future<void> _checkStoredSession() async {
+    final token = await _storage.getToken();
+    final userId = await _storage.getUserId();
+
+    if (token != null && token.isNotEmpty && userId != null) {
+      state = AuthState(
+        status: AuthStatus.authenticated,
+        token: token,
+        userId: int.tryParse(userId),
+      );
+    } else {
+      state = const AuthState(status: AuthStatus.unauthenticated);
+    }
+  }
+
+  Future<void> login({required String email, required String password}) async {
+    state = const AuthState(status: AuthStatus.initial);
+
+    try {
+      final request = LoginRequestModel(email: email, password: password);
+      final response = await _authService.login(request);
+
+      final token = response.token ?? response.user.id.toString();
+      final userId = response.user.id;
+
+      await _storage.saveToken(token);
+      await _storage.saveUserId(userId.toString());
+
+      state = AuthState(
+        status: AuthStatus.authenticated,
+        token: token,
+        userId: userId,
+      );
+    } catch (e) {
+      state = AuthState(
+        status: AuthStatus.unauthenticated,
+        error: e.toString(),
+      );
+      rethrow;
+    }
   }
 
   Future<void> signup({
@@ -30,7 +105,7 @@ class AuthNotifier extends AsyncNotifier<AuthResponseModel?> {
     required String email,
     required String password,
   }) async {
-    state = const AsyncValue.loading();
+    state = const AuthState(status: AuthStatus.initial);
 
     try {
       final request = SignupRequestModel(
@@ -39,63 +114,39 @@ class AuthNotifier extends AsyncNotifier<AuthResponseModel?> {
         number: number,
         email: email,
         password: password,
-        fieldsOfInterest: null, // Send as null as specified
+        fieldsOfInterest: null,
       );
 
       final response = await _authService.signup(request);
 
-      // We do NOT manually update personalInformationProvider here.
-      // Instead, we let the provider rebuild naturally when accessed,
-      // which will trigger the full fetchUserData() + fetchFieldsOfInterest() logic.
+      final token = response.token ?? response.user.id.toString();
+      final userId = response.user.id;
 
-      state = AsyncValue.data(response);
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
-      rethrow;
-    }
-  }
+      await _storage.saveToken(token);
+      await _storage.saveUserId(userId.toString());
 
-  Future<void> login({required String email, required String password}) async {
-    state = const AsyncValue.loading();
-
-    try {
-      final request = LoginRequestModel(email: email, password: password);
-
-      final response = await _authService.login(request);
-
-      // We do NOT manually update personalInformationProvider here.
-      // Instead, we let the provider rebuild naturally when accessed,
-      // which will trigger the full fetchUserData() + fetchFieldsOfInterest() logic.
-
-      state = AsyncValue.data(response);
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+      state = AuthState(
+        status: AuthStatus.authenticated,
+        token: token,
+        userId: userId,
+      );
+    } catch (e) {
+      state = AuthState(
+        status: AuthStatus.unauthenticated,
+        error: e.toString(),
+      );
       rethrow;
     }
   }
 
   Future<void> logout() async {
-    // Clear persisted auth values first
-    await _authService.logout();
+    await _storage.clearToken();
+    await _storage.clearUserId();
 
-    // Mark auth state as logged out
-    state = const AsyncValue.data(null);
+    state = const AuthState(status: AuthStatus.unauthenticated);
 
-    // Also clear any remaining stored values (defensive)
-    final authStorage = AuthStorage();
-    await authStorage.clearUserId();
-    await authStorage.clearToken();
-
-    // Invalidate the personal information provider.
-    // This ensures that the next time it is read (e.g. by ProfileScreen),
-    // it will re-execute its build() method, fetching fresh data for the new user
-    // (or unrelated data if we were to support guest mode, though currently it's auth-dependent).
     ref.invalidate(personalInformationProvider);
-
-    // Clear optimistic local applied jobs
     ref.read(appliedJobsLocalProvider.notifier).state = <String>{};
-
-    // Invalidate other caches that depend on the current user
     ref.invalidate(favoriteJobsProvider);
     ref.invalidate(applicationsProvider);
     ref.invalidate(jobsNotifierProvider);

@@ -35,9 +35,10 @@ class _ProfileInfoCardState extends ConsumerState<ProfileInfoCard>
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.98).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.98,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -146,7 +147,10 @@ class _ProfileInfoCardState extends ConsumerState<ProfileInfoCard>
                               ),
                             ),
                             IconButton(
-                              icon: Icon(Icons.close, color: Colors.grey.shade600),
+                              icon: Icon(
+                                Icons.close,
+                                color: Colors.grey.shade600,
+                              ),
                               onPressed: () => Navigator.of(context).pop(),
                             ),
                           ],
@@ -158,25 +162,31 @@ class _ProfileInfoCardState extends ConsumerState<ProfileInfoCard>
                               ? StatefulBuilder(
                                   builder: (context, setState) {
                                     return DropdownButtonFormField<String>(
-                                      value: selectedCountry,
+                                      initialValue: selectedCountry,
                                       decoration: InputDecoration(
                                         labelText: widget.label,
                                         filled: true,
                                         fillColor: Colors.grey.shade50,
                                         border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(16),
+                                          borderRadius: BorderRadius.circular(
+                                            16,
+                                          ),
                                           borderSide: BorderSide(
                                             color: Colors.grey.shade300,
                                           ),
                                         ),
                                         enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(16),
+                                          borderRadius: BorderRadius.circular(
+                                            16,
+                                          ),
                                           borderSide: BorderSide(
                                             color: Colors.grey.shade300,
                                           ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(16),
+                                          borderRadius: BorderRadius.circular(
+                                            16,
+                                          ),
                                           borderSide: BorderSide(
                                             color: _getIconColor(),
                                             width: 2,
@@ -265,7 +275,9 @@ class _ProfileInfoCardState extends ConsumerState<ProfileInfoCard>
                               child: OutlinedButton(
                                 onPressed: () => Navigator.of(context).pop(),
                                 style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -286,14 +298,17 @@ class _ProfileInfoCardState extends ConsumerState<ProfileInfoCard>
                               child: ElevatedButton(
                                 onPressed: () async {
                                   if (formKey.currentState!.validate()) {
-                                    final valueToSave = widget.label == 'Country'
+                                    final valueToSave =
+                                        widget.label == 'Country'
                                         ? selectedCountry!
                                         : controller.text;
                                     try {
                                       Navigator.of(context).pop();
                                       await widget.onSave!(valueToSave, ref);
                                       if (context.mounted) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           SnackBar(
                                             content: Row(
                                               children: [
@@ -310,10 +325,13 @@ class _ProfileInfoCardState extends ConsumerState<ProfileInfoCard>
                                                 ),
                                               ],
                                             ),
-                                            backgroundColor: const Color(0xFF10B981),
+                                            backgroundColor: const Color(
+                                              0xFF10B981,
+                                            ),
                                             behavior: SnackBarBehavior.floating,
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(12),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                             ),
                                             margin: const EdgeInsets.all(16),
                                           ),
@@ -321,7 +339,9 @@ class _ProfileInfoCardState extends ConsumerState<ProfileInfoCard>
                                       }
                                     } catch (e) {
                                       if (context.mounted) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           SnackBar(
                                             content: Row(
                                               children: [
@@ -334,16 +354,20 @@ class _ProfileInfoCardState extends ConsumerState<ProfileInfoCard>
                                                   child: Text(
                                                     'Error: $e',
                                                     style: const TextStyle(
-                                                      fontWeight: FontWeight.w600,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                     ),
                                                   ),
                                                 ),
                                               ],
                                             ),
-                                            backgroundColor: const Color(0xFFEF4444),
+                                            backgroundColor: const Color(
+                                              0xFFEF4444,
+                                            ),
                                             behavior: SnackBarBehavior.floating,
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(12),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                             ),
                                             margin: const EdgeInsets.all(16),
                                           ),
@@ -355,7 +379,9 @@ class _ProfileInfoCardState extends ConsumerState<ProfileInfoCard>
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: _getIconColor(),
                                   foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
@@ -394,7 +420,7 @@ class _ProfileInfoCardState extends ConsumerState<ProfileInfoCard>
   @override
   Widget build(BuildContext context) {
     final asyncData = ref.watch(personalInformationProvider);
-    
+
     return asyncData.when(
       loading: () => _buildCard(context, isLoading: true, onTap: null),
       error: (error, stackTrace) {
@@ -453,11 +479,7 @@ class _ProfileInfoCardState extends ConsumerState<ProfileInfoCard>
                         color: iconColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Icon(
-                        widget.icon,
-                        color: iconColor,
-                        size: 22,
-                      ),
+                      child: Icon(widget.icon, color: iconColor, size: 22),
                     ),
                     const SizedBox(width: 16),
                     Expanded(

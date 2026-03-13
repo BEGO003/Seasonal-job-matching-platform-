@@ -1,20 +1,23 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:job_seeker/providers/auth_provider.dart';
 import 'package:job_seeker/screens/Profile/profile_screen.dart';
 
 import 'applications_screen.dart';
 import 'home_screen.dart';
 import 'jobs_screen.dart';
+import 'auth/login_screen.dart';
 
-class LayoutScreen extends StatefulWidget {
+class LayoutScreen extends ConsumerStatefulWidget {
   const LayoutScreen({super.key});
 
   @override
-  State<LayoutScreen> createState() => _LayoutScreenState();
+  ConsumerState<LayoutScreen> createState() => _LayoutScreenState();
 }
 
-class _LayoutScreenState extends State<LayoutScreen> {
+class _LayoutScreenState extends ConsumerState<LayoutScreen> {
   int currentIndex = 0;
 
   final List<String> titles = const <String>[
@@ -60,6 +63,33 @@ class _LayoutScreenState extends State<LayoutScreen> {
       setState(() {
         currentIndex = index;
       });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _listenAuthState();
+    });
+  }
+
+  void _listenAuthState() {
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (next.status == AuthStatus.unauthenticated && mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          (route) => false,
+        );
+      }
+    });
+
+    final currentState = ref.read(authProvider);
+    if (currentState.status == AuthStatus.unauthenticated && mounted) {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+        (route) => false,
+      );
     }
   }
 

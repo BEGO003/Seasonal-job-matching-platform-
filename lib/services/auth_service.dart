@@ -7,12 +7,10 @@ import 'package:job_seeker/models/auth_models/login_request_model.dart';
 import 'package:job_seeker/models/auth_models/signup_request_model.dart';
 import 'package:job_seeker/core/auth/auth_storage.dart';
 
-final authServiceProvider = Provider<AuthService>(
-  (ref) {
-    final dio = ref.watch(dioProvider);
-    return AuthService(dio);
-  },
-);
+final authServiceProvider = Provider<AuthService>((ref) {
+  final dio = ref.watch(dioProvider);
+  return AuthService(dio);
+});
 
 class AuthService {
   final Dio _dio;
@@ -22,21 +20,19 @@ class AuthService {
 
   Future<AuthResponseModel> signup(SignupRequestModel request) async {
     try {
-      final response = await _dio.post(
-        SIGNUP,
-        data: request.toJson(),
-      );
-      
+      final response = await _dio.post(SIGNUP, data: request.toJson());
+
       final authResponse = AuthResponseModel.fromJson(response.data);
-      
+
       // Store user ID from the response
       await _authStorage.saveUserId(authResponse.user.id.toString());
-      
-      // Store token if provided in response (assuming backend returns token)
-      // if (response.data.containsKey('token')) {
-      //   await _authStorage.saveToken(response.data['token']);
-      // }
-      
+
+      // Store token if provided in response
+      final token = authResponse.token ?? response.data['token'];
+      if (token != null) {
+        await _authStorage.saveToken(token);
+      }
+
       return authResponse;
     } on DioException catch (e) {
       throw _handleError(e);
@@ -45,21 +41,19 @@ class AuthService {
 
   Future<AuthResponseModel> login(LoginRequestModel request) async {
     try {
-      final response = await _dio.post(
-        LOGIN,
-        data: request.toJson(),
-      );
-      
+      final response = await _dio.post(LOGIN, data: request.toJson());
+
       final authResponse = AuthResponseModel.fromJson(response.data);
-      
+
       // Store user ID from the response
       await _authStorage.saveUserId(authResponse.user.id.toString());
-      
-      // // Store token if provided in response (assuming backend returns token)
-      // if (response.data.containsKey('token')) {
-      //   await _authStorage.saveToken(response.data['token']);
-      // }
-      
+
+      // Store token if provided in response
+      final token = authResponse.token ?? response.data['token'];
+      if (token != null) {
+        await _authStorage.saveToken(token);
+      }
+
       return authResponse;
     } on DioException catch (e) {
       throw _handleError(e);
@@ -93,11 +87,13 @@ class AuthService {
       case DioExceptionType.badResponse:
         final statusCode = error.response?.statusCode;
         if (statusCode == 400) {
-          final message = error.response?.data?['message'] ?? 'Invalid data provided.';
+          final message =
+              error.response?.data?['message'] ?? 'Invalid data provided.';
           return message;
         }
         if (statusCode == 401) {
-          final message = error.response?.data?['message'] ?? 'Invalid email or password.';
+          final message =
+              error.response?.data?['message'] ?? 'Invalid email or password.';
           return message;
         }
         if (statusCode == 404) return 'Resource not found.';
@@ -112,4 +108,3 @@ class AuthService {
     }
   }
 }
-

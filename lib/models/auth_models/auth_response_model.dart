@@ -7,10 +7,10 @@ part 'auth_response_model.g.dart';
 @freezed
 abstract class AuthResponseModel with _$AuthResponseModel {
   const factory AuthResponseModel({
-    @JsonKey(name: "user")
-    required PersonalInformationModel user,
+    @JsonKey(name: "user") required PersonalInformationModel user,
+    String? token,
   }) = _AuthResponseModel;
 
-  factory AuthResponseModel.fromJson(Map<String, dynamic> json) => _$AuthResponseModelFromJson(json);
+  factory AuthResponseModel.fromJson(Map<String, dynamic> json) =>
+      _$AuthResponseModelFromJson(json);
 }
-

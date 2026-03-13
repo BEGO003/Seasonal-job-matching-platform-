@@ -68,20 +68,25 @@ class ResumeService {
 
     final data = <String, dynamic>{};
     if (educationToAdd != null) data['educationToAdd'] = educationToAdd;
-    if (educationToRemove != null)
+    if (educationToRemove != null) {
       data['educationToRemove'] = educationToRemove;
+    }
     if (experienceToAdd != null) data['experienceToAdd'] = experienceToAdd;
-    if (experienceToRemove != null)
+    if (experienceToRemove != null) {
       data['experienceToRemove'] = experienceToRemove;
-    if (certificatesToAdd != null)
+    }
+    if (certificatesToAdd != null) {
       data['certificatesToAdd'] = certificatesToAdd;
-    if (certificatesToRemove != null)
+    }
+    if (certificatesToRemove != null) {
       data['certificatesToRemove'] = certificatesToRemove;
+    }
     if (skillsToAdd != null) data['skillsToAdd'] = skillsToAdd;
     if (skillsToRemove != null) data['skillsToRemove'] = skillsToRemove;
     if (languagesToAdd != null) data['languagesToAdd'] = languagesToAdd;
-    if (languagesToRemove != null)
+    if (languagesToRemove != null) {
       data['languagesToRemove'] = languagesToRemove;
+    }
 
     if (data.isEmpty) return;
 

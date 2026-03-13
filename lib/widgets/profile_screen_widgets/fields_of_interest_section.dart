@@ -152,8 +152,9 @@ class _FieldsOfInterestSectionState
             ),
           ],
         ),
-        backgroundColor:
-            isError ? const Color(0xFFDC2626) : const Color(0xFF059669),
+        backgroundColor: isError
+            ? const Color(0xFFDC2626)
+            : const Color(0xFF059669),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
@@ -171,15 +172,15 @@ class _FieldsOfInterestSectionState
         color: isRemoved
             ? Colors.grey.shade100
             : isNew
-                ? const Color(0xFF10B981).withOpacity(0.1)
-                : const Color(0xFF3B82F6).withOpacity(0.1),
+            ? const Color(0xFF10B981).withOpacity(0.1)
+            : const Color(0xFF3B82F6).withOpacity(0.1),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
           color: isRemoved
               ? Colors.grey.shade400
               : isNew
-                  ? const Color(0xFF10B981)
-                  : const Color(0xFF3B82F6),
+              ? const Color(0xFF10B981)
+              : const Color(0xFF3B82F6),
           width: 1,
         ),
       ),
@@ -195,8 +196,8 @@ class _FieldsOfInterestSectionState
                 color: isRemoved
                     ? Colors.grey.shade500
                     : isNew
-                        ? const Color(0xFF10B981)
-                        : const Color(0xFF3B82F6),
+                    ? const Color(0xFF10B981)
+                    : const Color(0xFF3B82F6),
                 decoration: isRemoved ? TextDecoration.lineThrough : null,
               ),
             ),
@@ -212,8 +213,8 @@ class _FieldsOfInterestSectionState
               color: isRemoved
                   ? Colors.grey.shade500
                   : isNew
-                      ? const Color(0xFF10B981)
-                      : const Color(0xFF3B82F6),
+                  ? const Color(0xFF10B981)
+                  : const Color(0xFF3B82F6),
             ),
           ),
         ],
@@ -229,9 +230,7 @@ class _FieldsOfInterestSectionState
       data: (user) {
         final currentInterests = user.fieldsOfInterest ?? [];
         final displayInterests = [
-          ...currentInterests
-              .where((i) => !_removedInterests.contains(i))
-              .toList(),
+          ...currentInterests.where((i) => !_removedInterests.contains(i)),
           ..._addedInterests,
         ];
 
@@ -298,11 +297,7 @@ class _FieldsOfInterestSectionState
                         borderRadius: BorderRadius.circular(12),
                         child: const Padding(
                           padding: EdgeInsets.all(10),
-                          child: Icon(
-                            Icons.add,
-                            color: Colors.white,
-                            size: 20,
-                          ),
+                          child: Icon(Icons.add, color: Colors.white, size: 20),
                         ),
                       ),
                     ),
@@ -346,31 +341,34 @@ class _FieldsOfInterestSectionState
                   children: _popularInterests
                       .where((interest) => !displayInterests.contains(interest))
                       .take(4)
-                      .map((interest) => OutlinedButton.icon(
-                            onPressed: () {
-                              _interestController.text = interest;
-                              _addInterest();
-                            },
-                            icon: const Icon(Icons.add, size: 16),
-                            label: Text(interest),
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(color: Colors.grey.shade300),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                              foregroundColor: Colors.grey.shade700,
+                      .map(
+                        (interest) => OutlinedButton.icon(
+                          onPressed: () {
+                            _interestController.text = interest;
+                            _addInterest();
+                          },
+                          icon: const Icon(Icons.add, size: 16),
+                          label: Text(interest),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(color: Colors.grey.shade300),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                          ))
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            foregroundColor: Colors.grey.shade700,
+                          ),
+                        ),
+                      )
                       .toList(),
                 ),
               ],
 
               // Save button
-              if (_addedInterests.isNotEmpty || _removedInterests.isNotEmpty) ...[
+              if (_addedInterests.isNotEmpty ||
+                  _removedInterests.isNotEmpty) ...[
                 const SizedBox(height: 18),
                 SizedBox(
                   width: double.infinity,
@@ -391,8 +389,9 @@ class _FieldsOfInterestSectionState
                             width: 18,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
                             ),
                           )
                         : Text(
@@ -415,8 +414,7 @@ class _FieldsOfInterestSectionState
         child: Center(
           child: CircularProgressIndicator(
             strokeWidth: 2.5,
-            valueColor:
-                const AlwaysStoppedAnimation<Color>(Color(0xFF3B82F6)),
+            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF3B82F6)),
           ),
         ),
       ),
@@ -424,11 +422,7 @@ class _FieldsOfInterestSectionState
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            Icon(
-              Icons.error_outline,
-              color: Colors.red.shade400,
-              size: 32,
-            ),
+            Icon(Icons.error_outline, color: Colors.red.shade400, size: 32),
             const SizedBox(height: 12),
             Text(
               'Failed to load interests',

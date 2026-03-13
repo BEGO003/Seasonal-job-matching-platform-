@@ -540,7 +540,7 @@ class _ResumeScreenState extends ConsumerState<ResumeScreen> {
                 // The Key change will force a reset of the widget state
               }
             },
-            value: null,
+            initialValue: null,
           ),
         ],
       ),

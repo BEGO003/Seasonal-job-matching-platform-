@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:job_seeker/theme/app_theme.dart';
 
 class NewBadge extends StatefulWidget {
   final bool animate;
