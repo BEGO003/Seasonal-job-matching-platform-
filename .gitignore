@@ -66,3 +66,4 @@ coverage/
 
 # Optional: common node scripting output
 *.tsbuildinfonode_modules/
+tasks.txt

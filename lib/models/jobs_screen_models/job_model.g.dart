@@ -35,6 +35,11 @@ _JobModel _$JobModelFromJson(Map<String, dynamic> json) => _JobModel(
   benefits:
       (json['benefits'] as List<dynamic>?)?.map((e) => e as String).toList() ??
       const [],
+  comments:
+      (json['comments'] as List<dynamic>?)
+          ?.map((e) => JobComment.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
 );
 
 Map<String, dynamic> _$JobModelToJson(_JobModel instance) => <String, dynamic>{
@@ -56,4 +61,5 @@ Map<String, dynamic> _$JobModelToJson(_JobModel instance) => <String, dynamic>{
   'requirements': instance.requirements,
   'categories': instance.categories,
   'benefits': instance.benefits,
+  'comments': instance.comments,
 };

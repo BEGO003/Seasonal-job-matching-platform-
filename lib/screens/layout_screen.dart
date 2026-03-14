@@ -19,6 +19,7 @@ class LayoutScreen extends ConsumerStatefulWidget {
 
 class _LayoutScreenState extends ConsumerState<LayoutScreen> {
   int currentIndex = 0;
+  bool _hasHandledInitialAuth = false;
 
   final List<String> titles = const <String>[
     'Home',
@@ -66,35 +67,56 @@ class _LayoutScreenState extends ConsumerState<LayoutScreen> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _listenAuthState();
-    });
-  }
-
-  void _listenAuthState() {
-    ref.listen<AuthState>(authProvider, (previous, next) {
-      if (next.status == AuthStatus.unauthenticated && mounted) {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
-          (route) => false,
-        );
-      }
-    });
-
-    final currentState = ref.read(authProvider);
-    if (currentState.status == AuthStatus.unauthenticated && mounted) {
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
-        (route) => false,
-      );
-    }
+  void _showSessionExpiredDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text('Session Expired'),
+        content: const Text('Your session has expired. Please log in again.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                (route) => false,
+              );
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (next.status == AuthStatus.unauthenticated && mounted) {
+        if (next.sessionExpired) {
+          _showSessionExpiredDialog();
+        } else {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const LoginScreen()),
+            (route) => false,
+          );
+        }
+      }
+    });
+
+    if (!_hasHandledInitialAuth) {
+      _hasHandledInitialAuth = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final currentState = ref.read(authProvider);
+        if (currentState.status == AuthStatus.unauthenticated && mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const LoginScreen()),
+            (route) => false,
+          );
+        }
+      });
+    }
+
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 

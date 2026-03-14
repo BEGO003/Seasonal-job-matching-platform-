@@ -10,7 +10,6 @@ final appConfigProvider = Provider<AppConfig>((_) => const AppConfig.dev());
 
 final dioProvider = Provider<Dio>((ref) {
   final config = ref.watch(appConfigProvider);
-  ref.watch(authProvider);
 
   final Dio dio = Dio(
     BaseOptions(
@@ -36,10 +35,10 @@ final dioProvider = Provider<Dio>((ref) {
   dio.interceptors.add(
     InterceptorsWrapper(
       onError: (error, handler) async {
-        if (error.response?.statusCode == 401) {
+        if (error.response?.statusCode == 403) {
           await storage.clearToken();
           await storage.clearUserId();
-          ref.read(authProvider.notifier).logout();
+          ref.read(authProvider.notifier).logout(sessionExpired: true);
         }
         handler.next(error);
       },

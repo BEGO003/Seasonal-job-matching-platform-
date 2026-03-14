@@ -16,12 +16,14 @@ class AuthState {
   final String? token;
   final int? userId;
   final String? error;
+  final bool sessionExpired;
 
   const AuthState({
     this.status = AuthStatus.initial,
     this.token,
     this.userId,
     this.error,
+    this.sessionExpired = false,
   });
 
   AuthState copyWith({
@@ -29,12 +31,14 @@ class AuthState {
     String? token,
     int? userId,
     String? error,
+    bool? sessionExpired,
   }) {
     return AuthState(
       status: status ?? this.status,
       token: token ?? this.token,
       userId: userId ?? this.userId,
       error: error,
+      sessionExpired: sessionExpired ?? this.sessionExpired,
     );
   }
 
@@ -58,13 +62,12 @@ class AuthNotifier extends Notifier<AuthState> {
 
   Future<void> _checkStoredSession() async {
     final token = await _storage.getToken();
-    final userId = await _storage.getUserId();
 
-    if (token != null && token.isNotEmpty && userId != null) {
+    if (token != null && token.isNotEmpty) {
       state = AuthState(
         status: AuthStatus.authenticated,
         token: token,
-        userId: int.tryParse(userId),
+        userId: int.tryParse(await _storage.getUserId() ?? ''),
       );
     } else {
       state = const AuthState(status: AuthStatus.unauthenticated);
@@ -139,11 +142,14 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
-  Future<void> logout() async {
+  Future<void> logout({bool sessionExpired = false}) async {
     await _storage.clearToken();
     await _storage.clearUserId();
 
-    state = const AuthState(status: AuthStatus.unauthenticated);
+    state = AuthState(
+      status: AuthStatus.unauthenticated,
+      sessionExpired: sessionExpired,
+    );
 
     ref.invalidate(personalInformationProvider);
     ref.read(appliedJobsLocalProvider.notifier).state = <String>{};

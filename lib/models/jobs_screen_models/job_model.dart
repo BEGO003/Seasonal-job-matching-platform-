@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'job_comment_model.dart';
+
 part 'job_model.freezed.dart';
 part 'job_model.g.dart';
 
@@ -24,6 +26,7 @@ abstract class JobModel with _$JobModel {
     @Default([]) List<String> requirements,
     @Default([]) List<String> categories,
     @Default([]) List<String> benefits,
+    @Default([]) List<JobComment> comments,
   }) = _JobModel;
 
   factory JobModel.fromJson(Map<String, dynamic> json) =>

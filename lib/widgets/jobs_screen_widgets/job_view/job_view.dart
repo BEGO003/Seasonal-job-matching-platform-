@@ -7,6 +7,7 @@ import 'package:job_seeker/providers/jobs_screen_providers/job_apply_provider.da
 import 'package:job_seeker/providers/home_screen_providers/favorites_controller.dart';
 import 'package:job_seeker/providers/profile_screen_providers/personal_information_notifier.dart';
 import 'package:job_seeker/widgets/jobs_screen_widgets/job_view/job_apply_dialog.dart';
+import 'package:job_seeker/widgets/jobs_screen_widgets/job_view/job_comments_section.dart';
 
 import 'package:job_seeker/utils/job_color_util.dart';
 
@@ -290,6 +291,12 @@ class JobView extends ConsumerWidget {
                         ),
                         const SizedBox(height: 32),
                       ],
+
+                      // Q&A Comments Section
+                      JobCommentsSection(
+                        jobId: job.id,
+                        jobPosterId: job.jobposterId,
+                      ),
 
                       // Bottom Padding
                       const SizedBox(height: 100),

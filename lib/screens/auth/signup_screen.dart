@@ -29,6 +29,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen>
   final _confirmPasswordController = TextEditingController();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _hasNavigated = false;
 
   late AnimationController _headerAnimController;
   late Animation<double> _headerScaleAnimation;
@@ -56,43 +57,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen>
 
     _headerAnimController.forward();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _listenAuthState();
-    });
-
     _passwordController.addListener(_updatePasswordStrength);
-  }
-
-  void _listenAuthState() {
-    ref.listen<AuthState>(authProvider, (previous, next) {
-      if (next.status == AuthStatus.authenticated && mounted) {
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                const LayoutScreen(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
-            transitionDuration: AppTheme.animNormal,
-          ),
-        );
-      }
-    });
-
-    final currentState = ref.read(authProvider);
-    if (currentState.status == AuthStatus.authenticated && mounted) {
-      Navigator.of(context).pushReplacement(
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              const LayoutScreen(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-          transitionDuration: AppTheme.animNormal,
-        ),
-      );
-    }
   }
 
   @override
@@ -219,6 +184,25 @@ class _SignupScreenState extends ConsumerState<SignupScreen>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (next.status == AuthStatus.authenticated &&
+          mounted &&
+          !_hasNavigated) {
+        _hasNavigated = true;
+        Navigator.of(context).pushReplacement(
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                const LayoutScreen(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+            transitionDuration: AppTheme.animNormal,
+          ),
+        );
+      }
+    });
+
     final authState = ref.watch(authProvider);
     final isLoading = authState.isLoading;
     final theme = Theme.of(context);
